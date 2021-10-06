@@ -14,7 +14,7 @@ namespace ATM.Models
         public static Dictionary<string, string> Users = new Dictionary<string, string>
         {
                 { "Anmol", "1234" },                                              //registered users
-                { "Balaji", "0000" }                                             //registered users
+                { "Balaji", "0000" }                                              //registered users
         };
 
     }

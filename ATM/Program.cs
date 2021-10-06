@@ -68,14 +68,14 @@ namespace ATM.CLI
                     Console.WriteLine("Enter amount to deposit in the account");
                     string add = Console.ReadLine();
                     bankAccount1.Add(Convert.ToInt32(add));
-                    Transaction.Transactions.Add($"{add} deposited in account successfully.");
+                    Transaction.Transactions.Add($"{add} deposited in account of {userName} successfully.");
                 }
                 else if (option == "2")
                 {
                     Console.WriteLine("Enter amount to withdraw from the account");
                     string sub = Console.ReadLine();
                     bankAccount1.Withdraw(Convert.ToInt32(sub));
-                    Transaction.Transactions.Add($"{sub} withdrawn from the account." );
+                    Transaction.Transactions.Add($"{sub} withdrawn from the account of {userName} successfully." );
                 }
                 else if (option == "3")
                 {  

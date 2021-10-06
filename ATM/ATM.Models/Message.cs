@@ -32,6 +32,11 @@ namespace ATM.Models
             Console.WriteLine("Press 5, \t---\t To see the balance\n");
             Console.WriteLine("Press 0, \t---\t To log out");
         }
+        public static void TransactionHistory()
+        {
+            Console.WriteLine("\nTransaction History:--");
+            Console.WriteLine("<--------*-----*------->\n");
+        }
     }
 }
 

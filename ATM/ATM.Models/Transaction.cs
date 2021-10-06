@@ -11,8 +11,7 @@ namespace ATM.Models
 
         public static void ShowTransactions()
         {
-            Console.WriteLine("\nTransaction History:--");
-            Console.WriteLine("<--------*-----*------->\n");
+            Message.TransactionHistory();
             foreach (string transaction in Transaction.Transactions)
             {
                 Console.WriteLine(transaction);

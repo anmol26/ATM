@@ -37,6 +37,10 @@ namespace ATM.Models
             Console.WriteLine("\nTransaction History:--");
             Console.WriteLine("<--------*-----*------->\n");
         }
+        public static void InsufficientBalance()
+        {
+            Console.WriteLine("\nInsufficient Balance, Transaction failed!!!");
+        }
     }
 }
 

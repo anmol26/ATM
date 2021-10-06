@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ATM.Models;
 
 namespace ATM.Services
 {
@@ -24,7 +25,7 @@ namespace ATM.Services
         {
             if (this.Money < Money)
             {
-                Console.WriteLine("\nInsufficient Balance, Transaction failed!!!");
+                Message.InsufficientBalance();
             }
             else
             {

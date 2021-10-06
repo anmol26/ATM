@@ -9,8 +9,7 @@ namespace ATM.Services
     {
         public static string UserName;
         public double Money;
-
-
+       
         public BankAccount(string userName, double money)
         {
             UserName = userName;
@@ -33,16 +32,14 @@ namespace ATM.Services
 
             }
         }
-        public string Balance()
+        public double Balance()
         {
-            return ("\nYour current amount in the Account is: " + this.Money);
+            return (this.Money);
         }
         public void Transfer(double money)
         {
             Money -= money;
 
         }
-
-
     }
 }

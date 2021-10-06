@@ -92,8 +92,8 @@ namespace ATM.CLI
                 }
                 else if (option == "5")
                 {
-                    string a=bankAccount1.Balance();
-                    Console.WriteLine(a);
+                    double a=bankAccount1.Balance();
+                    Console.WriteLine("\nYour current amount in the Account is: "+ a);
                 }
                 else
                 {

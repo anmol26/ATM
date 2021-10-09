@@ -12,9 +12,11 @@ namespace ATM.Models
         public static void ShowTransactions()
         {
             Message.TransactionHistory();
+            int counter = 1;
             foreach (string transaction in Transaction.Transactions)
             {
-                Console.WriteLine(transaction);
+                Console.WriteLine($"{counter}. {transaction}.");
+                counter += 1;
 
             }
 

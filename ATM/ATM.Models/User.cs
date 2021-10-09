@@ -6,7 +6,8 @@ namespace ATM.Models
 {
     public class User
     {
-
+        //account
+        //bank class
         public string userName;
 
         public string accountNum;

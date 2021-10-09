@@ -8,38 +8,15 @@ namespace ATM.Services
     public class BankAccount
     {
         public static string UserName;
-        public double Money;
+        public static double Money;
        
         public BankAccount(string userName, double money)
         {
             UserName = userName;
             Money = money;
         }
-        public void Add(double Money)
-        {
-            this.Money += Money;
-
-        }
-        public void Withdraw(double Money)
-        {
-            if (this.Money < Money)
-            {
-                Message.InsufficientBalance();
-            }
-            else
-            {
-                this.Money -= Money;
-
-            }
-        }
-        public double Balance()
-        {
-            return (this.Money);
-        }
-        public void Transfer(double money)
-        {
-            Money -= money;
-
-        }
+        
+       
     }
+
 }

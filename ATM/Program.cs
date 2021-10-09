@@ -12,11 +12,10 @@ namespace ATM.CLI
         {
             Message.Welcome();
             Message.Login();
-
+            
             bool createAccount = (Console.ReadLine() == "1");        // take user input to create account
  
-            string userName;
-            string password;
+            string userName, password;
 
             if (createAccount)
             {
@@ -46,8 +45,7 @@ namespace ATM.CLI
                     }
             }    
             
-            Console.WriteLine();
-            Console.WriteLine("Enter Password");
+            Console.WriteLine("\nEnter Password");
             password = Console.ReadLine();
             while (User.Users[userName] != password)
             {
@@ -58,33 +56,23 @@ namespace ATM.CLI
             Message.WelcomeUser();
             Message.Choice();
 
-            BankAccount bankAccount1 = new BankAccount(userName, 5000);
+            new BankAccount(userName, 5000);
             
             string option = Console.ReadLine();
             while (option != "0")
             {
                 if (option == "1")
                 {
-                    Console.WriteLine("Enter amount to deposit in the account");
-                    string add = Console.ReadLine();
-                    bankAccount1.Add(Convert.ToInt32(add));
-                    Transaction.Transactions.Add($"{add} deposited in account of {userName} successfully.");
+                    Add.Deposit();
+                    
                 }
                 else if (option == "2")
                 {
-                    Console.WriteLine("Enter amount to withdraw from the account");
-                    string sub = Console.ReadLine();
-                    bankAccount1.Withdraw(Convert.ToInt32(sub));
-                    Transaction.Transactions.Add($"{sub} withdrawn from the account of {userName} successfully." );
+                    Sub.Withdraw();
                 }
                 else if (option == "3")
-                {  
-                    Console.WriteLine("Enter the username to transfer money:- ");
-                    string username = Console.ReadLine();
-                    Console.WriteLine("Enter amount to transfer in  account:-");
-                    string amount = Console.ReadLine();
-                    bankAccount1.Withdraw(Convert.ToInt32(amount));
-                    Transaction.Transactions.Add($"{amount} has been transferred to "+username+"'s account successfully.");
+                {
+                    Transfer.MoneyTransfer();
                 }
                 else if (option == "4")
                 {
@@ -92,12 +80,11 @@ namespace ATM.CLI
                 }
                 else if (option == "5")
                 {
-                    double a=bankAccount1.Balance();
-                    Console.WriteLine("\nYour current amount in the Account is: "+ a);
+                    Message.CheckBalance();
                 }
                 else
                 {
-                    Console.WriteLine("Enter a valid option");
+                    Message.ValidOption();
                 }
                 Message.Choice();
                 option = Console.ReadLine();

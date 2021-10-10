@@ -9,7 +9,7 @@ namespace ATM.Services
     {
         public void MoneyTransfer(double money)
         {
-            BankAccount.Money -= money;
+            Account.Money -= money;
 
         }
 

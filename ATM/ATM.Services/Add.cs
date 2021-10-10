@@ -10,7 +10,7 @@ namespace ATM.Services
         
         public static void Deposit(double money)
         {
-            BankAccount.Money += money;
+            Account.Money += money;
 
         }
         
@@ -19,7 +19,7 @@ namespace ATM.Services
             Console.WriteLine("Enter amount to deposit in the account");
             string add = Console.ReadLine();
             Add.Deposit(Convert.ToInt32(add));
-            Transaction.Transactions.Add($"{add} deposited in account of {BankAccount.UserName} successfully.");
+            Transaction.Transactions.Add($"{add} deposited in account of {Account.UserName} successfully.");
         }
     }
 }

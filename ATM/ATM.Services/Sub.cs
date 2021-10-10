@@ -9,13 +9,13 @@ namespace ATM.Services
     {
         public static void Withdraw(double money)
         {
-            if (BankAccount.Money < money)
+            if (Account.Money < money)
             {
                 Message.InsufficientBalance();
             }
             else
             {
-                BankAccount.Money -= money;
+                Account.Money -= money;
 
             }
         }
@@ -24,7 +24,7 @@ namespace ATM.Services
             Console.WriteLine("Enter amount to withdraw from the account");
             string sub = Console.ReadLine();
             Sub.Withdraw(Convert.ToInt32(sub));
-            Transaction.Transactions.Add($"{sub} withdrawn from the account of {BankAccount.UserName} successfully.");
+            Transaction.Transactions.Add($"{sub} withdrawn from the account of {Account.UserName} successfully.");
 
         }
     }

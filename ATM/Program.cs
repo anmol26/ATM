@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using ATM.Services;
 using ATM.Models;
+using ATM.Services;
 
 
 namespace ATM.CLI
@@ -55,8 +55,6 @@ namespace ATM.CLI
 
             Message.WelcomeUser();
             Message.Choice();
-
-            new BankAccount(userName, 5000);
             
             string option = Console.ReadLine();
             while (option != "0")

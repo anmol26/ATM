@@ -9,7 +9,7 @@ namespace ATM.Services
     {
         public static double CheckBalance()
         {
-            return (BankAccount.Money);
+            return (Account.Money);
         }
     }
 }

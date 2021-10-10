@@ -10,8 +10,8 @@ namespace ATM.Models
     {
         public static void Welcome()
         {
-            Console.WriteLine("Welcome to Bank Application");
-            Console.WriteLine("<-------*---------*------->\n");
+            Console.WriteLine("Welcome to Alpha Bank");
+            Console.WriteLine("<-----*--------*----->\n");
         }
         public static void Login()
         {

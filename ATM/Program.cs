@@ -15,42 +15,41 @@ namespace ATM.CLI
             
             bool createAccount = (Console.ReadLine() == "1");        // take user input to create account
  
-            string userName, password;
 
             if (createAccount)
             {
                 Console.WriteLine("Enter the username:- ");                 // create a new account and add it to users
-                userName = Console.ReadLine();
-                while (User.Users.ContainsKey(userName))                    // check if userName already exists in users dict if exists ask to pick another userName
+                Account.UserName = Console.ReadLine();
+                while (Account.Users.ContainsKey(Account.UserName))                    // check if userName already exists in users dict if exists ask to pick another userName
                 {
-                    Console.WriteLine(userName + " is already taken, Please pick another username");
-                    userName = Console.ReadLine();
+                    Console.WriteLine(Account.UserName + " is already taken, Please pick another username");
+                    Account.UserName = Console.ReadLine();
                 }
                 Console.WriteLine("Enter password");                    // set password 
-                password = Console.ReadLine();                          // add user to users dict
-                User.Users.Add(userName, password);
+                Account.Password = Console.ReadLine();                          // add user to users dict
+                Account.Users.Add(Account.UserName, Account.Password);
                 Console.WriteLine("\n!!!!!! Account Created Successfully !!!!!!\n");
 
             }
             Console.WriteLine("Enter Username");
-            userName = Console.ReadLine();
-            while (!User.Users.ContainsKey(userName))
+            Account.UserName = Console.ReadLine();
+            while (!Account.Users.ContainsKey(Account.UserName))
             {
                     Console.WriteLine("Enter username");
-                    userName = Console.ReadLine();
-                    while (!User.Users.ContainsKey(userName))
+                Account.UserName = Console.ReadLine();
+                    while (!Account.Users.ContainsKey(Account.UserName))
                     {
                         Console.WriteLine("Username not found, Please try again");
-                        userName = Console.ReadLine();
+                    Account.UserName = Console.ReadLine();
                     }
             }    
             
             Console.WriteLine("\nEnter Password");
-            password = Console.ReadLine();
-            while (User.Users[userName] != password)
+            Account.Password = Console.ReadLine();
+            while (Account.Users[Account.UserName] != Account.Password)
             {
                 Console.WriteLine("Wrong password, Please try again");
-                password = Console.ReadLine();
+                Account.Password = Console.ReadLine();
             }
 
             Message.WelcomeUser();

@@ -16,7 +16,7 @@ namespace ATM.Models
             int counter = 1;
             foreach (string transaction in Transaction.Transactions)
             {
-                Console.WriteLine($"{counter}. {transaction}.");
+                Console.WriteLine($"{counter}. {transaction}");
                 counter += 1;
 
             }

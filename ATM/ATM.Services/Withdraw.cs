@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 using ATM.Models;
+using ATM.App;
 
 namespace ATM.Services
 {
-    public class Sub
+    public class Withdraw
     {
-        public static void Withdraw(double money)
+        public static void Sub(double money)
         {
             if (Account.Money < money)
             {
@@ -15,16 +16,15 @@ namespace ATM.Services
             }
             else
             {
-                Account.Money -= money;
-
+                Account.Money -= Convert.ToDouble(money);
+                Transaction.Transactions.Add($"{money} withdrawn from the account of {Account.UserName} successfully.");
             }
         }
-        public static void Withdraw()
+        public static void Sub()
         {
             Console.WriteLine("Enter amount to withdraw from the account");
             string sub = Console.ReadLine();
-            Sub.Withdraw(Convert.ToInt32(sub));
-            Transaction.Transactions.Add($"{sub} withdrawn from the account of {Account.UserName} successfully.");
+            Withdraw.Sub(Convert.ToDouble(sub));
 
         }
     }

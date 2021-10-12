@@ -5,21 +5,21 @@ using ATM.Models;
 
 namespace ATM.Services
 {
-    public class Add
+    public class Deposit
     {
         
-        public static void Deposit(double money)
+        public static void Add(double money)
         {
             Account.Money += money;
+            Transaction.Transactions.Add($"{money} deposited in account of {Account.UserName} successfully.");
 
         }
         
-        public static void Deposit()
+        public static void Add()
         {
             Console.WriteLine("Enter amount to deposit in the account");
             string add = Console.ReadLine();
-            Add.Deposit(Convert.ToInt32(add));
-            Transaction.Transactions.Add($"{add} deposited in account of {Account.UserName} successfully.");
+            Deposit.Add(Convert.ToDouble(add));
         }
     }
 }

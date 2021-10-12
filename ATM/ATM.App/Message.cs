@@ -4,7 +4,7 @@ using System.Text;
 using ATM.Services;
 
 
-namespace ATM.Models
+namespace ATM.App
 {
     public class Message
     {
@@ -16,7 +16,7 @@ namespace ATM.Models
         public static void Login()
         {
             Console.WriteLine("Enter 1, To Create a new account");
-            Console.WriteLine("Enter any key, To login an existing account\n");
+            Console.WriteLine("Enter 2, To login an existing account\n");
         }
         public static void WelcomeUser()
         {
@@ -24,7 +24,7 @@ namespace ATM.Models
         }
         public static void Choice()
         {
-            Console.WriteLine("*-----------*-----------*-----------*-----------*\n");
+            Console.WriteLine("\n*-----------*-----------*-----------*-----------*\n");
             Console.WriteLine("Press 1, \t---\t To deposit money");
             Console.WriteLine("Press 2, \t---\t To withdraw money");
             Console.WriteLine("Press 3, \t---\t To transfer money");
@@ -35,21 +35,26 @@ namespace ATM.Models
         }
         public static void TransactionHistory()
         {
-            Console.WriteLine("\nTransaction History:--");
-            Console.WriteLine("<--------*-----*------->\n");
+            Console.WriteLine("\n\t\tTransaction History:--");
+            Console.WriteLine("\t\t<--------*-----*------->\n");
         }
         public static void InsufficientBalance()
         {
-            Console.WriteLine("\nInsufficient Balance, Transaction failed!!!");
+            Console.WriteLine("\n\tInsufficient Balance, Transaction failed!!!");
         }
 
         public static void ValidOption()
         {
-            Console.WriteLine("\nPLEASE ENTER A VALID OPTION!!!");
+            Console.WriteLine("\n\tPLEASE ENTER A VALID OPTION!!!");
         }
         public static void CheckBalance()
         {
-            Console.WriteLine("\nYour current amount in the Account is: " + Balance.CheckBalance());
+            Console.WriteLine("\n-->\tYour current amount in the Account is: " + Balance.CheckBalance());
+        }
+
+        public static void Exit()
+        {
+            Console.WriteLine("\n\t\tTHANK YOU, VISIT AGAIN !");
         }
     }
 }

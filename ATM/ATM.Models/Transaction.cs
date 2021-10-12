@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using ATM.Services;
+using ATM.App;
 
 namespace ATM.Models
 {
@@ -16,7 +17,7 @@ namespace ATM.Models
             int counter = 1;
             foreach (string transaction in Transaction.Transactions)
             {
-                Console.WriteLine($"{counter}. {transaction}");
+                Console.WriteLine($"{counter}-> {transaction}");
                 counter += 1;
 
             }

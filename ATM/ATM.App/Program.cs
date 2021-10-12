@@ -4,7 +4,7 @@ using ATM.Models;
 using ATM.Services;
 
 
-namespace ATM.CLI
+namespace ATM.App
 {
     public class Program
     {
@@ -20,12 +20,12 @@ namespace ATM.CLI
             {
                 Console.WriteLine("Enter the username:- ");                 // create a new account and add it to users
                 Account.UserName = Console.ReadLine();
-                while (Account.Users.ContainsKey(Account.UserName))                    // check if userName already exists in users dict if exists ask to pick another userName
+                while (Account.Users.ContainsKey(Account.UserName))         // check if userName already exists in users dict if exists ask to pick another userName
                 {
                     Console.WriteLine(Account.UserName + " is already taken, Please pick another username");
                     Account.UserName = Console.ReadLine();
                 }
-                Console.WriteLine("Enter password");                    // set password 
+                Console.WriteLine("Enter password");                            // set password 
                 Account.Password = Console.ReadLine();                          // add user to users dict
                 Account.Users.Add(Account.UserName, Account.Password);
                 Console.WriteLine("\n!!!!!! Account Created Successfully !!!!!!\n");
@@ -36,7 +36,7 @@ namespace ATM.CLI
             while (!Account.Users.ContainsKey(Account.UserName))
             {
                     Console.WriteLine("Enter username");
-                Account.UserName = Console.ReadLine();
+                    Account.UserName = Console.ReadLine();
                     while (!Account.Users.ContainsKey(Account.UserName))
                     {
                         Console.WriteLine("Username not found, Please try again");
@@ -60,12 +60,12 @@ namespace ATM.CLI
             {
                 if (option == "1")
                 {
-                    Add.Deposit();
+                    Deposit.Add();
                     
                 }
                 else if (option == "2")
                 {
-                    Sub.Withdraw();
+                    Withdraw.Sub();
                 }
                 else if (option == "3")
                 {
@@ -86,6 +86,7 @@ namespace ATM.CLI
                 Message.Choice();
                 option = Console.ReadLine();
             }
+            Message.Exit();
 
         }
 

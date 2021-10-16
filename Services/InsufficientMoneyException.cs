@@ -9,6 +9,7 @@ namespace ATM.Services
     {
         public InsufficientMoneyException(string message) : base(message) 
         { 
+
         }
     }
 }

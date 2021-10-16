@@ -5,8 +5,4 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ATM.Services\ATM.Services.csproj" />
-  </ItemGroup>
-
 </Project>

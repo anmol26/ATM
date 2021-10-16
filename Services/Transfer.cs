@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using ATM.Models;
-using ATM.App;
 
 namespace ATM.Services
 {
@@ -12,7 +11,7 @@ namespace ATM.Services
         {
             Console.WriteLine("Enter the username to transfer money:- ");
             string username = Console.ReadLine();
-            Console.WriteLine("Enter amount to transfer in  account:-");
+            Console.WriteLine("Enter amount to transfer in account:-");
             string amount = Console.ReadLine();
             if (Convert.ToDouble(amount) < Account.Money)
             {
@@ -22,7 +21,6 @@ namespace ATM.Services
             else 
             {
                 Message.InsufficientBalance();
-                //throw new Exception("Exception");
                 
             }
         }

@@ -4,15 +4,16 @@ using ATM.Models;
 using ATM.Services;
 
 
-namespace ATM.App
+namespace ATM.CLI
 {
     public class Program
     {
         public static void Main(string[] args)
         {
+
             Message.Welcome();
             Message.Login();
-            
+
             bool createAccount = (Console.ReadLine() == "1");        // take user input to create account
  
 
@@ -28,6 +29,8 @@ namespace ATM.App
                 Console.WriteLine("Enter password");                            // set password 
                 Account.Password = Console.ReadLine();                          // add user to users dict
                 Account.Users.Add(Account.UserName, Account.Password);
+                Console.WriteLine("Enter the initialize amount");
+                Account.Money = Convert.ToDouble(Console.ReadLine());
                 Console.WriteLine("\n!!!!!! Account Created Successfully !!!!!!\n");
 
             }

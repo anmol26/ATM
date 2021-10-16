@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ATM.Services;
-using ATM.App;
 
 namespace ATM.Models
 {
@@ -13,7 +11,8 @@ namespace ATM.Models
 
         public static void ShowTransactions()
         {
-            Message.TransactionHistory();
+            Console.WriteLine("\n\t\tTransaction History:--");
+            Console.WriteLine("\t\t<--------*-----*------->\n");
             int counter = 1;
             foreach (string transaction in Transaction.Transactions)
             {
@@ -25,6 +24,4 @@ namespace ATM.Models
         }
 
     }
-
 }
-

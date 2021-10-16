@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ATM.Services;
+using ATM.Models;
 
 
-namespace ATM.App
+namespace ATM.Services
+
 {
     public class Message
     {
@@ -22,6 +23,16 @@ namespace ATM.App
         {
             Console.WriteLine("\n!!!!! You are successfully logged in !!!!! ");
         }
+
+        public static void AskUserName()
+        {
+            Console.WriteLine("Enter the username:- ");
+        }
+        public static void SuccessfullCreation()
+        {
+            Console.WriteLine("\n!!!!!! Account Created Successfully !!!!!!\n");
+        }
+
         public static void Choice()
         {
             Console.WriteLine("\n*-----------*-----------*-----------*-----------*\n");

@@ -6,20 +6,23 @@ namespace ATM.Models
 {
     public class Account
     {
-        public static int AccountNumber { get; set; }
-        public static string UserName { get; set; }
-        public static string Password { get; set; }
-        public static double Money { get; set; }
+        public string Id { get; set; }
+        public string UserId { get; set; }
+        public string Password { get; set; }
+        public double Balance { get; set; }
         public AccountType AccountType { get; set; }
         public List<Transaction> Transactions { get; set; }
+        public string Name { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime currentDate { get; set; }
 
-        public static Dictionary<string, string> Users = new Dictionary<string, string>()
+        public Dictionary<string, string> Users = new Dictionary<string, string>
         {
                 { "Anmol", "1234" },                                              //registered users
                 { "Balaji", "0000" }                                              //registered users
+
         };
 
-
-
+        
     }
 }

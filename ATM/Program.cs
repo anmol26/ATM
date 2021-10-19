@@ -10,77 +10,92 @@ namespace ATM.CLI
     {
         public static void Main(string[] args)
         {
-
             Message.Welcome();
             Message.Login();
 
+            BankManager bankManager = new BankManager();
+
+            Account account= new Account();
+
             bool createAccount = (Console.ReadLine() == "1");        // take user input to create account
  
-
             if (createAccount)
             {
-                Console.WriteLine("Enter the username:- ");                 // create a new account and add it to users
-                Account.UserName = Console.ReadLine();
-                while (Account.Users.ContainsKey(Account.UserName))         // check if userName already exists in users dict if exists ask to pick another userName
+                Console.WriteLine("Enter the UserId:- ");                 // create a new account and add it to users
+                string userId  = Console.ReadLine();
+
+                while (account.Users.ContainsKey(userId))         // check if userName already exists in users dict if exists ask to pick another userName
                 {
-                    Console.WriteLine(Account.UserName + " is already taken, Please pick another username");
-                    Account.UserName = Console.ReadLine();
+                    Console.WriteLine(userId + " is already taken, Please pick another username");
+                    userId = Console.ReadLine();
                 }
                 Console.WriteLine("Enter password");                            // set password 
-                Account.Password = Console.ReadLine();                          // add user to users dict
-                Account.Users.Add(Account.UserName, Account.Password);
+                string password = Console.ReadLine();                          // add user to users dict
                 Console.WriteLine("Enter the initialize amount");
-                Account.Money = Convert.ToDouble(Console.ReadLine());
+                double balance = Convert.ToDouble(Console.ReadLine());
+
+                bankManager.CreateAccount(userId,password,balance);
+                
                 Console.WriteLine("\n!!!!!! Account Created Successfully !!!!!!\n");
 
             }
-            Console.WriteLine("Enter Username");
-            Account.UserName = Console.ReadLine();
-            while (!Account.Users.ContainsKey(Account.UserName))
+            Console.WriteLine("Enter UserId");
+            string usrId = Console.ReadLine();
+            while (!account.Users.ContainsKey(usrId))
             {
-                    Console.WriteLine("Enter username");
-                    Account.UserName = Console.ReadLine();
-                    while (!Account.Users.ContainsKey(Account.UserName))
+                Console.WriteLine("Enter UserId");
+                usrId = Console.ReadLine();
+                    while (!account.Users.ContainsKey(usrId))
                     {
-                        Console.WriteLine("Username not found, Please try again");
-                    Account.UserName = Console.ReadLine();
+                    Console.WriteLine("UserId not found, Please try again");
+                    usrId = Console.ReadLine();
                     }
             }    
             
             Console.WriteLine("\nEnter Password");
-            Account.Password = Console.ReadLine();
-            while (Account.Users[Account.UserName] != Account.Password)
+            string pass = Console.ReadLine();
+            while (account.Users[usrId] != pass)
             {
                 Console.WriteLine("Wrong password, Please try again");
-                Account.Password = Console.ReadLine();
+                pass = Console.ReadLine();
             }
 
             Message.WelcomeUser();
             Message.Choice();
-            
+
             string option = Console.ReadLine();
             while (option != "0")
             {
                 if (option == "1")
                 {
-                    Deposit.Add();
+                    Console.WriteLine("Enter amount to deposit in the account");
+                    double amt = Convert.ToDouble(Console.ReadLine());
+                    bankManager.Deposit(amt);
                     
                 }
                 else if (option == "2")
                 {
-                    Withdraw.Sub();
+
+                    Console.WriteLine("Enter amount to withdraw from the account");
+                    double amt = Convert.ToDouble(Console.ReadLine());
+                    bankManager.Withdraw(amt);
                 }
                 else if (option == "3")
                 {
-                    Transfer.MoneyTransfer();
+                    Console.WriteLine("Enter the username to transfer money:- ");
+                    string userName = Console.ReadLine();
+                    Console.WriteLine("Enter amount to transfer in account:-");
+                    double amt = Convert.ToDouble(Console.ReadLine());
+                    bankManager.Transfer(userName, amt);
                 }
                 else if (option == "4")
                 {
-                    Transaction.ShowTransactions();
+                    Message.TransactionHistory();
+                    bankManager.ShowTransactions();
                 }
                 else if (option == "5")
                 {
-                    Message.CheckBalance();
+                    Console.WriteLine(bankManager.Balance());
                 }
                 else
                 {

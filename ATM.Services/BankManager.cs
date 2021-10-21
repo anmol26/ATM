@@ -40,7 +40,7 @@ namespace ATM.Services
 
         public void CreateAccount(string userId, string password, double initializeAmount)
         {
-            account.Users.Add(userId,password);
+            Account.Users.Add(userId,password);
             account.Balance = initializeAmount;
             account.Id = GenerateAccountId(userId);
         }

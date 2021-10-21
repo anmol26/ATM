@@ -16,7 +16,7 @@ namespace ATM.Models
         public bool IsActive { get; set; }
         public DateTime currentDate { get; set; }
 
-        public Dictionary<string, string> Users = new Dictionary<string, string>
+        public static Dictionary<string, string> Users = new Dictionary<string, string>
         {
                 { "Anmol", "1234" },                                              //registered users
                 { "Balaji", "0000" }                                              //registered users

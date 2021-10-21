@@ -15,8 +15,6 @@ namespace ATM.CLI
 
             BankManager bankManager = new BankManager();
 
-            Account account= new Account();
-
             bool createAccount = (Console.ReadLine() == "1");        // take user input to create account
  
             if (createAccount)
@@ -24,7 +22,7 @@ namespace ATM.CLI
                 Console.WriteLine("Enter the UserId:- ");                 // create a new account and add it to users
                 string userId  = Console.ReadLine();
 
-                while (account.Users.ContainsKey(userId))         // check if userName already exists in users dict if exists ask to pick another userName
+                while (Account.Users.ContainsKey(userId))         // check if userName already exists in users dict if exists ask to pick another userName
                 {
                     Console.WriteLine(userId + " is already taken, Please pick another username");
                     userId = Console.ReadLine();
@@ -41,11 +39,11 @@ namespace ATM.CLI
             }
             Console.WriteLine("Enter UserId");
             string usrId = Console.ReadLine();
-            while (!account.Users.ContainsKey(usrId))
+            while (!Account.Users.ContainsKey(usrId))
             {
                 Console.WriteLine("Enter UserId");
                 usrId = Console.ReadLine();
-                    while (!account.Users.ContainsKey(usrId))
+                    while (!Account.Users.ContainsKey(usrId))
                     {
                     Console.WriteLine("UserId not found, Please try again");
                     usrId = Console.ReadLine();
@@ -54,7 +52,7 @@ namespace ATM.CLI
             
             Console.WriteLine("\nEnter Password");
             string pass = Console.ReadLine();
-            while (account.Users[usrId] != pass)
+            while (Account.Users[usrId] != pass)
             {
                 Console.WriteLine("Wrong password, Please try again");
                 pass = Console.ReadLine();

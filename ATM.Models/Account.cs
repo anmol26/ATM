@@ -14,7 +14,7 @@ namespace ATM.Models
         public List<Transaction> Transactions { get; set; }
         public string Name { get; set; }
         public bool IsActive { get; set; }
-        public DateTime currentDate { get; set; }
+        public DateTime CurrentDate { get; set; }
 
         public static Dictionary<string, string> Users = new Dictionary<string, string>
         {

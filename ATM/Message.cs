@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using ATM.Models;
+using ATM.Services;
 
 
-namespace ATM.Services
+namespace ATM.CLI
 
 
 {
@@ -59,11 +60,6 @@ namespace ATM.Services
         {
             Console.WriteLine("\n\tPLEASE ENTER A VALID OPTION!!!");
         }
-        public static void CheckBalance()
-        {
-            Console.WriteLine("\n-->\tYour current amount in the Account is: " + Balance.CheckBalance());
-        }
-
         public static void Exit()
         {
             Console.WriteLine("\n\t\tTHANK YOU, VISIT AGAIN !");

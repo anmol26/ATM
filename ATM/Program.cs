@@ -13,7 +13,7 @@ namespace ATM.CLI
             ConsoleOutput.Welcome();
             ConsoleOutput.Login();
 
-            BankManager bankManager = new BankManager();
+            BankService bankManager = new BankService();
 
             bool createAccount = (Console.ReadLine() == "1");        // take user input to create account
 

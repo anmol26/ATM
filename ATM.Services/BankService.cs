@@ -5,11 +5,11 @@ using ATM.Models;
 
 namespace ATM.Services
 {
-    public class BankManager
+    public class BankService
     {
         private readonly List<Account> accounts;
         private readonly List<Bank> banks;
-        public BankManager()
+        public BankService()
         {
             this.banks = new List<Bank>();
             this.accounts = new List<Account>();

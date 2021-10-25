@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ATM.Services
+namespace ATM.Models.Exceptions 
 {
-    public class BalanceInsufficientException : Exception {}
     public class SenderBalanceInsufficientException : Exception { }
-
+    
 }

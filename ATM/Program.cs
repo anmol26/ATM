@@ -14,11 +14,16 @@ namespace ATM.CLI
             ConsoleOutput.Welcome();
             ConsoleOutput.Login();
 
+            BankService bankManager = new BankService();
+
+
             LoginType loginOption = (LoginType)(Convert.ToInt32(ConsoleInput.Input()));
+            var banks = new List<Bank>();    //bank Database
             
             if (loginOption == LoginType.SetupBank)
-            {   //todo
-                SetupBank();
+            {
+                string bankName = ConsoleInput.BankName();
+                bankManager.CreateBank(bankName);
             }
             if (loginOption == LoginType.StaffMember)
             {   //todo
@@ -30,8 +35,6 @@ namespace ATM.CLI
             }
             
             ConsoleOutput.LoginOrCreate();
-
-            BankService bankManager = new BankService();
 
             bool createAccount = (ConsoleInput.Input()== "1");  
 
@@ -122,9 +125,7 @@ namespace ATM.CLI
             }
             ConsoleOutput.Exit();
 
-            static void SetupBank()
-            {   //todo
-            }
+            
             static void StaffMemberLogin()
             {   //todo
             }
@@ -133,6 +134,7 @@ namespace ATM.CLI
             }
 
         }
+        
 
     }
 }

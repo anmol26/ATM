@@ -26,6 +26,10 @@ namespace ATM.CLI
         {
             return GetInput("\nPlease Enter the Amount");
         }
+        public static string BankName()
+        {
+            return GetInput("\nEnter the bank name");
+        }
         private static string GetInput(string message)
         {
             Console.WriteLine("\n"+message+"\n");

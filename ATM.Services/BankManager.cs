@@ -70,8 +70,8 @@ namespace ATM.Services
         {
             if (account.Balance < amount)
             {
-                //Message.InsufficientBalance();
-                Console.WriteLine("\n\tInsufficient Balance, Transaction failed!!!");
+                throw new BalanceInsufficientException();
+                
             }
             else
             {
@@ -89,8 +89,8 @@ namespace ATM.Services
             }
             else
             {
-                //Message.InsufficientBalance();
-                Console.WriteLine("\n\tInsufficient Balance, Transaction failed!!!");
+
+                throw new SenderBalanceInsufficientException();
 
             }
         }

@@ -9,7 +9,7 @@ namespace ATM.CLI
 
 
 {
-    public class Message
+    public class ConsoleOutput
     {
         public static void Welcome()
         {
@@ -23,16 +23,23 @@ namespace ATM.CLI
         }
         public static void WelcomeUser()
         {
-            Console.WriteLine("\n!!!!! You are successfully logged in !!!!! ");
+            Console.WriteLine("\n\t!!!!!   You are successfully logged in   !!!!! ");
         }
-
-        public static void AskUserName()
+        public static void EnterAmount()
         {
-            Console.WriteLine("Enter the username:- ");
+            Console.WriteLine("Enter Amount");
+        }
+        public static void AskUserId()
+        {
+            Console.WriteLine("Enter the UserId:- ");
+        }
+        public static void EnterPassword()
+        {
+            Console.WriteLine("Enter Password");
         }
         public static void SuccessfullCreation()
         {
-            Console.WriteLine("\n!!!!!! Account Created Successfully !!!!!!\n");
+            Console.WriteLine("\n\t!!!!!!   Account Created Successfully   !!!!!!\n");
         }
 
         public static void Choice()
@@ -48,17 +55,21 @@ namespace ATM.CLI
         }
         public static void TransactionHistory()
         {
-            Console.WriteLine("\n\t\tTransaction History:--");
-            Console.WriteLine("\t\t<--------*-----*------->\n");
+            Console.WriteLine("\nTransaction History:--");
+            Console.WriteLine("<--------*-----*------->\n");
         }
         public static void InsufficientBalance()
         {
-            Console.WriteLine("\n\tInsufficient Balance, Transaction failed!!!");
+            Console.WriteLine("\nInsufficient Balance, Transaction failed !");
+        }
+        public static void SenderInsufficientBalance() 
+        {
+            Console.WriteLine("\nYou do not have enough balance to transfer money");
         }
 
         public static void ValidOption()
         {
-            Console.WriteLine("\n\tPLEASE ENTER A VALID OPTION!!!");
+            Console.WriteLine("\nPLEASE ENTER A VALID OPTION !");
         }
         public static void Exit()
         {

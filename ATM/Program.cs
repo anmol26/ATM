@@ -10,8 +10,8 @@ namespace ATM.CLI
     {
         public static void Main(string[] args)
         {
-            Message.Welcome();
-            Message.Login();
+            ConsoleOutput.Welcome();
+            ConsoleOutput.Login();
 
             BankManager bankManager = new BankManager();
 
@@ -19,7 +19,7 @@ namespace ATM.CLI
 
             if (createAccount)
             {
-                Console.WriteLine("Enter the UserId:- ");                 // create a new account and add it to users
+                ConsoleOutput.AskUserId();                 // create a new account and add it to users
                 string userId = Console.ReadLine();
 
                 while (Account.Users.ContainsKey(userId))         // check if userName already exists in users dict if exists ask to pick another userName
@@ -27,21 +27,21 @@ namespace ATM.CLI
                     Console.WriteLine(userId + " is already taken, Please pick another username");
                     userId = Console.ReadLine();
                 }
-                Console.WriteLine("Enter password");                            // set password 
+                ConsoleOutput.EnterPassword();                           // set password 
                 string password = Console.ReadLine();                          // add user to users dict
                 Console.WriteLine("Enter the initialize amount");
                 double balance = Convert.ToDouble(Console.ReadLine());
 
                 bankManager.CreateAccount(userId, password, balance);
 
-                Console.WriteLine("\n!!!!!! Account Created Successfully !!!!!!\n");
+                ConsoleOutput.SuccessfullCreation();
 
             }
-            Console.WriteLine("Enter UserId");
+            ConsoleOutput.AskUserId();
             string usrId = Console.ReadLine();
             while (!Account.Users.ContainsKey(usrId))
             {
-                Console.WriteLine("Enter UserId");
+                ConsoleOutput.AskUserId();
                 usrId = Console.ReadLine();
                 while (!Account.Users.ContainsKey(usrId))
                 {
@@ -50,7 +50,7 @@ namespace ATM.CLI
                 }
             }
 
-            Console.WriteLine("\nEnter Password");
+            ConsoleOutput.EnterPassword();
             string pass = Console.ReadLine();
             while (Account.Users[usrId] != pass)
             {
@@ -58,15 +58,15 @@ namespace ATM.CLI
                 pass = Console.ReadLine();
             }
 
-            Message.WelcomeUser();
-            Message.Choice();
+            ConsoleOutput.WelcomeUser();
+            ConsoleOutput.Choice();
 
             string option = Console.ReadLine();
             while (option != "0")
             {
                 if (option == "1")
                 {
-                    Console.WriteLine("Enter amount to deposit in the account");
+                    ConsoleOutput.EnterAmount();
                     double amt = Convert.ToDouble(Console.ReadLine());
                     bankManager.Deposit(amt);
 
@@ -74,21 +74,35 @@ namespace ATM.CLI
                 else if (option == "2")
                 {
 
-                    Console.WriteLine("Enter amount to withdraw from the account");
+                    ConsoleOutput.EnterAmount();
                     double amt = Convert.ToDouble(Console.ReadLine());
-                    bankManager.Withdraw(amt);
+                    try
+                    {
+                        bankManager.Withdraw(amt);
+                    }
+                    catch (BalanceInsufficientException) 
+                    {
+                        ConsoleOutput.InsufficientBalance();
+                    }
                 }
                 else if (option == "3")
                 {
-                    Console.WriteLine("Enter the username to transfer money:- ");
+                    ConsoleOutput.AskUserId();
                     string userName = Console.ReadLine();
-                    Console.WriteLine("Enter amount to transfer in account:-");
+                    ConsoleOutput.EnterAmount();
                     double amt = Convert.ToDouble(Console.ReadLine());
-                    bankManager.Transfer(userName, amt);
+                    try
+                    {
+                        bankManager.Transfer(userName, amt);
+                    }
+                    catch(SenderBalanceInsufficientException) 
+                    {
+                        ConsoleOutput.SenderInsufficientBalance();
+                    }
                 }
                 else if (option == "4")
                 {
-                    Message.TransactionHistory();
+                    ConsoleOutput.TransactionHistory();
                     bankManager.ShowTransactions();
                 }
                 else if (option == "5")
@@ -97,12 +111,12 @@ namespace ATM.CLI
                 }
                 else
                 {
-                    Message.ValidOption();
+                    ConsoleOutput.ValidOption();
                 }
-                Message.Choice();
+                ConsoleOutput.Choice();
                 option = Console.ReadLine();
             }
-            Message.Exit();
+            ConsoleOutput.Exit();
 
         }
 

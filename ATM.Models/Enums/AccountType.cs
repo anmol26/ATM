@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ATM.Models
+namespace ATM.Models.Enums
 {
     public enum AccountType
     {

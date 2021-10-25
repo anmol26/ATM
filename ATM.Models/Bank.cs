@@ -12,7 +12,7 @@ namespace ATM.Models
         public List<Account> Accounts { get; set; }
 
         public readonly DateTime currentDate;
-
+        
 
     }
 }

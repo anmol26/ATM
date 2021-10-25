@@ -25,17 +25,22 @@ namespace ATM.CLI
         {
             Console.WriteLine("\n\t!!!!!   You are successfully logged in   !!!!! ");
         }
-        public static void EnterAmount()
-        {
-            Console.WriteLine("Enter Amount");
-        }
-        public static void AskUserId()
-        {
-            Console.WriteLine("Enter the UserId:- ");
-        }
+        //public static void EnterAmount()
+        //{
+        //    Console.WriteLine("Enter Amount");
+        //}
+        
         public static void EnterPassword()
         {
             Console.WriteLine("Enter Password");
+        }
+        public static void WrongCredential()
+        {
+            Console.WriteLine("\nCredentials don't match!, Please Try Again ");
+        }
+        public static void AlreadyRegistered(string userId) 
+        {
+            Console.WriteLine(userId + " is already taken, Please pick another username");
         }
         public static void SuccessfullCreation()
         {

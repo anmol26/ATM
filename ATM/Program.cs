@@ -19,34 +19,30 @@ namespace ATM.CLI
 
             if (createAccount)
             {
-                ConsoleOutput.AskUserId();                 // create a new account and add it to users
-                string userId = Console.ReadLine();
+                string userId = ConsoleInput.UserName();
 
                 while (Account.Users.ContainsKey(userId))         // check if userName already exists in users dict if exists ask to pick another userName
                 {
-                    Console.WriteLine(userId + " is already taken, Please pick another username");
-                    userId = Console.ReadLine();
+                    ConsoleOutput.AlreadyRegistered(userId);
+                    userId = ConsoleInput.UserName();
                 }
                 ConsoleOutput.EnterPassword();                           // set password 
                 string password = Console.ReadLine();                          // add user to users dict
-                Console.WriteLine("Enter the initialize amount");
-                double balance = Convert.ToDouble(Console.ReadLine());
+                double balance = Convert.ToDouble(ConsoleInput.Amount());
 
                 bankManager.CreateAccount(userId, password, balance);
 
                 ConsoleOutput.SuccessfullCreation();
 
             }
-            ConsoleOutput.AskUserId();
-            string usrId = Console.ReadLine();
+            string usrId = ConsoleInput.UserName();
             while (!Account.Users.ContainsKey(usrId))
             {
-                ConsoleOutput.AskUserId();
-                usrId = Console.ReadLine();
+                usrId = ConsoleInput.UserName();
                 while (!Account.Users.ContainsKey(usrId))
                 {
-                    Console.WriteLine("UserId not found, Please try again");
-                    usrId = Console.ReadLine();
+                    ConsoleOutput.WrongCredential();
+                    usrId = ConsoleInput.UserName();
                 }
             }
 
@@ -54,7 +50,8 @@ namespace ATM.CLI
             string pass = Console.ReadLine();
             while (Account.Users[usrId] != pass)
             {
-                Console.WriteLine("Wrong password, Please try again");
+
+                ConsoleOutput.WrongCredential();
                 pass = Console.ReadLine();
             }
 
@@ -66,16 +63,13 @@ namespace ATM.CLI
             {
                 if (option == "1")
                 {
-                    ConsoleOutput.EnterAmount();
-                    double amt = Convert.ToDouble(Console.ReadLine());
+                    double amt = Convert.ToDouble(ConsoleInput.Amount());
                     bankManager.Deposit(amt);
 
                 }
                 else if (option == "2")
                 {
-
-                    ConsoleOutput.EnterAmount();
-                    double amt = Convert.ToDouble(Console.ReadLine());
+                    double amt = Convert.ToDouble(ConsoleInput.Amount());
                     try
                     {
                         bankManager.Withdraw(amt);
@@ -87,10 +81,8 @@ namespace ATM.CLI
                 }
                 else if (option == "3")
                 {
-                    ConsoleOutput.AskUserId();
-                    string userName = Console.ReadLine();
-                    ConsoleOutput.EnterAmount();
-                    double amt = Convert.ToDouble(Console.ReadLine());
+                    string userName = ConsoleInput.RecieverName();
+                    double amt = Convert.ToDouble(ConsoleInput.Amount());
                     try
                     {
                         bankManager.Transfer(userName, amt);

@@ -11,6 +11,12 @@ namespace ATM.Models
         public string Name { get; set; }
         public string Password { get; set; }
         public AccessLevelType AccessLevel { get; set; }
-        
+
+        public static Dictionary<string, string> Users = new Dictionary<string, string>
+        {
+                { "Koni", "1234" },                                              //registered users
+                { "Sagar", "0000" }                                              //registered users
+
+        };
     }
 }

@@ -13,13 +13,9 @@ namespace ATM.CLI
         {
             ConsoleOutput.Welcome();
             ConsoleOutput.Login();
+            LoginType loginOption = (LoginType)(Convert.ToInt32(ConsoleInput.Input()));
 
             BankService bankManager = new BankService();
-
-
-            LoginType loginOption = (LoginType)(Convert.ToInt32(ConsoleInput.Input()));
-            var banks = new List<Bank>();    //bank Database
-            
             if (loginOption == LoginType.SetupBank)
             {
                 string bankName = ConsoleInput.BankName();

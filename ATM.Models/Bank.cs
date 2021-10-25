@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ATM.Models.Enums;
 
 namespace ATM.Models
 {
@@ -11,8 +12,18 @@ namespace ATM.Models
         public string Address { get; set; }
         public List<Account> Accounts { get; set; }
 
-        public readonly DateTime currentDate;
+        public double RTGSChargeToSameBank;
         
+        public double IMPSChargeToSameBank;
+        
+        public double RTGSChargeToOtherBanks;
+        
+        public double IMPSChargeToOtherBanks;
+        
+        public CurrencyType AcceptedCurrency;
+        
+        public double ExchangeRate;
+
 
     }
 }

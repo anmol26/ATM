@@ -9,4 +9,5 @@ Bank console application using c#
 7. Logout
 
 
-![Bank Application](https://user-images.githubusercontent.com/45265490/136175585-3eadbde6-86dc-49ae-b0c8-81ebaae77ffc.png)
+![ATMConsole](https://user-images.githubusercontent.com/45265490/138728042-dcfd9cc6-bf3a-4971-b679-f6c537e0997f.png)
+

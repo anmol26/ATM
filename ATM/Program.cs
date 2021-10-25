@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using ATM.Models;
 using ATM.Services;
+using ATM.Models.Enums;
 
 
 namespace ATM.CLI
@@ -13,21 +14,37 @@ namespace ATM.CLI
             ConsoleOutput.Welcome();
             ConsoleOutput.Login();
 
+            LoginType loginOption = (LoginType)(Convert.ToInt32(ConsoleInput.Input()));
+            
+            if (loginOption == LoginType.SetupBank)
+            {   //todo
+                SetupBank();
+            }
+            if (loginOption == LoginType.StaffMember)
+            {   //todo
+                StaffMemberLogin();
+            }
+            if (loginOption == LoginType.AccountHolder)
+            {   //todo
+                AccountHolderLogin();
+            }
+            
+            ConsoleOutput.LoginOrCreate();
+
             BankService bankManager = new BankService();
 
-            bool createAccount = (ConsoleInput.Input()== "1");        // take user input to create account
+            bool createAccount = (ConsoleInput.Input()== "1");  
 
             if (createAccount)
             {
                 string userId = ConsoleInput.UserName();
 
-                while (Account.Users.ContainsKey(userId))         // check if userName already exists in users dict if exists ask to pick another userName
+                while (Account.Users.ContainsKey(userId))        
                 {
                     ConsoleOutput.AlreadyRegistered(userId);
                     userId = ConsoleInput.UserName();
                 }
-                // set password 
-                string password = ConsoleInput.Password();                          // add user to users dict
+                string password = ConsoleInput.Password();                         
                 double balance = Convert.ToDouble(ConsoleInput.Amount());
 
                 bankManager.CreateAccount(userId, password, balance);
@@ -38,17 +55,13 @@ namespace ATM.CLI
             string usrId = ConsoleInput.UserName();
             while (!Account.Users.ContainsKey(usrId))
             {
+                ConsoleOutput.WrongCredential();
                 usrId = ConsoleInput.UserName();
-                while (!Account.Users.ContainsKey(usrId))
-                {
-                    ConsoleOutput.WrongCredential();
-                    usrId = ConsoleInput.UserName();
-                }
             }
+
             string pass = ConsoleInput.Password();
             while (Account.Users[usrId] != pass)
             {
-
                 ConsoleOutput.WrongCredential();
                 pass = ConsoleInput.Password();
             }
@@ -108,6 +121,16 @@ namespace ATM.CLI
                 option = Console.ReadLine();
             }
             ConsoleOutput.Exit();
+
+            static void SetupBank()
+            {   //todo
+            }
+            static void StaffMemberLogin()
+            {   //todo
+            }
+            static void AccountHolderLogin()
+            {   //todo
+            }
 
         }
 

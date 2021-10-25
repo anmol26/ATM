@@ -4,10 +4,10 @@ using System.Text;
 
 namespace ATM.Models.Enums
 {
-    public enum CurrencyType
+    public enum LoginType
     {
-       INR=1,
-       USD,
-       EURO
+        SetupBank=1,
+        StaffMember,
+        AccountHolder
     }
 }

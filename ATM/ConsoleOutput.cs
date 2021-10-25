@@ -18,6 +18,13 @@ namespace ATM.CLI
         }
         public static void Login()
         {
+            Console.WriteLine("Please choose a login Option");
+            Console.WriteLine("1. Setup New Bank");
+            Console.WriteLine("2. Staff Member");
+            Console.WriteLine("3. Account Holder");
+        }
+        public static void LoginOrCreate() 
+        {
             Console.WriteLine("Enter 1, To Create a new account");
             Console.WriteLine("Enter 2, To login an existing account\n");
         }

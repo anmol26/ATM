@@ -6,17 +6,25 @@ namespace ATM.CLI
 {
     public class ConsoleInput
     {
+        public static string Input()
+        {
+            return Console.ReadLine();
+        }
         public static string UserName()
         {
-            return GetInput("Please Enter the username");
+            return GetInput("\nPlease Enter the username");
+        }
+        public static string Password()
+        {
+            return GetInput("\nPlease Enter the Password");
         }
         public static string RecieverName()
         {
-            return GetInput("Please Enter the Reciever name");
+            return GetInput("\nPlease Enter the Reciever name");
         }
         public static string Amount()
         {
-            return GetInput("Please Enter the Amount");
+            return GetInput("\nPlease Enter the Amount");
         }
         private static string GetInput(string message)
         {
@@ -24,5 +32,6 @@ namespace ATM.CLI
             string result = Console.ReadLine();
             return result;
         }
+
     }
 }

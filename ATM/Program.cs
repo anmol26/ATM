@@ -15,7 +15,7 @@ namespace ATM.CLI
 
             BankService bankManager = new BankService();
 
-            bool createAccount = (Console.ReadLine() == "1");        // take user input to create account
+            bool createAccount = (ConsoleInput.Input()== "1");        // take user input to create account
 
             if (createAccount)
             {
@@ -26,8 +26,8 @@ namespace ATM.CLI
                     ConsoleOutput.AlreadyRegistered(userId);
                     userId = ConsoleInput.UserName();
                 }
-                ConsoleOutput.EnterPassword();                           // set password 
-                string password = Console.ReadLine();                          // add user to users dict
+                // set password 
+                string password = ConsoleInput.Password();                          // add user to users dict
                 double balance = Convert.ToDouble(ConsoleInput.Amount());
 
                 bankManager.CreateAccount(userId, password, balance);
@@ -45,20 +45,18 @@ namespace ATM.CLI
                     usrId = ConsoleInput.UserName();
                 }
             }
-
-            ConsoleOutput.EnterPassword();
-            string pass = Console.ReadLine();
+            string pass = ConsoleInput.Password();
             while (Account.Users[usrId] != pass)
             {
 
                 ConsoleOutput.WrongCredential();
-                pass = Console.ReadLine();
+                pass = ConsoleInput.Password();
             }
 
             ConsoleOutput.WelcomeUser();
             ConsoleOutput.Choice();
 
-            string option = Console.ReadLine();
+            string option = ConsoleInput.Input();
             while (option != "0")
             {
                 if (option == "1")
@@ -99,6 +97,7 @@ namespace ATM.CLI
                 }
                 else if (option == "5")
                 {
+                    ConsoleOutput.Balance();
                     Console.WriteLine(bankManager.Balance());
                 }
                 else

@@ -31,7 +31,7 @@ namespace ATM.Services
         } 
         private string GenerateBankId(string bankName)
         {
-            // Axis-> Axs-> AXS.... 26-07-2001-> 2672001-> AXS2672001
+            // Axis-> Axs-> AXS.... 26-07-2001-> 2672001=>     AXS2672001
             DateTime currentDate = DateTime.Now;
             string date = currentDate.ToShortDateString();
             string bankId = bankName.Substring(0, 3).ToUpper() + date.Replace("-", "");

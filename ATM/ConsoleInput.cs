@@ -12,23 +12,23 @@ namespace ATM.CLI
         }
         public static string UserName()
         {
-            return GetInput("\nPlease Enter the username");
+            return GetInput(Constants.Messages.UserName);
         }
         public static string Password()
         {
-            return GetInput("\nPlease Enter the Password");
+            return GetInput(Constants.Messages.Password);
         }
         public static string RecieverName()
         {
-            return GetInput("\nPlease Enter the Reciever name");
+            return GetInput(Constants.Messages.RecieverName);
         }
         public static string Amount()
         {
-            return GetInput("\nPlease Enter the Amount");
+            return GetInput(Constants.Messages.Amount);
         }
         public static string BankName()
         {
-            return GetInput("\nEnter the bank name");
+            return GetInput(Constants.Messages.BankName);
         }
         private static string GetInput(string message)
         {

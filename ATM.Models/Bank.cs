@@ -20,7 +20,7 @@ namespace ATM.Models
         
         public double IMPSChargeToOtherBanks = 0.06;
         
-        public CurrencyType AcceptedCurrency = CurrencyType.INR;
+        public CurrencyType AcceptedCurrency = CurrencyType.INR;        //default currency type= INR
         
         public double ExchangeRate;
 

@@ -12,8 +12,9 @@ namespace ATM.Models
         public string Password { get; set; }
         public double Balance { get; set; }
         public AccountType AccountType { get; set; }
+        public string BankName { get; set; }
         public List<Transaction> Transactions { get; set; }
-        public string Name { get; set; }
+        public string AccountHolderName { get; set; }
         public bool IsActive { get; set; }
         public DateTime CurrentDate { get; set; }
 

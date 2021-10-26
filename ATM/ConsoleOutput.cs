@@ -1,88 +1,68 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ATM.Models;
-using ATM.Services;
-
 
 namespace ATM.CLI
-
-
 {
-    static class ConsoleOutput
+    public static class ConsoleOutput
     {
-        //constant variable declaration
-        public const string Welcome1 = "Welcome to Alpha Bank\n<-----*--------*----->\n";
         public static void Welcome()
         {
-            Console.WriteLine("Welcome to Alpha Bank");
-            Console.WriteLine("<-----*--------*----->\n");
+            Console.WriteLine(Constants.Messages.Welcome);
         }
         public static void Login()
         {
-            Console.WriteLine("Please choose a login Option");
-            Console.WriteLine("1. Setup New Bank");
-            Console.WriteLine("2. Staff Member");
-            Console.WriteLine("3. Account Holder");
+            Console.WriteLine(Constants.Messages.Login);
         }
         public static void LoginOrCreate() 
         {
-            Console.WriteLine("Enter 1, To Create a new account");
-            Console.WriteLine("Enter 2, To login an existing account\n");
+            Console.WriteLine(Constants.Messages.LoginOrCreate);
         }
         public static void WelcomeUser()
         {
-            Console.WriteLine("\n\t!!!!!   You are successfully logged in   !!!!! ");
+            Console.WriteLine(Constants.Messages.WelcomeUser);
         }
         public static void WrongCredential()
         {
-            Console.WriteLine("\nCredentials don't match!, Please Try Again ");
+            Console.WriteLine(Constants.Messages.WrongCredential);
         }
         public static void AlreadyRegistered(string userId) 
         {
-            Console.WriteLine(userId + " is already taken, Please pick another username");
+            Console.WriteLine(userId + Constants.Messages.AlreadyRegistered);
         }
         public static void SuccessfullCreation()
         {
-            Console.WriteLine("\n\t!!!!!!   Account Created Successfully   !!!!!!\n");
+            Console.WriteLine(Constants.Messages.SuccessfullCreation);
         }
 
         public static void Choice()
         {
-            Console.WriteLine("\n*-----------*-----------*-----------*-----------*\n");
-            Console.WriteLine("Press 1, \t---\t To deposit money");
-            Console.WriteLine("Press 2, \t---\t To withdraw money");
-            Console.WriteLine("Press 3, \t---\t To transfer money");
-            Console.WriteLine("Press 4, \t---\t To show transaction history");
-            Console.WriteLine("Press 5, \t---\t To see the balance\n");
-            Console.WriteLine("Press 0, \t---\t To log out");
-            Console.WriteLine("*-----------*-----------*-----------*-----------*\n");
+            Console.WriteLine(Constants.Messages.Choice);
         }
         public static void TransactionHistory()
         {
-            Console.WriteLine("\nTransaction History:--");
-            Console.WriteLine("<--------*-----*------->\n");
+            Console.WriteLine(Constants.Messages.TransactionHistory);
         }
         public static void Balance()
         {
-            Console.WriteLine("\nYour current balance is:");
+            Console.WriteLine(Constants.Messages.Balance);
         }
         public static void InsufficientBalance()
         {
-            Console.WriteLine("\nInsufficient Balance, Transaction failed !");
+            Console.WriteLine(Constants.Messages.InsufficientBalance);
         }
         public static void SenderInsufficientBalance() 
         {
-            Console.WriteLine("\nYou do not have enough balance to transfer money");
+            Console.WriteLine(Constants.Messages.SenderInsufficientBalance);
         }
 
         public static void ValidOption()
         {
-            Console.WriteLine("\nPLEASE ENTER A VALID OPTION !");
+            Console.WriteLine(Constants.Messages.ValidOption);
         }
         public static void Exit()
         {
-            Console.WriteLine("\n\t\tTHANK YOU, VISIT AGAIN !");
+            Console.WriteLine(Constants.Messages.Exit);
         }
     }
 }

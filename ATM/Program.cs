@@ -12,12 +12,10 @@ namespace ATM.CLI
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine(ConsoleOutput.Welcome1);
             ConsoleOutput.Welcome();
             ConsoleOutput.Login();
             LoginType loginOption = (LoginType)(Convert.ToInt32(ConsoleInput.Input()));
             Console.Clear();
-
             BankService bankManager = new BankService();
 
             if (loginOption == LoginType.SetupBank)

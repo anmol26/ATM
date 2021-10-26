@@ -12,6 +12,7 @@ namespace ATM.CLI
     {
         public static void Main(string[] args)
         {
+            Console.WriteLine(ConsoleOutput.Welcome1);
             ConsoleOutput.Welcome();
             ConsoleOutput.Login();
             LoginType loginOption = (LoginType)(Convert.ToInt32(ConsoleInput.Input()));
@@ -27,7 +28,7 @@ namespace ATM.CLI
                 StaffMemberLogin();
             }
             if (loginOption == LoginType.AccountHolder)
-            {   //todo
+            {   //todo= put line-34 to line-67 in a single function
                 AccountHolderLogin();
             }
             

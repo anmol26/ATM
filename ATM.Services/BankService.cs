@@ -28,7 +28,7 @@ namespace ATM.Services
                 Name = name
             };
             this.banks.Add(bank);
-        }
+        } 
         private string GenerateBankId(string bankName)
         {
 

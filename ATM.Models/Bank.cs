@@ -12,15 +12,15 @@ namespace ATM.Models
         public string Address;
         public List<Account> Accounts;
 
-        public double RTGSChargeToSameBank;
+        public double RTGSChargeToSameBank = 0;
         
-        public double IMPSChargeToSameBank;
+        public double IMPSChargeToSameBank = 0.05;
         
-        public double RTGSChargeToOtherBanks;
+        public double RTGSChargeToOtherBanks = 0.02;
         
-        public double IMPSChargeToOtherBanks;
+        public double IMPSChargeToOtherBanks = 0.06;
         
-        public CurrencyType AcceptedCurrency;
+        public CurrencyType AcceptedCurrency=CurrencyType.INR;
         
         public double ExchangeRate;
 

@@ -9,8 +9,10 @@ namespace ATM.CLI
 
 
 {
-    public class ConsoleOutput
+    static class ConsoleOutput
     {
+        //constant variable declaration
+        public const string Welcome1 = "Welcome to Alpha Bank\n<-----*--------*----->\n";
         public static void Welcome()
         {
             Console.WriteLine("Welcome to Alpha Bank");

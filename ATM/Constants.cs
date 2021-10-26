@@ -20,7 +20,7 @@ namespace ATM.CLI
                 "Press 2, \t---\t To withdraw money \n" +
                 "Press 3, \t---\t To transfer money \n" +
                 "Press 4, \t---\t To show transaction history \n" +
-                "Press 5, \t---\t To see the balance\n " +
+                "Press 5, \t---\t To see the balance\n" +
                 "Press 0, \t---\t To log out \n" +
                 "*-----------*-----------*-----------*-----------*\n";
             public const string TransactionHistory = "\nTransaction History:-- \n<--------*-----*------->\n";
@@ -32,6 +32,8 @@ namespace ATM.CLI
             public const string UserName = "\nPlease Enter the username";
             public const string Password = "\nPlease Enter the Password";
             public const string RecieverName="\nPlease Enter the Reciever name";
+            public const string DepositAmount = "\nPlease Enter the amount to deposit";
+            public const string WithdrawAmount = "\nPlease Enter the amount to withdraw";
             public const string Amount = "\nPlease Enter the Amount";
             public const string BankName = "\nEnter the bank name";
 

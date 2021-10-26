@@ -14,8 +14,10 @@ namespace ATM.CLI
         {
             ConsoleOutput.Welcome();
             ConsoleOutput.Login();
+
             LoginType loginOption = (LoginType)(Convert.ToInt32(ConsoleInput.Input()));
             Console.Clear();
+            
             BankService bankManager = new BankService();
 
             if (loginOption == LoginType.SetupBank)
@@ -84,19 +86,19 @@ namespace ATM.CLI
 
             ConsoleOutput.Choice();
 
-            string option = ConsoleInput.Input();
-            while (option != "0")
+            OperationType operationOption = (OperationType)Convert.ToInt32(ConsoleInput.Input());
+            while (operationOption != OperationType.LogOut)
             {
-                if (option == "1")
+                if (operationOption == OperationType.Deposit)
                 {
                     Console.Clear();
-                    double amt = Convert.ToDouble(ConsoleInput.Amount());
+                    double amt = Convert.ToDouble(ConsoleInput.DepositAmount());
                     bankManager.Deposit(amt);
                 }
-                else if (option == "2")
+                else if (operationOption == OperationType.Withdraw)
                 {
                     Console.Clear();
-                    double amt = Convert.ToDouble(ConsoleInput.Amount());
+                    double amt = Convert.ToDouble(ConsoleInput.WithdrawAmount());
                     try
                     {
                         bankManager.Withdraw(amt);
@@ -106,7 +108,7 @@ namespace ATM.CLI
                         ConsoleOutput.InsufficientBalance();
                     }
                 }
-                else if (option == "3")
+                else if (operationOption == OperationType.Transfer)
                 {
                     Console.Clear();
                     string userName = ConsoleInput.RecieverName();
@@ -121,14 +123,14 @@ namespace ATM.CLI
                     }
                     
                 }
-                else if (option == "4")
+                else if (operationOption == OperationType.TransactionHistory)
                 {
                     Console.Clear();
                     ConsoleOutput.TransactionHistory();
                     bankManager.ShowTransactions();
                     
                 }
-                else if (option == "5")
+                else if (operationOption == OperationType.Balance)
                 {
                     Console.Clear();
                     ConsoleOutput.Balance();
@@ -140,7 +142,7 @@ namespace ATM.CLI
                     ConsoleOutput.ValidOption();
                 }
                 ConsoleOutput.Choice();
-                option = Console.ReadLine();
+                operationOption = (OperationType)Convert.ToInt32(ConsoleInput.Input());
             }
             Console.Clear();
             ConsoleOutput.Exit();

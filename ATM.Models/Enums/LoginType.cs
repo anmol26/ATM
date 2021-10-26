@@ -8,6 +8,8 @@ namespace ATM.Models.Enums
     {
         SetupBank=1,
         StaffMember,
-        AccountHolder
+        AccountHolder,
+        CreateAccount,
+        ExistingAccount
     }
 }

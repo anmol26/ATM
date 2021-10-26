@@ -22,6 +22,14 @@ namespace ATM.CLI
         {
             return GetInput(Constants.Messages.RecieverName);
         }
+        public static string DepositAmount()
+        {
+            return GetInput(Constants.Messages.DepositAmount);   
+        }
+        public static string WithdrawAmount()
+        {
+            return GetInput(Constants.Messages.WithdrawAmount);
+        }
         public static string Amount()
         {
             return GetInput(Constants.Messages.Amount);

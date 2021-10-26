@@ -85,7 +85,7 @@ namespace ATM.Services
         {
             if (amount < account.Balance)
             {
-                Withdraw(amount);
+                account.Balance -= Convert.ToDouble(amount);
                 Transaction.Transactions.Add($"{amount} has been transferred to " + userName + "'s account successfully.");
             }
             else

@@ -12,7 +12,7 @@ namespace ATM.Models
         public string Address;
         public List<Account> Accounts;
 
-        public double RTGSChargeToSameBank = 0;
+        public double RTGSChargeToSameBank = 0;         //default rates
         
         public double IMPSChargeToSameBank = 0.05;
         
@@ -20,7 +20,7 @@ namespace ATM.Models
         
         public double IMPSChargeToOtherBanks = 0.06;
         
-        public CurrencyType AcceptedCurrency=CurrencyType.INR;
+        public CurrencyType AcceptedCurrency = CurrencyType.INR;
         
         public double ExchangeRate;
 

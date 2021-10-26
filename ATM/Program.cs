@@ -24,8 +24,22 @@ namespace ATM.CLI
                 bankManager.CreateBank(bankName);
             }
             if (loginOption == LoginType.StaffMember)
-            {   //todo
-                StaffMemberLogin();
+            {   
+                string staffUserId = ConsoleInput.UserName();
+                while (!Staff.Users.ContainsKey(staffUserId))
+                {
+                    ConsoleOutput.WrongCredential();
+                    staffUserId = ConsoleInput.UserName();
+                }
+
+                string staffPass = ConsoleInput.Password();
+                while (Staff.Users[staffUserId] != staffPass)
+                {
+                    ConsoleOutput.WrongCredential();
+                    staffPass = ConsoleInput.Password();
+                }
+
+                ConsoleOutput.WelcomeUser();
             }
             if (loginOption == LoginType.AccountHolder)
             {   //todo= put line-34 to line-67 in a single function

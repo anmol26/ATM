@@ -14,7 +14,7 @@ namespace ATM.Models
         public static List<string> Transactions = new List<string>();
         public TransactionType Type { get; set; }
         public DateTime CurrentDate { get; set; }
-
+        
 
     }
 }

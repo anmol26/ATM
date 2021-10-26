@@ -18,6 +18,7 @@ namespace ATM.CLI
             LoginType loginOption = (LoginType)(Convert.ToInt32(ConsoleInput.Input()));
 
             BankService bankManager = new BankService();
+
             if (loginOption == LoginType.SetupBank)
             {
                 string bankName = ConsoleInput.BankName();
@@ -42,46 +43,45 @@ namespace ATM.CLI
                 ConsoleOutput.WelcomeUser();
             }
             if (loginOption == LoginType.AccountHolder)
-            {   //todo= put line-34 to line-67 in a single function
-                AccountHolderLogin();
-            }
-            
-            ConsoleOutput.LoginOrCreate();
-
-            bool createAccount = (ConsoleInput.Input()== "1");  
-
-            if (createAccount)
             {
-                string userId = ConsoleInput.UserName();
+                ConsoleOutput.LoginOrCreate();
 
-                while (Account.Users.ContainsKey(userId))        
+                bool createAccount = (ConsoleInput.Input() == "1");
+
+                if (createAccount)
                 {
-                    ConsoleOutput.AlreadyRegistered(userId);
-                    userId = ConsoleInput.UserName();
+                    string userId = ConsoleInput.UserName();
+
+                    while (Account.Users.ContainsKey(userId))
+                    {
+                        ConsoleOutput.AlreadyRegistered(userId);
+                        userId = ConsoleInput.UserName();
+                    }
+                    string password = ConsoleInput.Password();
+                    double balance = Convert.ToDouble(ConsoleInput.Amount());
+
+                    bankManager.CreateAccount(userId, password, balance);
+
+                    ConsoleOutput.SuccessfullCreation();
+
                 }
-                string password = ConsoleInput.Password();                         
-                double balance = Convert.ToDouble(ConsoleInput.Amount());
+                string usrId = ConsoleInput.UserName();
+                while (!Account.Users.ContainsKey(usrId))
+                {
+                    ConsoleOutput.WrongCredential();
+                    usrId = ConsoleInput.UserName();
+                }
 
-                bankManager.CreateAccount(userId, password, balance);
+                string pass = ConsoleInput.Password();
+                while (Account.Users[usrId] != pass)
+                {
+                    ConsoleOutput.WrongCredential();
+                    pass = ConsoleInput.Password();
+                }
 
-                ConsoleOutput.SuccessfullCreation();
-
-            }
-            string usrId = ConsoleInput.UserName();
-            while (!Account.Users.ContainsKey(usrId))
-            {
-                ConsoleOutput.WrongCredential();
-                usrId = ConsoleInput.UserName();
-            }
-
-            string pass = ConsoleInput.Password();
-            while (Account.Users[usrId] != pass)
-            {
-                ConsoleOutput.WrongCredential();
-                pass = ConsoleInput.Password();
+                ConsoleOutput.WelcomeUser();
             }
 
-            ConsoleOutput.WelcomeUser();
             ConsoleOutput.Choice();
 
             string option = ConsoleInput.Input();
@@ -136,15 +136,6 @@ namespace ATM.CLI
                 option = Console.ReadLine();
             }
             ConsoleOutput.Exit();
-
-            
-            static void StaffMemberLogin()
-            {   //todo
-            }
-            static void AccountHolderLogin()
-            {   //todo
-            }
-
         }
         
 

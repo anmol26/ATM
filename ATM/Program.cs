@@ -16,6 +16,7 @@ namespace ATM.CLI
             ConsoleOutput.Welcome();
             ConsoleOutput.Login();
             LoginType loginOption = (LoginType)(Convert.ToInt32(ConsoleInput.Input()));
+            Console.Clear();
 
             BankService bankManager = new BankService();
 
@@ -44,6 +45,7 @@ namespace ATM.CLI
             }
             if (loginOption == LoginType.AccountHolder)
             {
+                Console.Clear();
                 ConsoleOutput.LoginOrCreate();
 
                 bool createAccount = (ConsoleInput.Input() == "1");
@@ -78,7 +80,7 @@ namespace ATM.CLI
                     ConsoleOutput.WrongCredential();
                     pass = ConsoleInput.Password();
                 }
-
+                Console.Clear();
                 ConsoleOutput.WelcomeUser();
             }
 
@@ -89,12 +91,13 @@ namespace ATM.CLI
             {
                 if (option == "1")
                 {
+                    Console.Clear();
                     double amt = Convert.ToDouble(ConsoleInput.Amount());
                     bankManager.Deposit(amt);
-
                 }
                 else if (option == "2")
                 {
+                    Console.Clear();
                     double amt = Convert.ToDouble(ConsoleInput.Amount());
                     try
                     {
@@ -107,6 +110,7 @@ namespace ATM.CLI
                 }
                 else if (option == "3")
                 {
+                    Console.Clear();
                     string userName = ConsoleInput.RecieverName();
                     double amt = Convert.ToDouble(ConsoleInput.Amount());
                     try
@@ -117,24 +121,30 @@ namespace ATM.CLI
                     {
                         ConsoleOutput.SenderInsufficientBalance();
                     }
+                    
                 }
                 else if (option == "4")
                 {
+                    Console.Clear();
                     ConsoleOutput.TransactionHistory();
                     bankManager.ShowTransactions();
+                    
                 }
                 else if (option == "5")
                 {
+                    Console.Clear();
                     ConsoleOutput.Balance();
                     Console.WriteLine(bankManager.Balance());
                 }
                 else
                 {
+                    Console.Clear();
                     ConsoleOutput.ValidOption();
                 }
                 ConsoleOutput.Choice();
                 option = Console.ReadLine();
             }
+            Console.Clear();
             ConsoleOutput.Exit();
         }
         

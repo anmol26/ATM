@@ -61,11 +61,6 @@ namespace ATM.Services
             return txnId;
 
         }
-        public void StaffMemberLogin()
-        {
-            Staff staff = new Staff();
-
-        }
         public void Deposit(double amount)
         {
             account.Balance += amount;

@@ -38,6 +38,10 @@ namespace ATM.CLI
         {
             return GetInput(Constants.Messages.BankName);
         }
+        public static string Address()
+        {
+            return GetInput(Constants.Messages.Address);
+        }
         private static string GetInput(string message)
         {
             Console.WriteLine("\n"+message+"\n");

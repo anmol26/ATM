@@ -16,16 +16,15 @@ namespace ATM.Services
             this.accounts = new List<Account>();
 
         }
+        readonly Account account = new Account();
 
-        Account account = new Account();
-
-
-        public void CreateBank(string name)
+        public void CreateBank(string name,string address)
         {
             Bank bank = new Bank
             {
                 Id = GenerateBankId(name),
-                Name = name
+                Name = name,
+                Address = address
             };
             this.banks.Add(bank);
         } 
@@ -36,9 +35,7 @@ namespace ATM.Services
             string date = currentDate.ToShortDateString();
             string bankId = bankName.Substring(0, 3).ToUpper() + date.Replace("-", "");
             return bankId;
-        }
-
-
+        } 
         public void CreateAccount(string userId, string password, double initializeAmount)
         {
             Account.Users.Add(userId, password);

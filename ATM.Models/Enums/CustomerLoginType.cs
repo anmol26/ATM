@@ -4,10 +4,9 @@ using System.Text;
 
 namespace ATM.Models.Enums
 {
-    public enum LoginType
+    public enum CustomerLoginType
     {
-        SetupBank=1,
-        StaffMember,
-        AccountHolder,
+        CreateAccount=1,
+        ExistingAccount
     }
 }

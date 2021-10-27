@@ -30,14 +30,23 @@ namespace ATM.CLI
         {
             Console.WriteLine(userId + Constants.Messages.AlreadyRegistered);
         }
-        public static void SuccessfullCreation()
+        public static void AccountSuccessfullCreation()
         {
-            Console.WriteLine(Constants.Messages.SuccessfullCreation);
+            Console.WriteLine(Constants.Messages.AccountSuccessfullCreation);
+        }
+        public static void BankSuccessfullCreation()
+        {
+            Console.WriteLine(Constants.Messages.BankSuccessfullCreation);
         }
 
-        public static void Choice()
+
+        public static void CustomerChoice()
         {
-            Console.WriteLine(Constants.Messages.Choice);
+            Console.WriteLine(Constants.Messages.CustomerChoice);
+        }
+        public static void StaffChoice()
+        {
+            Console.WriteLine(Constants.Messages.StaffChoice);
         }
         public static void TransactionHistory()
         {
@@ -60,10 +69,15 @@ namespace ATM.CLI
         {
             Console.WriteLine(Constants.Messages.ValidOption);
         }
+        public static void UnderConstruction()
+        {
+            Console.WriteLine(Constants.Messages.UnderConstruction);
+        }
         public static void Exit()
         {
             Console.WriteLine(Constants.Messages.Exit);
         }
+
     }
 }
 

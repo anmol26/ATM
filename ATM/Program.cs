@@ -23,7 +23,11 @@ namespace ATM.CLI
             if (loginOption == LoginType.SetupBank)
             {
                 string bankName = ConsoleInput.BankName();
-                bankManager.CreateBank(bankName);
+                string address = ConsoleInput.Address();
+                bankManager.CreateBank(bankName,address);
+
+                ConsoleOutput.BankSuccessfullCreation();
+                goto Finish;
             }
             if (loginOption == LoginType.StaffMember)
             {   
@@ -42,15 +46,59 @@ namespace ATM.CLI
                 }
 
                 ConsoleOutput.WelcomeUser();
+                ConsoleOutput.StaffChoice();
+
+                StaffOperationType staffOperation = (StaffOperationType)Convert.ToInt32(ConsoleInput.Input());
+                while (staffOperation != StaffOperationType.LogOut)
+                {
+                    if (staffOperation == StaffOperationType.CreateAccount)
+                    {
+                        //todo
+                    }
+                    else if (staffOperation == StaffOperationType.UpdateAccountStatus)
+                    {
+                        //todo
+                    }
+                    else if (staffOperation == StaffOperationType.UpdateAcceptedCurrency)
+                    {
+                        //todo
+                    }
+                    else if (staffOperation == StaffOperationType.UpdateServiceCharges)
+                    {
+                        //todo
+                    }
+                    else if (staffOperation == StaffOperationType.ShowTransactionHistory)
+                    {
+                        //todo
+                    }
+                    else if (staffOperation == StaffOperationType.RevertTransaction)
+                    {
+                        //todo
+                    }
+                    else
+                    {
+                        Console.Clear();
+                        ConsoleOutput.ValidOption();
+                    }
+                    ConsoleOutput.StaffChoice();
+                    staffOperation = (StaffOperationType)Convert.ToInt32(ConsoleInput.Input());
+                }
+                Console.Clear();
+                //
+                ConsoleOutput.UnderConstruction();
+                goto Finish;
+
             }
             if (loginOption == LoginType.AccountHolder)
             {
                 Console.Clear();
                 ConsoleOutput.LoginOrCreate();
 
-                bool createAccount = (ConsoleInput.Input() == "1");
+                CustomerLogin:
+                
+                CustomerLoginType loginAccount = (CustomerLoginType)Convert.ToInt32(ConsoleInput.Input());
 
-                if (createAccount)
+                if (loginAccount == CustomerLoginType.CreateAccount)
                 {
                     string userId = ConsoleInput.UserName();
 
@@ -64,38 +112,46 @@ namespace ATM.CLI
 
                     bankManager.CreateAccount(userId, password, balance);
 
-                    ConsoleOutput.SuccessfullCreation();
-
+                    ConsoleOutput.AccountSuccessfullCreation();
+                    
                 }
-                string usrId = ConsoleInput.UserName();
-                while (!Account.Users.ContainsKey(usrId))
+                else if (loginAccount == CustomerLoginType.ExistingAccount)
                 {
-                    ConsoleOutput.WrongCredential();
-                    usrId = ConsoleInput.UserName();
-                }
+                    string usrId = ConsoleInput.UserName();
+                    while (!Account.Users.ContainsKey(usrId))
+                    {
+                        ConsoleOutput.WrongCredential();
+                        usrId = ConsoleInput.UserName();
+                    }
 
-                string pass = ConsoleInput.Password();
-                while (Account.Users[usrId] != pass)
+                    string pass = ConsoleInput.Password();
+                    while (Account.Users[usrId] != pass)
+                    {
+                        ConsoleOutput.WrongCredential();
+                        pass = ConsoleInput.Password();
+                    }
+                }
+                else 
                 {
-                    ConsoleOutput.WrongCredential();
-                    pass = ConsoleInput.Password();
+                    ConsoleOutput.ValidOption();
+                    goto CustomerLogin;
                 }
                 Console.Clear();
                 ConsoleOutput.WelcomeUser();
             }
 
-            ConsoleOutput.Choice();
+            ConsoleOutput.CustomerChoice();
 
-            OperationType operationOption = (OperationType)Convert.ToInt32(ConsoleInput.Input());
-            while (operationOption != OperationType.LogOut)
+            CustomerOperationType customerOperation = (CustomerOperationType)Convert.ToInt32(ConsoleInput.Input());
+            while (customerOperation != CustomerOperationType.LogOut)
             {
-                if (operationOption == OperationType.Deposit)
+                if (customerOperation == CustomerOperationType.Deposit)
                 {
                     Console.Clear();
                     double amt = Convert.ToDouble(ConsoleInput.DepositAmount());
                     bankManager.Deposit(amt);
                 }
-                else if (operationOption == OperationType.Withdraw)
+                else if (customerOperation == CustomerOperationType.Withdraw)
                 {
                     Console.Clear();
                     double amt = Convert.ToDouble(ConsoleInput.WithdrawAmount());
@@ -108,7 +164,7 @@ namespace ATM.CLI
                         ConsoleOutput.InsufficientBalance();
                     }
                 }
-                else if (operationOption == OperationType.Transfer)
+                else if (customerOperation == CustomerOperationType.Transfer)
                 {
                     Console.Clear();
                     string userName = ConsoleInput.RecieverName();
@@ -123,14 +179,14 @@ namespace ATM.CLI
                     }
                     
                 }
-                else if (operationOption == OperationType.TransactionHistory)
+                else if (customerOperation == CustomerOperationType.TransactionHistory)
                 {
                     Console.Clear();
                     ConsoleOutput.TransactionHistory();
                     bankManager.ShowTransactions();
                     
                 }
-                else if (operationOption == OperationType.Balance)
+                else if (customerOperation == CustomerOperationType.Balance)
                 {
                     Console.Clear();
                     ConsoleOutput.Balance();
@@ -141,10 +197,11 @@ namespace ATM.CLI
                     Console.Clear();
                     ConsoleOutput.ValidOption();
                 }
-                ConsoleOutput.Choice();
-                operationOption = (OperationType)Convert.ToInt32(ConsoleInput.Input());
+                ConsoleOutput.CustomerChoice();
+                customerOperation = (CustomerOperationType)Convert.ToInt32(ConsoleInput.Input());
             }
             Console.Clear();
+            Finish:
             ConsoleOutput.Exit();
         }
         

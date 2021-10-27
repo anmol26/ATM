@@ -24,7 +24,12 @@ namespace ATM.Models
                 { "Balaji", "0000" }                                              //registered users
 
         };
-
+        public Account()
+        {
+            Balance=5000;
+            AccountType = AccountType.Savings;
+            IsActive = true;
+        }
 
     }
 }

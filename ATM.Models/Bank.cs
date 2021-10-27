@@ -7,23 +7,32 @@ namespace ATM.Models
 {
     public class Bank
     {
-        public string Name;
-        public string Id;
-        public string Address;
-        public List<Account> Accounts;
+        public string Name { get; set; }
+        public string Id { get; set; }
+        public string Address { get; set; }
+        public List<Account> Accounts { get; set; }
 
-        public double RTGSChargeToSameBank = 0;         //default rates
-        
-        public double IMPSChargeToSameBank = 0.05;
-        
-        public double RTGSChargeToOtherBanks = 0.02;
-        
-        public double IMPSChargeToOtherBanks = 0.06;
-        
-        public CurrencyType AcceptedCurrency = CurrencyType.INR;        //default currency type= INR
-        
-        public double ExchangeRate;
+        public double RTGSChargeToSameBank { get; set; }
 
+        public double IMPSChargeToSameBank { get; set; }
+
+        public double RTGSChargeToOtherBanks { get; set; }
+
+        public double IMPSChargeToOtherBanks { get; set; }
+
+        public CurrencyType AcceptedCurrency { get; set; }
+
+        public double ExchangeRate { get; set; }
+
+        public Bank()
+        {
+        RTGSChargeToSameBank = 0;         //default rates
+        IMPSChargeToSameBank = 0.05;
+        RTGSChargeToOtherBanks = 0.02;
+        IMPSChargeToOtherBanks = 0.06;
+        AcceptedCurrency = CurrencyType.INR;
+
+        }
 
     }
 }

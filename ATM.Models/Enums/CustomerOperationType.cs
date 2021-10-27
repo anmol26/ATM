@@ -11,6 +11,7 @@ namespace ATM.Models.Enums
         Withdraw,
         Transfer,
         TransactionHistory,
-        Balance
+        Balance,
+        LoginPage
     }
 }

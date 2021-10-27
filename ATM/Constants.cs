@@ -22,6 +22,7 @@ namespace ATM.CLI
                 "Press 3, \t---\t To transfer money \n" +
                 "Press 4, \t---\t To show transaction history \n" +
                 "Press 5, \t---\t To see the balance\n" +
+                "Press 6, \t---\t To Goto Login Page\n" +
                 "Press 0, \t---\t To log out \n" +
                 "*-----------*-----------*-----------*-----------*\n";
             public const string StaffChoice = "\n*-----------*-----------*-----------*-----------*\n" +
@@ -31,6 +32,7 @@ namespace ATM.CLI
                 "Press 4, \t---\t To Update Service Charges\n" +
                 "Press 5, \t---\t To show transaction history \n" +
                 "Press 6, \t---\t To Revert Transaction\n" +
+                "Press 7, \t---\t To Goto Login Page\n" +
                 "Press 0, \t---\t To log out \n" +
                 "*-----------*-----------*-----------*-----------*\n";
             public const string TransactionHistory = "\nTransaction History:-- \n<--------*-----*------->\n";

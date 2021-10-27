@@ -12,6 +12,7 @@ namespace ATM.Models.Enums
         UpdateAcceptedCurrency,
         UpdateServiceCharges,
         ShowTransactionHistory,
-        RevertTransaction
+        RevertTransaction,
+        LoginPage
     }
 }

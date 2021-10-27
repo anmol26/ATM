@@ -13,6 +13,7 @@ namespace ATM.CLI
         public static void Main(string[] args)
         {
             ConsoleOutput.Welcome();
+            LoginPage:
             ConsoleOutput.Login();
 
             LoginType loginOption = (LoginType)(Convert.ToInt32(ConsoleInput.Input()));
@@ -53,7 +54,18 @@ namespace ATM.CLI
                 {
                     if (staffOperation == StaffOperationType.CreateAccount)
                     {
-                        //todo
+                        string userId = ConsoleInput.UserName();
+                        while (Account.Users.ContainsKey(userId))
+                        {
+                            ConsoleOutput.AlreadyRegistered(userId);
+                            userId = ConsoleInput.UserName();
+                        }
+                        string password = ConsoleInput.Password();
+                        double balance = Convert.ToDouble(ConsoleInput.Amount());
+
+                        bankManager.CreateAccount(userId, password, balance);
+
+                        ConsoleOutput.AccountSuccessfullCreation();
                     }
                     else if (staffOperation == StaffOperationType.UpdateAccountStatus)
                     {
@@ -75,6 +87,10 @@ namespace ATM.CLI
                     {
                         //todo
                     }
+                    else if (staffOperation == StaffOperationType.LoginPage) 
+                    {
+                        goto LoginPage;
+                    }
                     else
                     {
                         Console.Clear();
@@ -84,7 +100,6 @@ namespace ATM.CLI
                     staffOperation = (StaffOperationType)Convert.ToInt32(ConsoleInput.Input());
                 }
                 Console.Clear();
-                //
                 ConsoleOutput.UnderConstruction();
                 goto Finish;
 
@@ -92,49 +107,18 @@ namespace ATM.CLI
             if (loginOption == LoginType.AccountHolder)
             {
                 Console.Clear();
-                ConsoleOutput.LoginOrCreate();
-
-                CustomerLogin:
-                
-                CustomerLoginType loginAccount = (CustomerLoginType)Convert.ToInt32(ConsoleInput.Input());
-
-                if (loginAccount == CustomerLoginType.CreateAccount)
+                string usrId = ConsoleInput.UserName();
+                while (!Account.Users.ContainsKey(usrId))
                 {
-                    string userId = ConsoleInput.UserName();
-
-                    while (Account.Users.ContainsKey(userId))
-                    {
-                        ConsoleOutput.AlreadyRegistered(userId);
-                        userId = ConsoleInput.UserName();
-                    }
-                    string password = ConsoleInput.Password();
-                    double balance = Convert.ToDouble(ConsoleInput.Amount());
-
-                    bankManager.CreateAccount(userId, password, balance);
-
-                    ConsoleOutput.AccountSuccessfullCreation();
-                    
+                    ConsoleOutput.WrongCredential();
+                    usrId = ConsoleInput.UserName();
                 }
-                else if (loginAccount == CustomerLoginType.ExistingAccount)
-                {
-                    string usrId = ConsoleInput.UserName();
-                    while (!Account.Users.ContainsKey(usrId))
-                    {
-                        ConsoleOutput.WrongCredential();
-                        usrId = ConsoleInput.UserName();
-                    }
 
-                    string pass = ConsoleInput.Password();
-                    while (Account.Users[usrId] != pass)
-                    {
-                        ConsoleOutput.WrongCredential();
-                        pass = ConsoleInput.Password();
-                    }
-                }
-                else 
+                string pass = ConsoleInput.Password();
+                while (Account.Users[usrId] != pass)
                 {
-                    ConsoleOutput.ValidOption();
-                    goto CustomerLogin;
+                    ConsoleOutput.WrongCredential();
+                    pass = ConsoleInput.Password();
                 }
                 Console.Clear();
                 ConsoleOutput.WelcomeUser();
@@ -159,7 +143,7 @@ namespace ATM.CLI
                     {
                         bankManager.Withdraw(amt);
                     }
-                    catch (BalanceInsufficientException) 
+                    catch (BalanceInsufficientException)
                     {
                         ConsoleOutput.InsufficientBalance();
                     }
@@ -173,24 +157,28 @@ namespace ATM.CLI
                     {
                         bankManager.Transfer(userName, amt);
                     }
-                    catch(SenderBalanceInsufficientException) 
+                    catch (SenderBalanceInsufficientException)
                     {
                         ConsoleOutput.SenderInsufficientBalance();
                     }
-                    
+
                 }
                 else if (customerOperation == CustomerOperationType.TransactionHistory)
                 {
                     Console.Clear();
                     ConsoleOutput.TransactionHistory();
                     bankManager.ShowTransactions();
-                    
+
                 }
                 else if (customerOperation == CustomerOperationType.Balance)
                 {
                     Console.Clear();
                     ConsoleOutput.Balance();
                     Console.WriteLine(bankManager.Balance());
+                }
+                else if (customerOperation == CustomerOperationType.LoginPage) 
+                {
+                    goto LoginPage;
                 }
                 else
                 {

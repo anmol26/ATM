@@ -81,17 +81,16 @@ namespace ATM.CLI
                         {
                             ConsoleOutput.AccountDoesNotExist();
                         }
-                        
                     }
                     else if (staffOperation == StaffOperationType.UpdateAcceptedCurrency)
                     {
                         //todo
+                        //how to add in enums
                         ConsoleOutput.UnderConstruction();
                     }
                     else if (staffOperation == StaffOperationType.UpdateServiceCharges)
                     {
-                        //todo
-                        ConsoleOutput.UnderConstruction();
+                        bankManager.UpdateServiceCharge();
                     }
                     else if (staffOperation == StaffOperationType.ShowTransactionHistory)
                     {

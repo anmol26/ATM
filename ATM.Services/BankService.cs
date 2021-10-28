@@ -58,6 +58,25 @@ namespace ATM.Services
             string txnId = "TXN" + bankId + accountId + date.Replace("-", "");
             return txnId;
         }
+        public void UpdateAcceptedCurrency() 
+        {
+            //bank.AcceptedCurrency=
+        }
+        public void UpdateServiceCharge()
+        { 
+            Console.WriteLine("Enter the updated RTGS charge to same bank");
+            double rtgsSame = Convert.ToDouble(Console.ReadLine());
+            Console.WriteLine("Enter the updated IMPS charge to same bank");
+            double impsSame = Convert.ToDouble(Console.ReadLine());
+            Console.WriteLine("Enter the updated RTGS charge to different bank");
+            double rtgsDifferent = Convert.ToDouble(Console.ReadLine());
+            Console.WriteLine("Enter the updated IMPS charge to different bank");
+            double impsDifferent = Convert.ToDouble(Console.ReadLine());
+            bank.RTGSChargeToSameBank = rtgsSame;
+            bank.RTGSChargeToOtherBanks = rtgsDifferent;
+            bank.IMPSChargeToSameBank = impsSame;
+            bank.IMPSChargeToOtherBanks = impsDifferent;
+        }
         public void Deposit(double amount)
         {
             account.Balance += amount;

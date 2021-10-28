@@ -17,6 +17,7 @@ namespace ATM.Services
 
         }
         readonly Account account = new Account();
+        Bank bank = new Bank();
 
         public void CreateBank(string name,string address)
         {
@@ -56,27 +57,23 @@ namespace ATM.Services
             string date = currentDate.ToShortDateString();
             string txnId = "TXN" + bankId + accountId + date.Replace("-", "");
             return txnId;
-
         }
         public void Deposit(double amount)
         {
             account.Balance += amount;
             Transaction.Transactions.Add($"{amount} deposited in account successfully.");
-
         }
         public void Withdraw(double amount)
         {
             if (account.Balance < amount)
             {
                 throw new BalanceInsufficientException();
-                
             }
             else
             {
                 account.Balance -= Convert.ToDouble(amount);
                 Transaction.Transactions.Add($"{amount} withdrawn from the account successfully.");
             }
-
         }
         public void Transfer(string userName, double amount)
         {
@@ -87,9 +84,7 @@ namespace ATM.Services
             }
             else
             {
-
                 throw new SenderBalanceInsufficientException();
-
             }
         }
         public double Balance()
@@ -98,16 +93,12 @@ namespace ATM.Services
         }
         public void ShowTransactions()
         {
-
             int counter = 1;
             foreach (string transaction in Transaction.Transactions)
             {
                 Console.WriteLine($"{counter}-> {transaction}");
                 counter += 1;
-
             }
-
         }
-
     }
 }

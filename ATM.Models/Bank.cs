@@ -11,6 +11,7 @@ namespace ATM.Models
         public string Id { get; set; }
         public string Address { get; set; }
         public List<Account> Accounts { get; set; }
+        public List<Currency> Currencies { get; set; }
 
         public double RTGSChargeToSameBank { get; set; }
 
@@ -22,8 +23,6 @@ namespace ATM.Models
 
         public CurrencyType AcceptedCurrency { get; set; }
 
-        public double ExchangeRate { get; set; }
-
         public Bank()
         {
         RTGSChargeToSameBank = 0;         //default rates
@@ -31,7 +30,6 @@ namespace ATM.Models
         RTGSChargeToOtherBanks = 0.02;
         IMPSChargeToOtherBanks = 0.06;
         AcceptedCurrency = CurrencyType.INR;
-
         }
 
     }

@@ -18,6 +18,10 @@ namespace ATM.CLI
         {
             return GetInput(Constants.Messages.Password);
         }
+        public static string DeleteUserName()
+        {
+            return GetInput(Constants.Messages.DeleteUserName);
+        }
         public static string RecieverName()
         {
             return GetInput(Constants.Messages.RecieverName);
@@ -31,6 +35,14 @@ namespace ATM.CLI
             return GetInput(Constants.Messages.WithdrawAmount);
         }
         public static string Amount()
+        {
+            return GetInput(Constants.Messages.Amount);
+        }
+        public static string UpdateCurrency()
+        {
+            return GetInput(Constants.Messages.UpdateCurrency);
+        }
+        public static string InitializeAmount()
         {
             return GetInput(Constants.Messages.Amount);
         }

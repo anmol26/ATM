@@ -38,7 +38,14 @@ namespace ATM.CLI
         {
             Console.WriteLine(Constants.Messages.BankSuccessfullCreation);
         }
-
+        public static void AccountSuccessfullDeletion()
+        {
+            Console.WriteLine(Constants.Messages.AccountSuccessfullDeletion);
+        }
+        public static void AccountDoesNotExist() 
+        {
+            Console.WriteLine(Constants.Messages.AccountDoesnotExist);
+        }
 
         public static void CustomerChoice()
         {

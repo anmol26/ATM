@@ -54,6 +54,7 @@ namespace ATM.CLI
                 {
                     if (staffOperation == StaffOperationType.CreateAccount)
                     {
+                        Console.Clear();
                         string userId = ConsoleInput.UserName();
                         while (Account.Users.ContainsKey(userId))
                         {
@@ -61,7 +62,7 @@ namespace ATM.CLI
                             userId = ConsoleInput.UserName();
                         }
                         string password = ConsoleInput.Password();
-                        double balance = Convert.ToDouble(ConsoleInput.Amount());
+                        double balance = Convert.ToDouble(ConsoleInput.InitializeAmount());
 
                         bankManager.CreateAccount(userId, password, balance);
 
@@ -69,23 +70,39 @@ namespace ATM.CLI
                     }
                     else if (staffOperation == StaffOperationType.UpdateAccountStatus)
                     {
-                        //todo
+                        Console.Clear();
+                        string accountUserName = ConsoleInput.DeleteUserName();
+                        if (Account.Users.ContainsKey(accountUserName))
+                        {
+                            Account.Users.Remove(accountUserName);
+                            ConsoleOutput.AccountSuccessfullDeletion();
+                        }
+                        else 
+                        {
+                            ConsoleOutput.AccountDoesNotExist();
+                        }
+                        
                     }
                     else if (staffOperation == StaffOperationType.UpdateAcceptedCurrency)
                     {
                         //todo
+                        ConsoleOutput.UnderConstruction();
                     }
                     else if (staffOperation == StaffOperationType.UpdateServiceCharges)
                     {
                         //todo
+                        ConsoleOutput.UnderConstruction();
                     }
                     else if (staffOperation == StaffOperationType.ShowTransactionHistory)
                     {
-                        //todo
+                        Console.Clear();
+                        ConsoleOutput.TransactionHistory();
+                        bankManager.ShowTransactions();
                     }
                     else if (staffOperation == StaffOperationType.RevertTransaction)
                     {
                         //todo
+                        ConsoleOutput.UnderConstruction();
                     }
                     else if (staffOperation == StaffOperationType.LoginPage) 
                     {
@@ -100,7 +117,6 @@ namespace ATM.CLI
                     staffOperation = (StaffOperationType)Convert.ToInt32(ConsoleInput.Input());
                 }
                 Console.Clear();
-                ConsoleOutput.UnderConstruction();
                 goto Finish;
 
             }

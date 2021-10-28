@@ -15,6 +15,8 @@ namespace ATM.CLI
             public const string WrongCredential = "\nCredentials don't match!, Please Try Again ";
             public const string AlreadyRegistered = " is already taken, Please pick another username";
             public const string AccountSuccessfullCreation = "\nAccount Created Successfully!!\n";
+            public const string AccountSuccessfullDeletion = "\nAccount deleted successfully!!\n";
+            public const string AccountDoesnotExist = "\nAccount does not exist!!\n";
             public const string BankSuccessfullCreation = "\nNew Bank Created Successfully!!\n";
             public const string CustomerChoice = "\n*-----------*-----------*-----------*-----------*\n" +
                 "Press 1, \t---\t To deposit money \n" +
@@ -22,7 +24,7 @@ namespace ATM.CLI
                 "Press 3, \t---\t To transfer money \n" +
                 "Press 4, \t---\t To show transaction history \n" +
                 "Press 5, \t---\t To see the balance\n" +
-                "Press 6, \t---\t To Goto Login Page\n" +
+                "Press 6, \t---\t To Login Another Account\n" +
                 "Press 0, \t---\t To log out \n" +
                 "*-----------*-----------*-----------*-----------*\n";
             public const string StaffChoice = "\n*-----------*-----------*-----------*-----------*\n" +
@@ -32,7 +34,7 @@ namespace ATM.CLI
                 "Press 4, \t---\t To Update Service Charges\n" +
                 "Press 5, \t---\t To show transaction history \n" +
                 "Press 6, \t---\t To Revert Transaction\n" +
-                "Press 7, \t---\t To Goto Login Page\n" +
+                "Press 7, \t---\t To Login Another Account\n" +
                 "Press 0, \t---\t To log out \n" +
                 "*-----------*-----------*-----------*-----------*\n";
             public const string TransactionHistory = "\nTransaction History:-- \n<--------*-----*------->\n";
@@ -47,10 +49,13 @@ namespace ATM.CLI
             public const string DepositAmount = "\nPlease Enter the amount to deposit";
             public const string WithdrawAmount = "\nPlease Enter the amount to withdraw";
             public const string Amount = "\nPlease Enter the Amount";
+            public const string InitializeAmount = "\nPlease Enter the Initialize Amount";
             public const string BankName = "\nEnter the bank name";
             public const string Address = "\nEnter the bank Address";
             public const string UnderConstruction = "\nCurrently application is under construction";
-            
+            public const string DeleteUserName = "\nPlease Enter the username to delete account";
+            public const string UpdateCurrency = "\nPlease Enter currency to add";
+
         }
     }
 }

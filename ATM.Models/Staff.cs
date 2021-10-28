@@ -10,6 +10,7 @@ namespace ATM.Models
         public string Id { get; set; }
         public string Name { get; set; }
         public string Password { get; set; }
+        public string BankName { get; set; }
         public AccessLevelType AccessLevel { get; set; }
 
         public static Dictionary<string, string> Users = new Dictionary<string, string>

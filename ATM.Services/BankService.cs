@@ -26,8 +26,10 @@ namespace ATM.Services
                 Id = GenerateBankId(name),
                 Name = name,
                 Address = address
+
             };
-            this.banks.Add(bank);
+            
+            this.banks.Add(bank); 
         } 
         private string GenerateBankId(string bankName)
         {
@@ -37,10 +39,9 @@ namespace ATM.Services
             string bankId = bankName.Substring(0, 3).ToUpper() + date.Replace("-", "");
             return bankId;
         } 
-        public void CreateAccount(string userId, string password, double initializeAmount)
+        public void CreateAccount(string userId, string password)
         {
-            Account.Users.Add(userId, password);
-            account.Balance = initializeAmount;
+            UserDatabase.AccountUsers.Add(userId, password);
             account.Id = GenerateAccountId(userId);
         }
 

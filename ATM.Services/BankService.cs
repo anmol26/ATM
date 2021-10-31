@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using ATM.Models;
+using ATM.Models.Enums;
 using ATM.Models.Exceptions;
 
 namespace ATM.Services
@@ -18,7 +19,7 @@ namespace ATM.Services
         }
         Account account = new Account();
         Bank bank = new Bank();
-
+        
         public void CreateBank(string name,string address)
         {
             Bank bank = new Bank
@@ -34,9 +35,8 @@ namespace ATM.Services
         private string GenerateBankId(string bankName)
         {
             // Axis-> Axs-> AXS.... 26-07-2001-> 2672001=>     AXS2672001
-            DateTime currentDate = DateTime.Now;
-            string date = currentDate.ToShortDateString();
-            string bankId = bankName.Substring(0, 3).ToUpper() + date.Replace("-", "");
+            string currentDate = DateTime.Now.ToString("yyyyMMddHHmmss");
+            string bankId = bankName.Substring(0, 3).ToUpper() + currentDate;
             return bankId;
         } 
         public void CreateAccount(string userId, string password)
@@ -47,21 +47,23 @@ namespace ATM.Services
 
         private string GenerateAccountId(string accName)
         {
-            DateTime currentDate = DateTime.Now;
-            string date = currentDate.ToShortDateString();
-            string accId = accName.Substring(0, 3).ToUpper() + date.Replace("-", "");
+            string currentDate = DateTime.Now.ToString("yyyyMMddHHmmss");
+            string accId = accName.Substring(0, 3).ToUpper() + currentDate;
             return accId;
         }
         private string GenerateTransactionId(string bankId, string accountId)
         {
-            DateTime currentDate = DateTime.Now;
-            string date = currentDate.ToString();
-            string txnId = "TXN" + bankId + accountId + date.Replace("-", "");
+            string currentDate = DateTime.Now.ToString("yyyyMMddHHmmss");
+            string txnId = "TXN" + bankId + accountId + currentDate;
             return txnId;
         }
         public void UpdateAcceptedCurrency() 
         {
-            //bank.AcceptedCurrency=
+            Console.WriteLine("Enter the currency code to Update the Accepted currency: \n1.INR, 2.USD, 3.EURO ");
+            string askCurrency = Console.ReadLine();
+           
+            bank.AcceptedCurrency = (CurrencyType)(Convert.ToInt32(askCurrency));
+
         }
         public void UpdateServiceCharge()
         { 

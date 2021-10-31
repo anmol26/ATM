@@ -118,10 +118,7 @@ namespace ATM.CLI
                     }
                     else if (staffOperation == StaffOperationType.UpdateAcceptedCurrency)
                     {
-                        //todo
-                        //how to add in enums
-                        
-                        ConsoleOutput.UnderConstruction();
+                        bankManager.UpdateAcceptedCurrency();
                     }
                     else if (staffOperation == StaffOperationType.UpdateServiceCharges)
                     {

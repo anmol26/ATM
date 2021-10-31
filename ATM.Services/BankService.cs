@@ -55,7 +55,7 @@ namespace ATM.Services
         private string GenerateTransactionId(string bankId, string accountId)
         {
             DateTime currentDate = DateTime.Now;
-            string date = currentDate.ToShortDateString();
+            string date = currentDate.ToString();
             string txnId = "TXN" + bankId + accountId + date.Replace("-", "");
             return txnId;
         }
@@ -81,7 +81,7 @@ namespace ATM.Services
         public void Deposit(double amount)
         {
             account.Balance += amount;
-            Transaction.Transactions.Add($"{amount} deposited in account successfully.");
+            Transaction.Transactions.Add(GenerateTransactionId(bank.Id,account.Id), $"{amount} deposited in account successfully.");
         }
         public void Withdraw(double amount)
         {
@@ -92,7 +92,7 @@ namespace ATM.Services
             else
             {
                 account.Balance -= Convert.ToDouble(amount);
-                Transaction.Transactions.Add($"{amount} withdrawn from the account successfully.");
+                Transaction.Transactions.Add(GenerateTransactionId(bank.Id, account.Id), $"{amount} withdrawn from the account successfully.");
             }
         }
         public void Transfer(string userName, double amount)
@@ -100,7 +100,7 @@ namespace ATM.Services
             if (amount < account.Balance)
             {
                 account.Balance -= Convert.ToDouble(amount);
-                Transaction.Transactions.Add($"{amount} has been transferred to " + userName + "'s account successfully.");
+                Transaction.Transactions.Add(GenerateTransactionId(bank.Id, account.Id), $"{amount} has been transferred to " + userName + "'s account successfully.");
             }
             else
             {
@@ -114,9 +114,9 @@ namespace ATM.Services
         public void ShowTransactions()
         {
             int counter = 1;
-            foreach (string transaction in Transaction.Transactions)
+            foreach (var transaction in Transaction.Transactions)
             {
-                Console.WriteLine($"{counter}-> {transaction}");
+                Console.WriteLine($"{counter}-> {transaction.Key}: {transaction.Value}");
                 counter += 1;
             }
         }

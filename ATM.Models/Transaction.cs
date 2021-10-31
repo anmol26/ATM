@@ -11,7 +11,7 @@ namespace ATM.Models
         public int SourceAccountId { get; set; }
         public int DestinationAccountId { get; set; }
 
-        public static List<string> Transactions = new List<string>();
+        public static Dictionary<string,string> Transactions = new Dictionary<string,string>();
         public TransactionType Type { get; set; }
         public DateTime CurrentDate { get; set; }
         

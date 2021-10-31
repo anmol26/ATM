@@ -120,6 +120,7 @@ namespace ATM.CLI
                     {
                         //todo
                         //how to add in enums
+                        
                         ConsoleOutput.UnderConstruction();
                     }
                     else if (staffOperation == StaffOperationType.UpdateServiceCharges)
@@ -134,8 +135,18 @@ namespace ATM.CLI
                     }
                     else if (staffOperation == StaffOperationType.RevertTransaction)
                     {
-                        //todo
-                        ConsoleOutput.UnderConstruction();
+                        Console.Clear();
+                        Console.WriteLine("Please write the transaction id:\n");
+                        string txnId = Console.ReadLine();
+                        if (Transaction.Transactions.ContainsKey(txnId))
+                        {
+                            Transaction.Transactions.Remove(txnId);
+                            Console.WriteLine("Transaction revert successfully");
+                        }
+                        else 
+                        {
+                            Console.WriteLine("TransactionId not found, Please try again with right credentials");
+                        }
                     }
                     else if (staffOperation == StaffOperationType.LoginPage)
                     {

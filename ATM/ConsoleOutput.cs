@@ -72,9 +72,9 @@ namespace ATM.CLI
             Console.WriteLine(Constants.Messages.SenderInsufficientBalance);
         }
 
-        public static void ValidOption()
+        public static void InValidOption()
         {
-            Console.WriteLine(Constants.Messages.ValidOption);
+            Console.WriteLine(Constants.Messages.InValidOption);
         }
         public static void UnderConstruction()
         {

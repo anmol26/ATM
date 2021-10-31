@@ -9,12 +9,13 @@ namespace ATM.Models
     {
         public Account()
         {
+            Id = "ANM31102021";
             Balance = 5000;
             AccountType = AccountType.Savings;
             IsActive = true;
         }
         public string Id { get; set; }
-        public string UserId { get; set; }
+        public string UserName { get; set; }
         public string Password { get; set; }
         public double Balance { get; set; }
         public AccountType AccountType { get; set; }

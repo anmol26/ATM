@@ -9,8 +9,8 @@ namespace ATM.CLI
         public static class Messages
         {
             public const string Welcome = "Welcome to Alpha Bank\n<-----*--------*----->\n";
-            public const string Login = "Please choose a login Option:- \n1. Setup New Bank \n2. Staff Member \n3. Account Holder";
-            public const string LoginOrCreate = "Enter 1, To Create a new account \nEnter 2, To login an existing account\n";
+            public const string Login = "\nPlease choose a login Option:- \n1. Setup New Bank \n2. Staff Member \n3. Account Holder";
+            public const string LoginOrCreate = "\nEnter 1, To Create a new account \nEnter 2, To login an existing account\n";
             public const string WelcomeUser = "\nYou are successfully logged in!";
             public const string WrongCredential = "\nCredentials don't match!, Please Try Again ";
             public const string AlreadyRegistered = " is already taken, Please pick another username";
@@ -41,7 +41,7 @@ namespace ATM.CLI
             public const string Balance = "\nYour current balance is:";
             public const string InsufficientBalance = "\nInsufficient Balance, Transaction failed !";
             public const string SenderInsufficientBalance = "\nYou do not have enough balance to transfer money";
-            public const string ValidOption = "\nPLEASE ENTER A VALID OPTION !";
+            public const string InValidOption = "\nPLEASE ENTER A VALID OPTION !";
             public const string Exit = "\nTHANK YOU, VISIT AGAIN !";
             public const string UserName = "\nPlease Enter the username";
             public const string Password = "\nPlease Enter the Password";

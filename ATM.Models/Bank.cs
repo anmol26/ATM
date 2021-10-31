@@ -9,6 +9,9 @@ namespace ATM.Models
     {
         public Bank()
         {
+            Name = "Alpha Bank";
+            Id = "ALP31102021";
+            Address = "Hyderabad";
             RTGSChargeToSameBank = 0;         //default rates
             IMPSChargeToSameBank = 0.05;
             RTGSChargeToOtherBanks = 0.02;

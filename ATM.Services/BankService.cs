@@ -16,7 +16,7 @@ namespace ATM.Services
             this.accounts = new List<Account>();
 
         }
-        readonly Account account = new Account();
+        Account account = new Account();
         Bank bank = new Bank();
 
         public void CreateBank(string name,string address)

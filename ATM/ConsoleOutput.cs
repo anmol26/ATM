@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ATM.Models;
 
 namespace ATM.CLI
 {
@@ -83,6 +84,17 @@ namespace ATM.CLI
         public static void Exit()
         {
             Console.WriteLine(Constants.Messages.Exit);
+        }
+        public static void History(Transaction i)
+        {
+            Console.WriteLine("Transaction ID:" + i.Id);
+            Console.WriteLine(i.Amount);
+            Console.WriteLine(i.Type + " to/from your account ");
+            if (i.SenderAccountId != i.RecieverAccountId)
+            {
+                Console.WriteLine("From " + i.SenderAccountId + " to    " + i.RecieverAccountId);
+            }
+            Console.WriteLine(i.CurrentDate.ToString());
         }
 
     }

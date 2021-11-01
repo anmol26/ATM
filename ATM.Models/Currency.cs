@@ -6,7 +6,12 @@ namespace ATM.Models
 {
     public class Currency
     {
-        public string Name { get; set; }
-        public double ExchangeRate { get; set; }
+        public static Dictionary<string, double> curr = new Dictionary<string, double>()
+        {
+            { "EUR", 0.9},
+            { "INR", 74.1},
+            { "USD", 1.0}
+        };
     }
+    
 }

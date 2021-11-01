@@ -14,6 +14,8 @@ namespace ATM.Models
         public static Dictionary<string,string> Transactions = new Dictionary<string,string>();
         public TransactionType Type { get; set; }
         public DateTime CurrentDate { get; set; }
+        public double Amount { get; set; }
+
         
 
     }

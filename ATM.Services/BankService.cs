@@ -34,7 +34,6 @@ namespace ATM.Services
         } 
         private string GenerateBankId(string bankName)
         {
-            // Axis-> Axs-> AXS.... 26-07-2001-> 2672001=>     AXS2672001
             string currentDate = DateTime.Now.ToString("yyyyMMddHHmmss");
             string bankId = bankName.Substring(0, 3).ToUpper() + currentDate;
             return bankId;
@@ -42,6 +41,9 @@ namespace ATM.Services
         public void CreateAccount(string userId, string password)
         {
             UserDatabase.AccountUsers.Add(userId, password);
+            account.UserName = userId;
+            account.Password = password;
+            
             account.Id = GenerateAccountId(userId);
         }
 

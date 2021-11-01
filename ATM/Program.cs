@@ -98,6 +98,7 @@ namespace ATM.CLI
                             userId = ConsoleInput.UserName();
                         }
                         string password = ConsoleInput.Password();
+
                         bankManager.CreateAccount(userId, password);
 
                         ConsoleOutput.AccountSuccessfullCreation();
@@ -132,6 +133,7 @@ namespace ATM.CLI
                     }
                     else if (staffOperation == StaffOperationType.RevertTransaction)
                     {
+                        //todo
                         Console.Clear();
                         Console.WriteLine("Please write the transaction id:\n");
                         string txnId = Console.ReadLine();

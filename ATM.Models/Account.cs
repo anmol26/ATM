@@ -13,6 +13,7 @@ namespace ATM.Models
             Balance = 5000;
             AccountType = AccountType.Savings;
             IsActive = true;
+            CurrentDate = DateTime.Now;
         }
         public string Id { get; set; }
         public string UserName { get; set; }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace ATM.CLI
 {
     public static class Constants
@@ -38,7 +35,7 @@ namespace ATM.CLI
                 "Press 0, \t---\t To log out \n" +
                 "*-----------*-----------*-----------*-----------*\n";
             public const string TransactionHistory = "\nTransaction History:-- \n<--------*-----*------->\n";
-            public const string Balance = "\nYour current balance is:";
+            public const string Balance = "\nYour current balance is: ";
             public const string InsufficientBalance = "\nInsufficient Balance, Transaction failed !";
             public const string SenderInsufficientBalance = "\nYou do not have enough balance to transfer money";
             public const string InValidOption = "\nPLEASE ENTER A VALID OPTION !";

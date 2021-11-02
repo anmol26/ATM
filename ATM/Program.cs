@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using ATM.Models;
 using ATM.Services;
 using ATM.Models.Enums;
-using ATM.Models.Exceptions;
 
 
 namespace ATM.CLI
@@ -174,20 +173,6 @@ namespace ATM.CLI
                             ConsoleOutput.InValidOption();
                             goto UpdateAccount;
                         }
-
-
-
-                        /*
-                        string accountUserName = ConsoleInput.DeleteUserName();
-                        if (UserDatabase.AccountUsers.ContainsKey(accountUserName))
-                        {
-                            UserDatabase.AccountUsers.Remove(accountUserName);
-                            ConsoleOutput.AccountSuccessfullDeletion();
-                        }
-                        else
-                        {
-                            ConsoleOutput.AccountDoesNotExist();
-                        }*/
                     }
                     else if (staffOperation == StaffOperationType.UpdateAcceptedCurrency)
                     {
@@ -196,14 +181,13 @@ namespace ATM.CLI
                         Console.WriteLine("Enter Exchange rate:");
                         double rate = Convert.ToDouble(Console.ReadLine());
                         bankManager.AddCurrency(code, rate);
-                        //bankManager.UpdateAcceptedCurrency();
                     }
                     else if (staffOperation == StaffOperationType.UpdateServiceCharges)
                     {
                     UpdateServiceCharge:
                         Console.WriteLine("Update Service Charges in \n1.Within Same bank   2.For Different Bank  ");
-                        int choice = Convert.ToInt32(Console.ReadLine());
-                        if (choice == 1)
+                        string choice = Console.ReadLine();
+                        if (choice == "1")
                         {
                             Console.WriteLine("Enter new charge for RTGS:");
                             double Rtgs = Convert.ToDouble(Console.ReadLine());
@@ -211,7 +195,7 @@ namespace ATM.CLI
                             double Imps = Convert.ToDouble(Console.ReadLine());
                             bankManager.UpdateCharges(Rtgs, Imps, 1);
                         }
-                        else if (choice == 2) 
+                        else if (choice == "2") 
                         {
                             Console.WriteLine("Enter new charge for RTGS:");
                             double Rtgs = Convert.ToDouble(Console.ReadLine());
@@ -224,25 +208,23 @@ namespace ATM.CLI
                             ConsoleOutput.InValidOption();
                             goto UpdateServiceCharge;
                         }
-                        //bankManager.UpdateServiceCharge();
                     }
                     else if (staffOperation == StaffOperationType.ShowTransactionHistory)
                     {
                         Console.Clear();
-                        Console.WriteLine("Enter TransactionID :");
+                    ShowTransactionHistory:
+                        Console.WriteLine("Enter AccountId :");
                         string id = Console.ReadLine();
                         bankAccount = bankManager.ViewHistory(id);
                         if (bankAccount == null)
                         {
-                            Console.WriteLine("Invalid!");
-                            break;
+                            ConsoleOutput.InValidOption();
+                            goto ShowTransactionHistory;
                         }
                         foreach (var i in bankAccount.Transactions)
                         {
                             ConsoleOutput.History(i);
                         }
-                        //ConsoleOutput.TransactionHistory();
-                        //bankManager.ShowTransactions();
                     }
                     else if (staffOperation == StaffOperationType.RevertTransaction)
                     {
@@ -253,20 +235,6 @@ namespace ATM.CLI
                         Console.WriteLine("Enter Transaction Id to revert:");
                         string Id = Console.ReadLine();
                         bankManager.RevertTransaction(BankId, UserId, Id);
-                        /*
-                        Console.Clear();
-                        Console.WriteLine("Please write the transaction id:\n");
-                        string txnId = Console.ReadLine();
-                        if (Transaction.Transactions.ContainsKey(txnId))
-                        {
-                            Transaction.Transactions.Remove(txnId);
-                            Console.WriteLine("Transaction revert successfully");
-                        }
-                        else 
-                        {
-                            Console.WriteLine("TransactionId not found, Please try again with right credentials");
-                        }
-                        */
                     }
                     else if (staffOperation == StaffOperationType.LoginPage)
                     {
@@ -276,8 +244,8 @@ namespace ATM.CLI
                     {
                         Console.Clear();
                         ConsoleOutput.InValidOption();
+                        goto StaffPage;
                     }
-                    goto StaffPage;
                 }
                 Console.Clear();
                 goto Finish;
@@ -344,30 +312,18 @@ namespace ATM.CLI
                             }
                             else
                             {
-                                Console.WriteLine("Insufficient Amount to Withdraw!");
+                                ConsoleOutput.InsufficientBalance();
                             }
                         }
                         else if (customerOperation == CustomerOperationType.Transfer)
                         {
                             Console.Clear();
-                            /*
-                            string userName = ConsoleInput.RecieverName();
-                            double amt = Convert.ToDouble(ConsoleInput.Amount());
-                            try
-                            {
-                                bankManager.Transfer(userName, amt);
-                            }
-                            catch (SenderBalanceInsufficientException)
-                            {
-                                ConsoleOutput.SenderInsufficientBalance();
-                            }
-                            */
                             Console.WriteLine("Enter Sender BankId");
                             string sbankId = Console.ReadLine();
                             Console.WriteLine("Enter Receiver BankId");
                             string ToBankId = Console.ReadLine();
                             Console.WriteLine("Select type:\n1.RTGS\n2.IMPS");
-                            int choice5 = Convert.ToInt32(Console.ReadLine());
+                            int choice = Convert.ToInt32(Console.ReadLine());
                             Console.WriteLine("Enter Account Holder name to Transfer:");
                             string hName = Console.ReadLine();
                             Account reciever = bankManager.CheckAccount(ToBankId, hName);
@@ -375,7 +331,7 @@ namespace ATM.CLI
                             {
                                 Console.WriteLine("Enter Amount to Transfer:");
                                 double amtToTransfer = Convert.ToDouble(Console.ReadLine());
-                                if (bankManager.Transfer(bankAccount, amtToTransfer, reciever, sbankId, ToBankId, choice5))
+                                if (bankManager.Transfer(bankAccount, amtToTransfer, reciever, sbankId, ToBankId, choice))
                                 {
                                     Console.WriteLine(amtToTransfer + " transferred successfully!");
                                 }
@@ -394,26 +350,18 @@ namespace ATM.CLI
                         {
                             Console.Clear();
                             ConsoleOutput.TransactionHistory();
-                            try
+                            
+                            foreach (var i in bankAccount.Transactions)
                             {
-                                foreach (var i in bankAccount.Transactions)
-                                {
-                                    ConsoleOutput.History(i);
-                                }
+                                ConsoleOutput.History(i);
                             }
-                            catch (Exception e) 
-                            {
-                                Console.WriteLine("Exception: "+ e);
-                            }
-
-                            //bankManager.ShowTransactions();
 
                         }
                         else if (customerOperation == CustomerOperationType.Balance)
                         {
                             Console.Clear();
                             ConsoleOutput.Balance();
-                            Console.WriteLine(bankManager.ViewBalance(bankAccount));
+                            Console.Write(bankManager.ViewBalance(bankAccount));
                         }
                         else if (customerOperation == CustomerOperationType.LoginPage)
                         {
@@ -434,85 +382,6 @@ namespace ATM.CLI
                 Console.Clear();
                 ConsoleOutput.InValidOption();
             }
-        /*        
-        CustomerPage:
-            ConsoleOutput.CustomerChoice();
-            List<string> customerChoiceOptions = new List<string>() { "0","1","2","3","4","5","6" };
-            var chooseCustomerOption = ConsoleInput.Input();
-            if (customerChoiceOptions.Contains(chooseCustomerOption))
-            { goto CustomerOperations; }
-            else
-            {
-                ConsoleOutput.InValidOption();
-                goto CustomerPage;
-            }
-
-        CustomerOperations:
-            CustomerOperationType customerOperation = (CustomerOperationType)Convert.ToInt32(chooseCustomerOption);
-            while (customerOperation != CustomerOperationType.LogOut)
-            {
-             
-                if (customerOperation == CustomerOperationType.Deposit)
-                {
-                    Console.Clear();
-                    double amt = Convert.ToDouble(ConsoleInput.DepositAmount());
-                    Console.WriteLine("Please Enter Currency Code");
-                    string currCode = Console.ReadLine();
-
-                    bankManager.Deposit(bankAccount,amt,currCode);
-                }
-                else if (customerOperation == CustomerOperationType.Withdraw)
-                {
-                    Console.Clear();
-                    double amt = Convert.ToDouble(ConsoleInput.WithdrawAmount());
-                    try
-                    {
-                        bankManager.Withdraw(amt);
-                    }
-                    catch (BalanceInsufficientException)
-                    {
-                        ConsoleOutput.InsufficientBalance();
-                    }
-                }
-                else if (customerOperation == CustomerOperationType.Transfer)
-                {
-                    Console.Clear();
-                    string userName = ConsoleInput.RecieverName();
-                    double amt = Convert.ToDouble(ConsoleInput.Amount());
-                    try
-                    {
-                        bankManager.Transfer(userName, amt);
-                    }
-                    catch (SenderBalanceInsufficientException)
-                    {
-                        ConsoleOutput.SenderInsufficientBalance();
-                    }
-
-                }
-                else if (customerOperation == CustomerOperationType.TransactionHistory)
-                {
-                    Console.Clear();
-                    ConsoleOutput.TransactionHistory();
-                    bankManager.ShowTransactions();
-
-                }
-                else if (customerOperation == CustomerOperationType.Balance)
-                {
-                    Console.Clear();
-                    ConsoleOutput.Balance();
-                    Console.WriteLine(bankManager.Balance());
-                }
-                else if (customerOperation == CustomerOperationType.LoginPage) 
-                {
-                    goto LoginPage;
-                }
-                else
-                {
-                    Console.Clear();
-                    ConsoleOutput.InValidOption();
-                }
-                goto CustomerPage;
-            }*/
             Console.Clear();
         Finish:
             ConsoleOutput.Exit();

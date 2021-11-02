@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using ATM.Models.Enums;
 
 namespace ATM.Models
 {
@@ -11,7 +9,6 @@ namespace ATM.Models
         {
             this.Name = name;
             this.Id = GenerateAccountId(name);
-            //this.Balance = 5000;
             this.IsActive = true;
             this.CurrentDate = DateTime.Now;
             this.PhoneNumber = phoneNumber;
@@ -22,10 +19,11 @@ namespace ATM.Models
         public string Name { get; set; }
         public long PhoneNumber { get; set; }
         public string Password { get; set; }
-        //public double Balance { get; set; }
+
         public double Balance = 0;
         public string Gender { get; set; }
         public string  BankId { get; set; }
+
         public List<Transaction> Transactions = new List<Transaction>();
         public bool IsActive { get; set; }
         public DateTime CurrentDate { get; set; }

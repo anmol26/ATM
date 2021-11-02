@@ -1,20 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using ATM.Models.Enums;
 
 namespace ATM.Models
 {
     public class Bank
     {
-        /*public Bank( )
-        {
-            Name = "Alpha Bank";
-            Id = "ALP31102021";
-            Address = "Hyderabad";
-            AcceptedCurrency = CurrencyType.INR;
-        }
-        */
         public Bank(string name, string address, string branch, string currencyCode)
         {
             this.Name = name;
@@ -36,7 +26,7 @@ namespace ATM.Models
         public double IMPSChargeToOtherBanks = 6;
         public string CurrencyCode = "INR";
 
-        private string GenerateBankId(string bankName)
+        protected string GenerateBankId(string bankName)
         {
             string currentDate = DateTime.Now.ToString("ddHHmmss");
             string bankId = bankName.Substring(0, 3).ToUpper() + currentDate;

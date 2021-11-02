@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
 using ATM.Models;
-using ATM.Models.Enums;
-using ATM.Models.Exceptions;
 
 namespace ATM.Services
 {
@@ -17,28 +12,6 @@ namespace ATM.Services
             UserDatabase.Banks.Add(bank);
             return bank.Id;
         }
-        /*
-        public void CreateBank(string name, string address, string branch, string currencyCode)
-        {
-            Bank bank = new Bank
-            {
-                Name = name,
-                Address = address,
-                Branch = branch,
-                CurrencyCode=currencyCode
-
-            };
-            
-            this.banks.Add(bank); 
-        } 
-        */
-        /*private string GenerateBankId(string bankName)
-        {
-            string currentDate = DateTime.Now.ToString("yyyyMMddHHmmss");
-            string bankId = bankName.Substring(0, 3).ToUpper() + currentDate;
-            return bankId;
-        }
-        */
         public string CreateAccount(string bankId,string name, string password,long phoneNumber,string gender,int choice)
         {
             string Id="";
@@ -49,7 +22,6 @@ namespace ATM.Services
                     bank = i;
                 }
             }
-            //UserDatabase.AccountUsers.Add(name, password);
             if (choice == 1) 
             {
                 Staff s = new Staff(name,phoneNumber,password,gender);
@@ -63,44 +35,10 @@ namespace ATM.Services
                 Id = a.Id;
             }
             return Id;
-            //account.Name = name;
-            //account.Password = password;
         }
-        /*
-        private string GenerateTransactionId(string bankId, string accountId)
-        {
-            string currentDate = DateTime.Now.ToString("yyyyMMddHHmmss");
-            string txnId = "TXN" + bankId + accountId + currentDate;
-            return txnId;
-        }
-        */
-        public void UpdateAcceptedCurrency() 
-        {
-            Console.WriteLine("Enter the currency code to Update the Accepted currency: \n1.INR, 2.USD, 3.EURO ");
-            string askCurrency = Console.ReadLine();
-            bank.CurrencyCode = askCurrency;
-
-        }
-        public void UpdateServiceCharge()
-        { 
-            Console.WriteLine("Enter the updated RTGS charge to same bank");
-            double rtgsSame = Convert.ToDouble(Console.ReadLine());
-            Console.WriteLine("Enter the updated IMPS charge to same bank");
-            double impsSame = Convert.ToDouble(Console.ReadLine());
-            Console.WriteLine("Enter the updated RTGS charge to different bank");
-            double rtgsDifferent = Convert.ToDouble(Console.ReadLine());
-            Console.WriteLine("Enter the updated IMPS charge to different bank");
-            double impsDifferent = Convert.ToDouble(Console.ReadLine());
-            bank.RTGSChargeToSameBank = rtgsSame;
-            bank.RTGSChargeToOtherBanks = rtgsDifferent;
-            bank.IMPSChargeToSameBank = impsSame;
-            bank.IMPSChargeToOtherBanks = impsDifferent;
-        }
+        
         public void Deposit(Account user,double amount, string currCode, string bankId)
-        {/*
-            account.Balance += amount;
-            Transaction.Transactions.Add(GenerateTransactionId(bank.Id,account.Id), $"{amount} deposited in account successfully.");
-        */
+        {
             user.Balance += Math.Round(amount * (double)(Currency.curr[currCode] / Currency.curr["INR"]), 2);
             Transaction trans = new Transaction(amount, 1, user.Id, user.Id, bankId, bankId);
             user.Transactions.Add(trans);
@@ -118,18 +56,6 @@ namespace ATM.Services
         }
         public bool Transfer(Account user, double amt, Account rcvr, string fromid, string toid, int choice)
         {
-            /*
-            
-            if (amount < account.Balance)
-            {
-                account.Balance -= Convert.ToDouble(amount);
-                Transaction.Transactions.Add(GenerateTransactionId(bank.Id, account.Id), $"{amount} has been transferred to " + userName + "'s account successfully.");
-            }
-            else
-            {
-                throw new SenderBalanceInsufficientException();
-            }
-            */
             Bank reciever = null;
             foreach (var i in UserDatabase.Banks)
             {
@@ -166,10 +92,11 @@ namespace ATM.Services
                     charge = DeductCharges(amt, bank.IMPSChargeToOtherBanks);
                 }
             }
-            if (user.Balance >= amt)
+            if (user.Balance >= amt+charge)
             {
-                amt-=charge;
-                user.Balance -= amt;
+                //amt-=charge;
+                //user.Balance -= amt;
+                user.Balance -= amt + charge;
 
                 rcvr.Balance += Math.Round(amt * (double)(Currency.curr[bank.CurrencyCode] / Currency.curr[reciever.CurrencyCode]), 2);
                 Transaction trans = new Transaction(amt, 2, user.Id, rcvr.Id, fromid, toid);
@@ -212,8 +139,9 @@ namespace ATM.Services
             foreach (Account account in bank.UserAccount)
             {
                 if (account.Id == UserId & account.Password == pass)
+                {
                     user = account;
-
+                }
             }
             return user;
 

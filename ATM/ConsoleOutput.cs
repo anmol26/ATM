@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using ATM.Models;
 
 namespace ATM.CLI
@@ -92,7 +90,7 @@ namespace ATM.CLI
             Console.WriteLine(i.Type + " to/from your account ");
             if (i.SenderAccountId != i.RecieverAccountId)
             {
-                Console.WriteLine("From " + i.SenderAccountId + " to    " + i.RecieverAccountId);
+                Console.WriteLine("From " + i.SenderAccountId + " to " + i.RecieverAccountId);
             }
             Console.WriteLine(i.CurrentDate.ToString());
         }

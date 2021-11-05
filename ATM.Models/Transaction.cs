@@ -6,6 +6,8 @@ namespace ATM.Models
 {
     public class Transaction
     {
+        const string DefaultPrefix = "TXN";
+        const string DefaultTimeFormat = "ddHHmmss";
         public Transaction(double amt, int type, string senderId, string recieverId, string sBankId, string rBankId)
         {
             Id = GenerateTransactionId(sBankId,senderId);
@@ -29,8 +31,8 @@ namespace ATM.Models
         public double Amount { get; set; }
         private string GenerateTransactionId(string bankId, string accountId)
         {
-            string currentDate = DateTime.Now.ToString("ddHHmmss");
-            string txnId = "TXN" + bankId + accountId + currentDate;
+            string currentDate = DateTime.Now.ToString(DefaultTimeFormat);
+            string txnId = DefaultPrefix + bankId + accountId + currentDate;
             return txnId;
         }
 

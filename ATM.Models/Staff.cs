@@ -1,9 +1,9 @@
 ﻿
 namespace ATM.Models
 {
-    public class Staff : Account
+    public class Staff : User
     {
-        public Staff(string name, long number, string password, string gender) : base(name, number, password, gender)
+        public Staff(string name, long number, string password, string gender)
         {
             this.Name = name;
             this.PhoneNumber = number;

@@ -5,6 +5,11 @@ namespace ATM.Models
 {
     public class Bank
     {
+        const string DefaultCurrency = "INR";
+        const double DefaultRTGSChargeToSameBank=0;
+        const double DefaultIMPSChargeToSameBank = 5;
+        const double DefaultRTGSChargeToOtherBank = 2;
+        const double DefaultIMPSChargeToOtherBank = 6;
         public Bank(string name, string address, string branch, string currencyCode)
         {
             this.Name = name;
@@ -20,16 +25,24 @@ namespace ATM.Models
         public List<Account> UserAccount = new List<Account>();
         public List<Staff> StaffAccount = new List<Staff>();
 
-        public double RTGSChargeToSameBank = 0;
-        public double IMPSChargeToSameBank = 5;
-        public double RTGSChargeToOtherBanks = 2;
-        public double IMPSChargeToOtherBanks = 6;
-        public string CurrencyCode = "INR";
+        public double RTGSChargeToSameBank = DefaultRTGSChargeToSameBank;
+        public double IMPSChargeToSameBank = DefaultIMPSChargeToSameBank;
+        public double RTGSChargeToOtherBanks = DefaultRTGSChargeToOtherBank;
+        public double IMPSChargeToOtherBanks = DefaultIMPSChargeToOtherBank;
+        public string CurrencyCode = DefaultCurrency;
 
         protected string GenerateBankId(string bankName)
         {
+            string bankId;
             string currentDate = DateTime.Now.ToString("ddHHmmss");
-            string bankId = bankName.Substring(0, 3).ToUpper() + currentDate;
+            if (bankName.Length >= 3)
+            {
+                bankId = bankName.Substring(0, 3).ToUpper() + currentDate;
+            }
+            else 
+            {
+                bankId = bankName.ToUpper() + currentDate;
+            }
             return bankId;
         }
 

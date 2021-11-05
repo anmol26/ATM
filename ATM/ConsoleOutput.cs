@@ -11,11 +11,7 @@ namespace ATM.CLI
         }
         public static void Login()
         {
-            Console.WriteLine(Constants.Messages.Login);
-        }
-        public static void LoginOrCreate() 
-        {
-            Console.WriteLine(Constants.Messages.LoginOrCreate);
+            Console.WriteLine(Constants.Messages.LoginOptions);
         }
         public static void WelcomeUser()
         {
@@ -25,10 +21,6 @@ namespace ATM.CLI
         {
             Console.WriteLine(Constants.Messages.WrongCredential);
         }
-        public static void AlreadyRegistered(string userId) 
-        {
-            Console.WriteLine(userId + Constants.Messages.AlreadyRegistered);
-        }
         public static void AccountSuccessfullCreation()
         {
             Console.WriteLine(Constants.Messages.AccountSuccessfullCreation);
@@ -37,15 +29,6 @@ namespace ATM.CLI
         {
             Console.WriteLine(Constants.Messages.BankSuccessfullCreation);
         }
-        public static void AccountSuccessfullDeletion()
-        {
-            Console.WriteLine(Constants.Messages.AccountSuccessfullDeletion);
-        }
-        public static void AccountDoesNotExist() 
-        {
-            Console.WriteLine(Constants.Messages.AccountDoesnotExist);
-        }
-
         public static void CustomerChoice()
         {
             Console.WriteLine(Constants.Messages.CustomerChoice);
@@ -66,22 +49,33 @@ namespace ATM.CLI
         {
             Console.WriteLine(Constants.Messages.InsufficientBalance);
         }
-        public static void SenderInsufficientBalance() 
-        {
-            Console.WriteLine(Constants.Messages.SenderInsufficientBalance);
-        }
-
         public static void InValidOption()
         {
-            Console.WriteLine(Constants.Messages.InValidOption);
-        }
-        public static void UnderConstruction()
-        {
-            Console.WriteLine(Constants.Messages.UnderConstruction);
+            Console.WriteLine(Constants.Messages.InvalidOption);
         }
         public static void Exit()
         {
             Console.WriteLine(Constants.Messages.Exit);
+        }
+        public static void BankId(string bankId) 
+        {
+            Console.WriteLine("\nYour Bank Id is: {0}. PLEASE NOTE IT!!!" , bankId);
+        }
+        public static void AccountId(string accountId)
+        {
+            Console.WriteLine("\nYour Account Id is: {0}. PLEASE NOTE IT!!!" , accountId);
+        }
+        public static void DepositSuccessfull(double amt)
+        {
+            Console.WriteLine("\n{0} deposited successfully",amt);
+        }
+        public static void WithdrawSuccessfull(double amt)
+        {
+            Console.WriteLine("\n{0} withdrawn successfully", amt);
+        }
+        public static void TransferSuccessfull(double amt)
+        {
+            Console.WriteLine("\n{0} transferred successfully", amt);
         }
         public static void History(Transaction i)
         {

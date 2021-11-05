@@ -1,116 +1,152 @@
 ﻿using System;
 using ATM.Models;
+using System.Linq;
 
 namespace ATM.Services
 {
     public class BankService
     {
         Bank bank;
+        const string DefaultCurrency = "INR";
         public string CreateBank(string name, string address, string branch, string currencyCode)
         {
+            if (string.IsNullOrEmpty(name))
+                throw new Exception("Bank name is not valid!");
+            if (UserDatabase.Banks.Count != 0 & UserDatabase.Banks.Any(p => p.Name == name))
+                throw new Exception("Bank already exists!");
+            if (!Currency.curr.ContainsKey(currencyCode))
+                throw new Exception("Invalid currency code!");
+            
             Bank bank = new Bank(name, address, branch, currencyCode);
             UserDatabase.Banks.Add(bank);
             return bank.Id;
         }
-        public string CreateAccount(string bankId,string name, string password,long phoneNumber,string gender,int choice)
+        public string CreateAccount(string bankId, string name, string password, long phoneNumber, string gender, int choice)
         {
-            string Id="";
-            foreach (var i in UserDatabase.Banks)
-            {
-                if (i.Id == bankId)
+            string Id;
+            bank = FindBank(bankId);
+
+            if (string.IsNullOrEmpty(name))
+                throw new Exception("Name is not valid!");
+            if (bank.UserAccount.Count != 0 & bank.UserAccount.Any(p => p.Name == name) == true)
+                throw new Exception("Account already exists!");
+            if (UserDatabase.Banks.Count != 0 & UserDatabase.Banks.Any(p => p.Id == bankId) != true)
+                throw new Exception("Bank doesn't exists!");
+
+            if (choice == 1)
                 {
-                    bank = i;
+                    Staff s = new Staff(name, phoneNumber, password, gender);
+                    bank.StaffAccount.Add(s);
+                    Id = s.Id;
                 }
-            }
-            if (choice == 1) 
-            {
-                Staff s = new Staff(name,phoneNumber,password,gender);
-                bank.StaffAccount.Add(s);
-                Id = s.Id;
-            }
-            if (choice == 2)
-            {
-                Account a = new Account(name, phoneNumber, password, gender);
-                bank.UserAccount.Add(a);
-                Id = a.Id;
-            }
+            else
+                {
+                    Account a = new Account(name, phoneNumber, password, gender);
+                    bank.UserAccount.Add(a);
+                    Id = a.Id;
+                }
+            
+            
             return Id;
         }
         
         public void Deposit(Account user,double amount, string currCode, string bankId)
         {
-            user.Balance += Math.Round(amount * (double)(Currency.curr[currCode] / Currency.curr["INR"]), 2);
-            Transaction trans = new Transaction(amount, 1, user.Id, user.Id, bankId, bankId);
-            user.Transactions.Add(trans);
+            try
+            {
+                user.Balance += Math.Round(amount * (double)(Currency.curr[currCode] / Currency.curr[DefaultCurrency]), 2);
+                Transaction trans = new Transaction(amount, 1, user.Id, user.Id, bankId, bankId);
+                user.Transactions.Add(trans);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
         public bool Withdraw(Account user, double amount,string bankId)
         {
-            if (user.Balance >= amount)
+            try
             {
-                user.Balance -= amount;
-                Transaction trans = new Transaction(amount, 2, user.Id, user.Id, bankId, bankId);
-                user.Transactions.Add(trans);
-                return true;
+                if (user.Balance >= amount)
+                {
+                    user.Balance -= amount;
+                    Transaction trans = new Transaction(amount, 2, user.Id, user.Id, bankId, bankId);
+                    user.Transactions.Add(trans);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
             return false;
         }
-        public bool Transfer(Account user, double amt, Account rcvr, string fromid, string toid, int choice)
+        public bool Transfer(Account user, double amt, Account rcvr, string fromid, string toid, string choice)
         {
             Bank reciever = null;
-            foreach (var i in UserDatabase.Banks)
+            try
             {
-                if (i.Id == fromid)
+                foreach (var i in UserDatabase.Banks)
                 {
-                    bank = i;
+                    if (i.Id == fromid)
+                    {
+                        bank = i;
+                    }
+                    if (i.Id == toid)
+                    {
+                        reciever = i;
+                    }
                 }
-                if (i.Id == toid)
+                double charge;
+                if (fromid == toid)
                 {
-                    reciever = i;
-                }
-            }
-            double charge;
-            if (fromid == toid)
-            {
-                if (choice == 1)
-                {
-                    charge = DeductCharges(amt, bank.RTGSChargeToSameBank);
+                    if (choice == "1")
+                    {
+                        charge = DeductCharges(amt, bank.RTGSChargeToSameBank);
+                    }
+                    else
+                    {
+                        charge = DeductCharges(amt, bank.IMPSChargeToSameBank);
+                    }
+
                 }
                 else
                 {
-                    charge = DeductCharges(amt, bank.IMPSChargeToSameBank);
+                    if (choice == "1")
+                    {
+                        charge = DeductCharges(amt, bank.RTGSChargeToOtherBanks);
+                    }
+                    else
+                    {
+                        charge = DeductCharges(amt, bank.IMPSChargeToOtherBanks);
+                    }
                 }
-
-            }
-            else
-            {
-                if (choice == 1)
+                if (user.Balance >= amt + charge)
                 {
-                    charge = DeductCharges(amt, bank.RTGSChargeToOtherBanks);
-                }
-                else
-                {
-                    charge = DeductCharges(amt, bank.IMPSChargeToOtherBanks);
+                    //amt-=charge;
+                    //user.Balance -= amt;
+                    user.Balance -= amt + charge;
+
+                    //rcvr.Balance += Math.Round(amt * (double)(Currency.curr[bank.CurrencyCode] / Currency.curr[reciever.CurrencyCode]), 2);
+                    rcvr.Balance += Math.Round(amt * (double)( Currency.curr[reciever.CurrencyCode]/ Currency.curr[bank.CurrencyCode]), 2);
+                    Transaction trans = new Transaction(amt, 2, user.Id, rcvr.Id, fromid, toid);
+                    user.Transactions.Add(trans);
+                    Transaction rcvrtrans = new Transaction(amt, 1, rcvr.Id, user.Id, fromid, toid);
+                    rcvr.Transactions.Add(rcvrtrans);
+                    return true;
                 }
             }
-            if (user.Balance >= amt+charge)
+            catch (Exception ex)
             {
-                //amt-=charge;
-                //user.Balance -= amt;
-                user.Balance -= amt + charge;
-
-                rcvr.Balance += Math.Round(amt * (double)(Currency.curr[bank.CurrencyCode] / Currency.curr[reciever.CurrencyCode]), 2);
-                Transaction trans = new Transaction(amt, 2, user.Id, rcvr.Id, fromid, toid);
-                user.Transactions.Add(trans);
-                Transaction rcvrtrans = new Transaction(amt, 1, rcvr.Id, user.Id, fromid, toid);
-                rcvr.Transactions.Add(rcvrtrans);
-                return true;
+                Console.WriteLine("Error in Transfer: {0}", ex.Message);
             }
             return false;
 
         }
         public double DeductCharges(double amount, double percent)
-        {
-            return (double)Math.Round(amount * ((100 - Convert.ToDouble(percent)) / 100), 2);
+        {        
+            //return (double)Math.Round(amount * ((100 - Convert.ToDouble(percent)) / 100), 2);
+            return (double)Math.Round(amount * (Convert.ToDouble(percent) / 100), 2);
         }
         public double ViewBalance(Account user)
         {
@@ -118,106 +154,124 @@ namespace ATM.Services
         }
         public void ShowTransactions()
         {
-            int counter = 1;
-            foreach (var transaction in Transaction.Transactions)
+            try
             {
-                Console.WriteLine($"{counter}-> {transaction.Key}: {transaction.Value}");
-                counter += 1;
-            }
-        }
-        public Account Login(string BankId, string UserId, string pass)
-        {
-            foreach (var i in UserDatabase.Banks)
-            {
-                if (i.Id == BankId)
+                int counter = 1;
+                foreach (var transaction in Transaction.Transactions)
                 {
-                    bank = i;
+                    Console.WriteLine($"{counter}-> {transaction.Key}: {transaction.Value}");
+                    counter += 1;
                 }
             }
-
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in Show Transactions: {0}", ex.Message);
+            }
+        }
+        public Account Login(string bankId, string userId, string pass)
+        {
             Account user = null;
-            foreach (Account account in bank.UserAccount)
+            
+            try
             {
-                if (account.Id == UserId & account.Password == pass)
+                bank = FindBank(bankId);
+                foreach (Account account in bank.UserAccount)
                 {
-                    user = account;
+                    if (account.Id == userId & account.Password == pass)
+                    {
+                        user = account;
+                    }
                 }
             }
-            return user;
-
-
-        }
-
-        public Staff StaffLogin(string BankId, string UserId, string pass)
-        {
-            foreach (var i in UserDatabase.Banks)
+            catch (Exception ex)
             {
-                if (i.Id == BankId)
-                {
-                    bank = i;
-                }
-            }
-            Staff user = null;
-            foreach (Staff account in bank.StaffAccount)
-            {
-                if (account.Id == UserId & account.Password == pass)
-                    user = account;
-
+                throw new Exception(ex.Message);
             }
             return user;
         }
-        public Account CheckAccount(string BankId, string accountHolder)
+
+        public Staff StaffLogin(string bankId, string userId, string pass)
         {
-            Account user = null;
-            foreach (var i in UserDatabase.Banks)
+            Staff user=null;
+            try
             {
-                if (i.Id == BankId)
+                bank = FindBank(bankId);
+                if (bank == null) 
                 {
-                    bank = i;
+                    throw new Exception("Bank does not exist");
+                }
+                foreach (Staff account in bank.StaffAccount)
+                {
+                    if (account.Id == userId & account.Password == pass)
+                        user = account;
+
                 }
             }
-            foreach (Account account in bank.UserAccount)
+            catch (Exception ex)
             {
-                if (account.Name == accountHolder)
-                    user = account;
+                throw new Exception(ex.Message);
             }
             return user;
         }
-        public Account UpdateChanges(string bankId, string userid)
+        public Account CheckAccount(string bankId, string accountHolder)
         {
-            foreach (var i in UserDatabase.Banks)
+            Account user = null;
+            try
             {
-                if (i.Id == bankId)
+                bank = FindBank(bankId);
+                if (bank == null)
                 {
-                    bank = i;
+                    throw new Exception("Bank does not exist");
+                }
+                foreach (Account account in bank.UserAccount)
+                {
+                    if (account.Name == accountHolder)
+                        user = account;
                 }
             }
-            Account user = null;
-            foreach (Account account in bank.UserAccount)
+            catch (Exception ex)
             {
-                if (account.Id == userid)
-                    user = account;
-
+                throw new Exception(ex.Message);
             }
+            return user;
+        }
+        public Account UpdateChanges(string bankId, string userId)
+        {
+            Account user;
+            try
+            {
+                bank = FindBank(bankId);
+                if (bank == null)
+                {
+                    throw new Exception("Bank does not exist");
+                }
+                user = FindAccount(bank, userId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
             return user;
 
         }
-        public void DeleteAccount(string BankId, string UserId)
+        public void DeleteAccount(string bankId, string userId)
         {
-            foreach (var i in UserDatabase.Banks)
+            Account user;
+            try
             {
-                if (i.Id == BankId)
+                bank = FindBank(bankId);
+                if (bank == null)
                 {
-                    bank = i;
+                    throw new Exception("Bank does not exist");
                 }
+                user = FindAccount(bank, userId);
+                
             }
-            Account user = null;
-            foreach (var i in bank.UserAccount)
+            catch (Exception ex)
             {
-                if (i.Id == UserId)
-                {
-                    user = i;
-                }
+                throw new Exception(ex.Message);
+
             }
             bank.UserAccount.Remove(user);
         }
@@ -241,10 +295,18 @@ namespace ATM.Services
         public Account ViewHistory(string Id)
         {
             Account user = null;
-            foreach (Account account in bank.UserAccount)
+            try
             {
-                if (account.Id == Id)
-                    user = account;
+                foreach (Account account in bank.UserAccount)
+                {
+                    if (account.Id == Id)
+                        user = account;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in ViewHistory: {0}", ex.Message);
 
             }
             return user;
@@ -254,43 +316,84 @@ namespace ATM.Services
             Transaction revert = null;
             Account sender = null;
             Account rcvr = null;
-            foreach (var i in UserDatabase.Banks)
+            try
             {
-                if (i.Id == bankid)
+                foreach (var i in UserDatabase.Banks)
                 {
-                    foreach (var j in i.UserAccount)
+                    if (i.Id == bankid)
                     {
-                        if (j.Id == accountid)
+                        foreach (var j in i.UserAccount)
                         {
-                            foreach (var k in j.Transactions)
+                            if (j.Id == accountid)
                             {
-                                if (k.Id == transid)
+                                foreach (var k in j.Transactions)
                                 {
-                                    revert = k;
-                                    sender = j;
+                                    if (k.Id == transid)
+                                    {
+                                        revert = k;
+                                        sender = j;
 
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-            }
-            foreach (var i in UserDatabase.Banks)
-            {
-                if (i.Id == revert.RecieverBankId)
+                }
+                if((revert==null) || (sender== null))
                 {
-                    foreach (var j in i.UserAccount)
+                    throw new Exception();
+                }
+                foreach (var i in UserDatabase.Banks)
+                {
+                    if (i.Id == revert.RecieverBankId)
                     {
-                        if (j.Id == revert.RecieverAccountId)
+                        foreach (var j in i.UserAccount)
                         {
-                            rcvr = j;
+                            if (j.Id == revert.RecieverAccountId)
+                            {
+                                rcvr = j;
+                            }
                         }
                     }
                 }
             }
-            sender.Balance += revert.Amount;
-            rcvr.Balance -= revert.Amount;
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            try
+            {
+                sender.Balance += revert.Amount;
+                rcvr.Balance -= revert.Amount;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+
+            }
+
+        }
+        public static Bank FindBank(string bankId)
+        {
+            foreach (var i in UserDatabase.Banks)
+            {
+                if (i.Id == bankId)
+                {
+                    return i;
+                }
+            }
+            return null;
+        }
+        public static Account FindAccount(Bank bank, string userId)
+        {
+            foreach (Account account in bank.UserAccount)
+            {
+                if (account.Id == userId )
+                    return account;
+
+            }
+            return null;
         }
     }
 }

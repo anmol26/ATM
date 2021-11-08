@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace ATM.Models
 {
@@ -10,12 +9,12 @@ namespace ATM.Models
         const double DefaultIMPSChargeToSameBank = 5;
         const double DefaultRTGSChargeToOtherBank = 2;
         const double DefaultIMPSChargeToOtherBank = 6;
-        public Bank(string name, string address, string branch, string currencyCode)
+        public Bank(string name, string address, string branch, string currencyCode, string bankId)
         {
             this.Name = name;
             this.Address = address;
             this.Branch = branch;
-            this.Id = GenerateBankId(name);
+            this.Id = bankId;
             this.CurrencyCode = currencyCode;
         }
         public string Name { get; set; }
@@ -30,21 +29,6 @@ namespace ATM.Models
         public double RTGSChargeToOtherBanks = DefaultRTGSChargeToOtherBank;
         public double IMPSChargeToOtherBanks = DefaultIMPSChargeToOtherBank;
         public string CurrencyCode = DefaultCurrency;
-
-        protected string GenerateBankId(string bankName)
-        {
-            string bankId;
-            string currentDate = DateTime.Now.ToString("ddHHmmss");
-            if (bankName.Length >= 3)
-            {
-                bankId = bankName.Substring(0, 3).ToUpper() + currentDate;
-            }
-            else 
-            {
-                bankId = bankName.ToUpper() + currentDate;
-            }
-            return bankId;
-        }
 
     }
 }

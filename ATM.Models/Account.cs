@@ -6,10 +6,10 @@ namespace ATM.Models
     public class Account : User
     {
         const double DefaultBalance = 0;
-        public Account(string name,long phoneNumber,string password,string gender)
+        public Account(string name,long phoneNumber,string password,string gender,string id)
         {
             this.Name = name;
-            this.Id = GenerateAccountId(name);
+            this.Id = id;
             this.IsActive = true;
             this.CurrentDate = DateTime.Now;
             this.PhoneNumber = phoneNumber;

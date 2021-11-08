@@ -8,6 +8,7 @@ namespace ATM.Services
     {
         Bank bank;
         const string DefaultCurrency = "INR";
+        readonly GenerateId idGenerator=new GenerateId();
         public string CreateBank(string name, string address, string branch, string currencyCode)
         {
             if (string.IsNullOrEmpty(name))
@@ -17,7 +18,7 @@ namespace ATM.Services
             if (!Currency.curr.ContainsKey(currencyCode))
                 throw new Exception("Invalid currency code!");
             
-            Bank bank = new Bank(name, address, branch, currencyCode);
+            Bank bank = new Bank(name, address, branch, currencyCode,idGenerator.GenerateBankId(name));
             UserDatabase.Banks.Add(bank);
             return bank.Id;
         }
@@ -35,13 +36,13 @@ namespace ATM.Services
 
             if (choice == 1)
                 {
-                    Staff s = new Staff(name, phoneNumber, password, gender);
+                    Staff s = new Staff(name, phoneNumber, password, gender, idGenerator.GenerateAccountId(name));
                     bank.StaffAccount.Add(s);
                     Id = s.Id;
                 }
             else
                 {
-                    Account a = new Account(name, phoneNumber, password, gender);
+                    Account a = new Account(name, phoneNumber, password, gender, idGenerator.GenerateAccountId(name));
                     bank.UserAccount.Add(a);
                     Id = a.Id;
                 }
@@ -55,7 +56,7 @@ namespace ATM.Services
             try
             {
                 user.Balance += Math.Round(amount * (double)(Currency.curr[currCode] / Currency.curr[DefaultCurrency]), 2);
-                Transaction trans = new Transaction(amount, 1, user.Id, user.Id, bankId, bankId);
+                Transaction trans = new Transaction(amount, 1, user.Id, user.Id, bankId, bankId,idGenerator.GenerateTransactionId(bankId,user.Id));
                 user.Transactions.Add(trans);
             }
             catch (Exception ex)
@@ -70,7 +71,7 @@ namespace ATM.Services
                 if (user.Balance >= amount)
                 {
                     user.Balance -= amount;
-                    Transaction trans = new Transaction(amount, 2, user.Id, user.Id, bankId, bankId);
+                    Transaction trans = new Transaction(amount, 2, user.Id, user.Id, bankId, bankId, idGenerator.GenerateTransactionId(bankId, user.Id));
                     user.Transactions.Add(trans);
                     return true;
                 }
@@ -127,11 +128,10 @@ namespace ATM.Services
                     //user.Balance -= amt;
                     user.Balance -= amt + charge;
 
-                    //rcvr.Balance += Math.Round(amt * (double)(Currency.curr[bank.CurrencyCode] / Currency.curr[reciever.CurrencyCode]), 2);
-                    rcvr.Balance += Math.Round(amt * (double)( Currency.curr[reciever.CurrencyCode]/ Currency.curr[bank.CurrencyCode]), 2);
-                    Transaction trans = new Transaction(amt, 2, user.Id, rcvr.Id, fromid, toid);
+                    rcvr.Balance += Math.Round(amt * (double)(Currency.curr[bank.CurrencyCode] / Currency.curr[reciever.CurrencyCode]), 2);
+                    Transaction trans = new Transaction(amt, 2, user.Id, rcvr.Id, fromid, toid, idGenerator.GenerateTransactionId(fromid, user.Id));
                     user.Transactions.Add(trans);
-                    Transaction rcvrtrans = new Transaction(amt, 1, rcvr.Id, user.Id, fromid, toid);
+                    Transaction rcvrtrans = new Transaction(amt, 1, rcvr.Id, user.Id, fromid, toid, idGenerator.GenerateTransactionId(toid, rcvr.Id));
                     rcvr.Transactions.Add(rcvrtrans);
                     return true;
                 }
@@ -152,22 +152,6 @@ namespace ATM.Services
         {
             return user.Balance;
         }
-        public void ShowTransactions()
-        {
-            try
-            {
-                int counter = 1;
-                foreach (var transaction in Transaction.Transactions)
-                {
-                    Console.WriteLine($"{counter}-> {transaction.Key}: {transaction.Value}");
-                    counter += 1;
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error in Show Transactions: {0}", ex.Message);
-            }
-        }
         public Account Login(string bankId, string userId, string pass)
         {
             Account user = null;
@@ -175,12 +159,9 @@ namespace ATM.Services
             try
             {
                 bank = FindBank(bankId);
-                foreach (Account account in bank.UserAccount)
+                foreach (var account in bank.UserAccount.Where(account => account.Id == userId & account.Password == pass))
                 {
-                    if (account.Id == userId & account.Password == pass)
-                    {
-                        user = account;
-                    }
+                    user = account;
                 }
             }
             catch (Exception ex)
@@ -200,11 +181,10 @@ namespace ATM.Services
                 {
                     throw new Exception("Bank does not exist");
                 }
-                foreach (Staff account in bank.StaffAccount)
-                {
-                    if (account.Id == userId & account.Password == pass)
-                        user = account;
 
+                foreach (var account in bank.StaffAccount.Where(account => account.Id == userId & account.Password == pass))
+                {
+                    user = account;
                 }
             }
             catch (Exception ex)
@@ -223,10 +203,10 @@ namespace ATM.Services
                 {
                     throw new Exception("Bank does not exist");
                 }
-                foreach (Account account in bank.UserAccount)
+
+                foreach (var account in bank.UserAccount.Where(account => account.Name == accountHolder))
                 {
-                    if (account.Name == accountHolder)
-                        user = account;
+                    user = account;
                 }
             }
             catch (Exception ex)
@@ -297,11 +277,9 @@ namespace ATM.Services
             Account user = null;
             try
             {
-                foreach (Account account in bank.UserAccount)
+                foreach (var account in bank.UserAccount.Where(account => account.Id == Id))
                 {
-                    if (account.Id == Id)
-                        user = account;
-
+                    user = account;
                 }
             }
             catch (Exception ex)
@@ -376,22 +354,18 @@ namespace ATM.Services
         }
         public static Bank FindBank(string bankId)
         {
-            foreach (var i in UserDatabase.Banks)
+            foreach (var i in UserDatabase.Banks.Where(i => i.Id == bankId))
             {
-                if (i.Id == bankId)
-                {
-                    return i;
-                }
+                return i;
             }
+
             return null;
         }
         public static Account FindAccount(Bank bank, string userId)
         {
-            foreach (Account account in bank.UserAccount)
+            foreach (var account in bank.UserAccount.Where(account => account.Id == userId))
             {
-                if (account.Id == userId )
-                    return account;
-
+                return account;
             }
             return null;
         }

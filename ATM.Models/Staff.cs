@@ -1,4 +1,5 @@
-﻿
+﻿using System;
+
 namespace ATM.Models
 {
     public class Staff : User
@@ -8,6 +9,8 @@ namespace ATM.Models
             this.Name = name;
             this.PhoneNumber = number;
             this.Password = password;
+            this.IsActive = true;
+            this.CurrentDate = DateTime.Now;
             this.Gender = gender;
             this.Id = id;
         }

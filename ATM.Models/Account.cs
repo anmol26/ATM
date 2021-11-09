@@ -15,9 +15,10 @@ namespace ATM.Models
             this.PhoneNumber = phoneNumber;
             this.Gender = gender;
             this.Password = password;
+            Transactions= new List<Transaction>();
         }
         public double Balance = DefaultBalance;
-        public List<Transaction> Transactions = new List<Transaction>();
-
+        //public List<Transaction> Transactions = new List<Transaction>();
+        public List<Transaction> Transactions { get; set; }
     }
 }

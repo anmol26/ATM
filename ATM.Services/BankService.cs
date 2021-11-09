@@ -159,6 +159,10 @@ namespace ATM.Services
             try
             {
                 bank = FindBank(bankId);
+                if (bank == null) 
+                { 
+                    throw new Exception("Bank does not exist");
+                }
                 foreach (var account in bank.UserAccount.Where(account => account.Id == userId & account.Password == pass))
                 {
                     user = account;

@@ -18,7 +18,6 @@ namespace ATM.Models
             Transactions= new List<Transaction>();
         }
         public double Balance = DefaultBalance;
-        //public List<Transaction> Transactions = new List<Transaction>();
         public List<Transaction> Transactions { get; set; }
     }
 }

@@ -23,21 +23,69 @@ namespace ATM.Models
         public string Id { get; set; }
         public string Branch { get; set; }
         public string Address { get; set; }
-
-        //public List<Account> UserAccount = new List<Account>();
         public List<Account> UserAccount { get; set; }
         public List<Staff> StaffAccount { get; set; }
-        //public List<Staff> StaffAccount = new List<Staff>();
 
-        public double RTGSChargeToSameBank = DefaultRTGSChargeToSameBank;
-        
-        public double IMPSChargeToSameBank = DefaultIMPSChargeToSameBank;
-        
-        public double RTGSChargeToOtherBanks = DefaultRTGSChargeToOtherBank;
-        
-        public double IMPSChargeToOtherBanks = DefaultIMPSChargeToOtherBank;
-        
-        public string CurrencyCode = DefaultCurrency;
+        public double sameRTGS = DefaultRTGSChargeToSameBank;
+        public double sameIMPS = DefaultIMPSChargeToSameBank;
+        public double diffRTGS = DefaultRTGSChargeToOtherBank;
+        public double diffIMPS = DefaultIMPSChargeToOtherBank;
+        public string currencyCode = DefaultCurrency;
 
+        public string CurrencyCode 
+        {
+            get
+            {
+                return currencyCode;
+            }
+            set
+            {
+                currencyCode = value;
+            }
+        }
+        public double SameRTGS
+        {
+            get
+            {
+                return sameRTGS;
+            }
+            set
+            {
+                sameRTGS = value;
+            }
+        }
+        public double DiffRTGS
+        {
+            get
+            {
+                return diffRTGS;
+            }
+            set
+            {
+                diffRTGS = value;
+            }
+        }
+        public double SameIMPS
+        {
+            get
+            {
+                return sameIMPS;
+            }
+            set
+            {
+                sameIMPS = value;
+            }
+        }
+        public double DiffIMPS
+        {
+            get
+            {
+                return diffIMPS;
+            }
+            set
+            {
+                diffIMPS = value;
+            }
+        }
     }
 }

@@ -103,11 +103,11 @@ namespace ATM.Services
                 {
                     if (choice == "1")
                     {
-                        charge = DeductCharges(amt, bank.RTGSChargeToSameBank);
+                        charge = DeductCharges(amt, bank.SameRTGS);
                     }
                     else
                     {
-                        charge = DeductCharges(amt, bank.IMPSChargeToSameBank);
+                        charge = DeductCharges(amt, bank.SameIMPS);
                     }
 
                 }
@@ -115,11 +115,11 @@ namespace ATM.Services
                 {
                     if (choice == "1")
                     {
-                        charge = DeductCharges(amt, bank.RTGSChargeToOtherBanks);
+                        charge = DeductCharges(amt, bank.DiffRTGS);
                     }
                     else
                     {
-                        charge = DeductCharges(amt, bank.IMPSChargeToOtherBanks);
+                        charge = DeductCharges(amt, bank.DiffIMPS);
                     }
                 }
                 if (user.Balance >= amt + charge)
@@ -267,13 +267,13 @@ namespace ATM.Services
         {
             if (choice == 1)
             {
-                bank.RTGSChargeToSameBank = rtgs;
-                bank.IMPSChargeToSameBank = imps;
+                bank.SameRTGS = rtgs;
+                bank.SameIMPS = imps;
             }
             else if(choice==2)
             {
-                bank.RTGSChargeToOtherBanks = rtgs;
-                bank.IMPSChargeToOtherBanks = imps;
+                bank.DiffRTGS = rtgs;
+                bank.DiffIMPS = imps;
             }
         }
         public Account ViewHistory(string Id)

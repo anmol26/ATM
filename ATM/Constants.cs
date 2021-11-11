@@ -77,6 +77,8 @@ namespace ATM.CLI
                 "Press 5, \t---\t To show transaction history \n" +
                 "Press 6, \t---\t To Revert Transaction\n" +
                 "Press 7, \t---\t To Login Another Account\n" +
+                "Press 8, \t---\t To Print all the Staff Name\n"+
+                "Press 9, \t---\t To Print all the Account Holder Name\n" +
                 "Press 0, \t---\t To log out \n" +
                 "*-----------*-----------*-----------*-----------*\n";
             

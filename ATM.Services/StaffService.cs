@@ -1,5 +1,6 @@
 ﻿using System;
 using ATM.Models;
+using System.IO;
 using System.Linq;
 
 namespace ATM.Services
@@ -207,6 +208,40 @@ namespace ATM.Services
 
             }
 
+        }
+        public void PrintList(Bank bank,int a)
+        {
+            try
+            {
+                if (a == 1)
+                {
+                    string fileName = @"C:\Users\dell\OneDrive\Desktop\StaffList.txt";
+                    using (StreamWriter file = new StreamWriter(fileName, append: true))
+                    {
+                        foreach (Staff s in bank.StaffAccount)
+                        {
+                            file.WriteLine(s.Name);
+                        }
+                        file.WriteLine("\n-----------------------------------------------------------------\n\n");
+                    }
+                }
+                else 
+                {
+                    string fileName = @"C:\Users\dell\OneDrive\Desktop\AccountHolderList.txt";
+                    using (StreamWriter file = new StreamWriter(fileName, append: true))
+                    {
+                        foreach (Account acc in bank.UserAccount)
+                        {
+                            file.WriteLine(acc.Name);
+                        }
+                        file.WriteLine("\n-----------------------------------------------------------------\n\n");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

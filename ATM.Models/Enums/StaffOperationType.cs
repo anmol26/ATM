@@ -9,6 +9,9 @@
         UpdateServiceCharges,
         ShowTransactionHistory,
         RevertTransaction,
-        LoginPage
+        LoginPage,
+        ShowStaffMemberList,
+        ShowCustomerMemberList,
+        
     }
 }

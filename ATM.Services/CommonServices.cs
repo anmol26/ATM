@@ -1,5 +1,6 @@
 ﻿using System;
 using ATM.Models;
+using System.IO;
 using System.Linq;
 
 namespace ATM.Services
@@ -92,6 +93,30 @@ namespace ATM.Services
                 return account;
             }
             return null;
+        }
+        public void WriteHistory(Transaction i)
+        {
+            try
+            {
+                string fileName = @"C:\Users\dell\OneDrive\Desktop\TransactionHistory.txt";
+                using (StreamWriter file = new StreamWriter(fileName, append: true))
+                {
+                    file.WriteLine("Transaction ID:" + i.Id);
+                    file.WriteLine(i.Amount);
+                    file.WriteLine(i.Type + " to/from your account ");
+                    if (i.SenderAccountId != i.RecieverAccountId)
+                    {
+                        file.WriteLine("From " + i.SenderAccountId + " to " + i.RecieverAccountId);
+                    }
+                    file.WriteLine(i.CurrentDate.ToString());
+                    file.WriteLine("\n-----------------------------------------------------------------\n\n");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
         }
     }
 }

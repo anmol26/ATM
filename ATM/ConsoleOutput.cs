@@ -1,10 +1,12 @@
 ﻿using System;
+using System.IO;
 using ATM.Models;
 
 namespace ATM.CLI
 {
-    public static class ConsoleOutput
+    public class ConsoleOutput
     {
+
         public static void Welcome()
         {
             Console.WriteLine(Constants.Messages.Welcome);
@@ -87,6 +89,7 @@ namespace ATM.CLI
                 Console.WriteLine("From " + i.SenderAccountId + " to " + i.RecieverAccountId);
             }
             Console.WriteLine(i.CurrentDate.ToString());
+
         }
 
     }

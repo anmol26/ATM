@@ -2,7 +2,7 @@
 
 namespace ATM.Services
 {
-    public class GenerateId
+    public class CommonServices
     {
         const string DefaultPrefix = "TXN";
         const string DefaultTimeFormat = "ddHHmmss";

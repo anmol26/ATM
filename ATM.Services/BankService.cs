@@ -8,7 +8,7 @@ namespace ATM.Services
     {
         Bank bank;
         const string DefaultCurrency = "INR";
-        readonly GenerateId idGenerator=new GenerateId();
+        readonly CommonServices idGenerator=new CommonServices();
         public string CreateBank(string name, string address, string branch, string currencyCode)
         {
             if (string.IsNullOrEmpty(name))

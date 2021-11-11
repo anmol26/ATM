@@ -14,7 +14,7 @@ namespace ATM.Services
         {
             try
             {
-                bank = CommonServices.FindBank(bankId);
+                bank = FindBank(bankId);
                 if (bank == null)
                 {
                     throw new Exception("Bank does not exist");
@@ -76,7 +76,7 @@ namespace ATM.Services
             string txnId = DefaultPrefix + bankId + accountId + currentDate;
             return txnId;
         }
-        public static Bank FindBank(string bankId)
+        public Bank FindBank(string bankId)
         {
             foreach (var i in UserDatabase.Banks.Where(i => i.Id == bankId))
             {
@@ -85,7 +85,7 @@ namespace ATM.Services
 
             return null;
         }
-        public static Account FindAccount(Bank bank, string userId)
+        public Account FindAccount(Bank bank, string userId)
         {
             foreach (var account in bank.UserAccount.Where(account => account.Id == userId))
             {

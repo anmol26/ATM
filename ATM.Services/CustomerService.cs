@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using ATM.Models;
-using System.Linq;
 
 namespace ATM.Services
 {

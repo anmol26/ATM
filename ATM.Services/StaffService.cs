@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using ATM.Models;
 using System.Linq;
 
@@ -26,7 +24,7 @@ namespace ATM.Services
         public string CreateAccount(string bankId, string name, string password, long phoneNumber, string gender, int choice)
         {
             string Id;
-            bank = CommonServices.FindBank(bankId);
+            bank = commonServices.FindBank(bankId);
 
             if (string.IsNullOrEmpty(name))
                 throw new Exception("Name is not valid!");
@@ -56,7 +54,7 @@ namespace ATM.Services
             Account user = null;
             try
             {
-                bank = CommonServices.FindBank(bankId);
+                bank = commonServices.FindBank(bankId);
                 if (bank == null)
                 {
                     throw new Exception("Bank does not exist");
@@ -78,12 +76,12 @@ namespace ATM.Services
             Account user;
             try
             {
-                bank = CommonServices.FindBank(bankId);
+                bank = commonServices.FindBank(bankId);
                 if (bank == null)
                 {
                     throw new Exception("Bank does not exist");
                 }
-                user = CommonServices.FindAccount(bank, userId);
+                user = commonServices.FindAccount(bank, userId);
             }
             catch (Exception ex)
             {
@@ -98,12 +96,12 @@ namespace ATM.Services
             Account user;
             try
             {
-                bank = CommonServices.FindBank(bankId);
+                bank = commonServices.FindBank(bankId);
                 if (bank == null)
                 {
                     throw new Exception("Bank does not exist");
                 }
-                user = CommonServices.FindAccount(bank, userId);
+                user = commonServices.FindAccount(bank, userId);
 
             }
             catch (Exception ex)

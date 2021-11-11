@@ -112,30 +112,5 @@ namespace ATM.Services
         {
             return user.Balance;
         }
-        public Account Login(string bankId, string userId, string pass)
-        {
-            Account user = null;
-
-            try
-            {
-                bank = CommonServices.FindBank(bankId);
-                if (bank == null)
-                {
-                    throw new Exception("Bank does not exist");
-                }
-                foreach (var account in bank.UserAccount.Where(account => account.Id == userId & account.Password == pass))
-                {
-                    user = account;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-            return user;
-        }
-
-
-
     }
 }

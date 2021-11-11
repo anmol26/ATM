@@ -9,6 +9,39 @@ namespace ATM.Services
         Bank bank;
         const string DefaultPrefix = "TXN";
         const string DefaultTimeFormat = "ddHHmmss";
+
+        public dynamic Login(string bankId, string userId, string pass, string choice)
+        {
+            try
+            {
+                bank = CommonServices.FindBank(bankId);
+                if (bank == null)
+                {
+                    throw new Exception("Bank does not exist");
+                }
+                if (choice == "1")
+                {
+                    foreach (var account in bank.StaffAccount.Where(account => account.Id == userId & account.Password == pass))
+                    {
+                        return account;
+                    }
+                    
+                }
+                
+                else
+                {
+                    foreach (var account in bank.UserAccount.Where(account => account.Id == userId & account.Password == pass))
+                    {
+                        return account;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return null;
+        }
         public string GenerateBankId(string bankName)
         {
             string bankId;

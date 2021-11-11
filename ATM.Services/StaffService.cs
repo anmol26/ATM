@@ -51,28 +51,6 @@ namespace ATM.Services
 
             return Id;
         }
-        public Staff StaffLogin(string bankId, string userId, string pass)
-        {
-            Staff user = null;
-            try
-            {
-                bank = CommonServices.FindBank(bankId);
-                if (bank == null)
-                {
-                    throw new Exception("Bank does not exist");
-                }
-
-                foreach (var account in bank.StaffAccount.Where(account => account.Id == userId & account.Password == pass))
-                {
-                    user = account;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-            return user;
-        }
         public Account CheckAccount(string bankId, string accountHolder)
         {
             Account user = null;

@@ -14,6 +14,7 @@ namespace ATM.CLI
 
             StaffService staffMember = new StaffService();
             CustomerService accountHolder = new CustomerService();
+            CommonServices commonServices = new CommonServices();
 
             Console.WriteLine(Constants.Messages.SetupFirstBank);
 
@@ -97,7 +98,11 @@ namespace ATM.CLI
                 string pass = ConsoleInput.Password();
                 try
                 {
-                    bankstaff = staffMember.StaffLogin(bId, aId, pass);
+                    bankstaff = commonServices.Login(bId, aId, pass,"1");
+                    if (bankstaff == null) 
+                    {
+                        throw new Exception("Account does not exist");
+                    }
                 }
                 catch(Exception ex) 
                 {
@@ -368,7 +373,7 @@ namespace ATM.CLI
                 string pass = ConsoleInput.Password();
                 try
                 {
-                    bankAccount = accountHolder.Login(bId, aId, pass);
+                    bankAccount = commonServices.Login(bId, aId, pass,"2");
                 }
                 catch 
                 {

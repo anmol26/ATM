@@ -6,17 +6,19 @@ namespace ATM.CLI
         public static class Messages
         {
             public const string AccountDoesNotExist = "\nAccount does not exist";
+            public const string AccountHolderListSuccessFull = "Account holder list printed successfully";
             public const string AccountId="\nPlease Enter AccouontId:";
             public const string AccountSuccessfullCreation = "\nAccount Created Successfully!!\n";
             public const string AccountSuccessfullDeletion = "\nAccount deleted successfully!!\n";
             public const string AccountUpdateChoice = "\nWhat do you want to update!\n1.Name\n2.Phone Number\n3.Password\n";
+            public const string Address = "\nEnter the bank Address";
             public const string AdminName = "\nPlease enter Admin name";
             public const string AdminPass = "\nPlease enter Admin password";
-            public const string Address = "\nEnter the bank Address";
             public const string Amount = "\nPlease Enter the Amount";
             public const string Balance = "\nYour current Balance is: ";
             public const string BankId = "\nPlease Enter BankId:";
             public const string BankName = "\nEnter the bank name";
+            public const string BankNotExist = "\nBank not Exist!";
             public const string BankSuccessfullCreation = "\nNew Bank Created Successfully!!\n";
             public const string BranchName = "\nPlease enter the Branch name";
             public const string CreateAccountChoice = "\nCreate new account for: \n1.Staff 2.Account Holder";
@@ -47,10 +49,14 @@ namespace ATM.CLI
             public const string SenderInsufficientBalance = "\nYou do not have enough balance to transfer money";
             public const string ServiceChargeType = "\nSelect type:\n1.RTGS\n2.IMPS";
             public const string ServiceChargeUpdateChoice="Update Service Charges in: \n1.Within Same bank   2.For Different Bank  ";
+            public const string SetupFirstBank="\nPlease setup a bank first";
+            public const string StaffListSuccessFull= "Staff member list printed successfully";
+            public const string TransactionListSuccessFull = "Transaction list printed successfully";
             public const string StaffName = "\nPlease enter StaffName";
             public const string SuccessfullLogin = "\nLogin Successfull!";
-            public const string SetupFirstBank="\nPlease setup a bank first";
             public const string TransactionHistory = "\nTransaction History:-- \n<--------*-----*------->\n";
+            public const string TransactionHistoryChoice = "\nPress \n1. Show result on console \n2. Print the passbook";
+            public const string StaffTransactionHistoryChoice = "\nPress \n1. Show result on console \n2. Print the passbook by Accountid \n3. Print Transaction history of all account";
             public const string TransferToAccountHolderName = "\nEnter Account Holder name to Transfer:";
             public const string UnderConstruction = "\nCurrently application is under construction";
             public const string UpdateCurrency = "\nPlease Enter currency to add";
@@ -79,6 +85,9 @@ namespace ATM.CLI
                 "Press 7, \t---\t To Login Another Account\n" +
                 "Press 8, \t---\t To Print all the Staff Name\n"+
                 "Press 9, \t---\t To Print all the Account Holder Name\n" +
+                "Press 10,\t---\t To Print all the Account's Transaction History\n"+
+                "Press 11,\t---\t To Transafer Money\n" +
+                "Press 12,\t---\t To Deposit Money\n" +
                 "Press 0, \t---\t To log out \n" +
                 "*-----------*-----------*-----------*-----------*\n";
             

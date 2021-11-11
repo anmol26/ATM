@@ -2,7 +2,6 @@
 using ATM.Models;
 using ATM.Services;
 using ATM.Models.Enums;
-using System.IO;
 
 
 namespace ATM.CLI
@@ -102,7 +101,7 @@ namespace ATM.CLI
                     bankstaff = commonServices.Login(bId, aId, pass,"1");
                     if (bankstaff == null) 
                     {
-                        throw new Exception("Account does not exist");
+                        throw new Exception(Constants.Messages.AccountDoesNotExist);
                     }
                 }
                 catch(Exception ex) 
@@ -319,7 +318,7 @@ namespace ATM.CLI
                         Console.WriteLine(Constants.Messages.AccountId);
                         string accountId = Console.ReadLine();
                         bankAccount = staffMember.ViewHistory(accountId);
-                        Console.WriteLine("\nPress \n1. Show result on console \n2. Print the passbook");
+                        Console.WriteLine(Constants.Messages.StaffTransactionHistoryChoice);
                         string choice = Console.ReadLine();
                         if (choice == "1")
                         {
@@ -334,7 +333,7 @@ namespace ATM.CLI
                             }
 
                         }
-                        else
+                        else if (choice == "2")
                         {
                             if (bankAccount == null)
                             {
@@ -354,6 +353,11 @@ namespace ATM.CLI
                                 }
                             }
 
+                        }
+                        else
+                        {
+                            Console.Clear();
+                            ConsoleOutput.InValidOption();
                         }
                     }
                     else if (staffOperation == StaffOperationType.RevertTransaction)
@@ -380,35 +384,130 @@ namespace ATM.CLI
                     }
                     else if (staffOperation == StaffOperationType.ShowStaffMemberList)
                     {
-                        Bank bank=null;
+                        Bank bank;
                         Console.WriteLine(Constants.Messages.BankId);
                         string bankId = Console.ReadLine();
                         bank = commonServices.FindBank(bankId);
                         if (bank == null)
                         {
-                            Console.WriteLine("Bank does not exist");
+                            Console.WriteLine(Constants.Messages.BankNotExist);
                         }
                         else
                         {
-                            staffMember.PrintList(bank,1);
-                            Console.WriteLine("Staff member list printed successfully");
+                            staffMember.PrintList(bank, 1);
+                            Console.WriteLine(Constants.Messages.StaffListSuccessFull);
                         }
                     }
-                    else if (staffOperation == StaffOperationType.ShowCustomerMemberList) 
+                    else if (staffOperation == StaffOperationType.ShowCustomerMemberList)
                     {
-                        Bank bank = null;
+                        Bank bank;
                         Console.WriteLine(Constants.Messages.BankId);
                         string bankId = Console.ReadLine();
                         bank = commonServices.FindBank(bankId);
                         if (bank == null)
                         {
-                            Console.WriteLine("Bank does not exist");
+                            Console.WriteLine(Constants.Messages.BankNotExist);
                         }
                         else
                         {
-                            staffMember.PrintList(bank,2);
-                            Console.WriteLine("Account Holder list printed successfully");
+                            staffMember.PrintList(bank, 2);
+                            Console.WriteLine(Constants.Messages.AccountHolderListSuccessFull);
                         }
+                    }
+                    else if (staffOperation == StaffOperationType.PrintAllAccountTransaction)
+                    {
+                        Console.WriteLine(Constants.Messages.BankId);
+                        string bankId = Console.ReadLine();
+                        try
+                        {
+                            staffMember.WriteAllAccountHistory(bankId);
+                            Console.WriteLine("All Account Holder's Transaction history printed successfully");
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
+
+                    }
+                    else if (staffOperation == StaffOperationType.TransferMoney)
+                    {
+                        Console.Clear();
+                        Account reciever;
+                        Bank bank;
+                        Console.WriteLine(Constants.Messages.AccountId);
+                        accountID = Console.ReadLine();
+                        Console.WriteLine(Constants.Messages.SenderBankId);
+                        string sbankId = Console.ReadLine();
+                        Console.WriteLine(Constants.Messages.ReceiverBankId);
+                        string ToBankId = Console.ReadLine();
+                        Console.WriteLine(Constants.Messages.ServiceChargeType);
+                        string choice = Console.ReadLine();
+                        Console.WriteLine(Constants.Messages.TransferToAccountHolderName);
+                        string hName = Console.ReadLine();
+                        Console.WriteLine();
+                        try
+                        {   bank = commonServices.FindBank(sbankId);
+                            bankAccount=commonServices.FindAccount(bank,accountID);
+                            reciever = staffMember.CheckAccount(ToBankId, hName);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                            goto StaffOperations;
+                        }
+                        if (reciever != null)
+                        {
+                            Console.WriteLine(Constants.Messages.Amount);
+                            double amtToTransfer = Convert.ToDouble(Console.ReadLine());
+                            if (accountHolder.Transfer(bankAccount, amtToTransfer, reciever, sbankId, ToBankId, choice))
+                            {
+                                ConsoleOutput.TransferSuccessfull(amtToTransfer);
+                            }
+                            else
+                            {
+                                Console.WriteLine(Constants.Messages.InvalidDetail);
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine(Constants.Messages.AccountDoesNotExist);
+                        }
+
+                    }
+                    else if (staffOperation == StaffOperationType.DepositMoney)
+                    {
+                        Console.Clear();
+                        double amt;
+                        string currCode, bankId;
+                        Bank bank;
+                        try
+                        {
+                            amt = Convert.ToDouble(ConsoleInput.DepositAmount());
+                            Console.WriteLine(Constants.Messages.CurrencyCode);
+                            currCode = Console.ReadLine();
+                            Console.WriteLine(Constants.Messages.BankId);
+                            bankId = Console.ReadLine();
+                            Console.WriteLine(Constants.Messages.AccountId);
+                            accountID = Console.ReadLine();
+                            bank = commonServices.FindBank(bankId);
+                            bankAccount = commonServices.FindAccount(bank,accountID);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                            goto StaffOperations;
+                        }
+                        try
+                        {
+                            accountHolder.Deposit(bankAccount, amt, currCode, bankId);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                            goto StaffOperations;
+                        }
+                        ConsoleOutput.DepositSuccessfull(amt);
+
                     }
                     else
                     {
@@ -560,7 +659,7 @@ namespace ATM.CLI
                         else if (customerOperation == CustomerOperationType.TransactionHistory)
                         {
                             Console.Clear();
-                            Console.WriteLine("\nPress \n1. Show result on console \n2. Print the passbook");
+                            Console.WriteLine(Constants.Messages.TransactionHistoryChoice);
                             string choice = Console.ReadLine();
                             if (choice == "1")
                             {
@@ -570,12 +669,18 @@ namespace ATM.CLI
                                     ConsoleOutput.History(i);
                                 }
                             }
-                            else
+                            else if(choice=="2")
                             {
                                 foreach (var i in bankAccount.Transactions)
                                 {
                                     commonServices.WriteHistory(i);
+                                    Console.WriteLine(Constants.Messages.TransactionListSuccessFull);
                                 }
+                            }
+                            else
+                            {
+                                Console.Clear();
+                                ConsoleOutput.InValidOption();
                             }
                         }
                         else if (customerOperation == CustomerOperationType.Balance)

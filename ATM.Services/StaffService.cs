@@ -218,6 +218,7 @@ namespace ATM.Services
                     string fileName = @"C:\Users\dell\OneDrive\Desktop\StaffList.txt";
                     using (StreamWriter file = new StreamWriter(fileName, append: true))
                     {
+                        file.WriteLine();
                         foreach (Staff s in bank.StaffAccount)
                         {
                             file.WriteLine(s.Name);
@@ -230,6 +231,7 @@ namespace ATM.Services
                     string fileName = @"C:\Users\dell\OneDrive\Desktop\AccountHolderList.txt";
                     using (StreamWriter file = new StreamWriter(fileName, append: true))
                     {
+                        file.WriteLine();
                         foreach (Account acc in bank.UserAccount)
                         {
                             file.WriteLine(acc.Name);
@@ -241,6 +243,47 @@ namespace ATM.Services
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
+            }
+        }
+        public void WriteAllAccountHistory(string bankId)
+        {
+            try
+            {
+                string fileName = @"C:\Users\dell\OneDrive\Desktop\TransactionHistory.txt";
+                using (StreamWriter file = new StreamWriter(fileName, append: true))
+                {
+                    file.WriteLine();
+                    Bank bank = commonServices.FindBank(bankId);
+                    if (bank == null)
+                    {
+                        throw new Exception("Bank does not exist");
+                    }
+                    foreach (var account in bank.UserAccount)
+                    {
+                        if (account == null)
+                        {
+                            throw new Exception("Account does not exist");
+                        }
+                        foreach (var transaction in account.Transactions)
+                        {
+                            file.WriteLine(account.Name);
+                            file.WriteLine();
+                            file.WriteLine("Transaction ID:" + transaction.Id);
+                            file.WriteLine(transaction.Amount);
+                            file.WriteLine(transaction.Type + " to/from your account ");
+                            if (transaction.SenderAccountId != transaction.RecieverAccountId)
+                            {
+                                file.WriteLine("From " + transaction.SenderAccountId + " to " + transaction.RecieverAccountId);
+                            }
+                            file.WriteLine(transaction.CurrentDate.ToString());
+                        }
+                        file.WriteLine("\n-----------------------------------------------------------------\n\n");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
     }

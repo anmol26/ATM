@@ -12,6 +12,8 @@
         LoginPage,
         ShowStaffMemberList,
         ShowCustomerMemberList,
-        
+        PrintAllAccountTransaction,
+        TransferMoney,
+        DepositMoney
     }
 }

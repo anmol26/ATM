@@ -193,12 +193,18 @@ namespace ATM.CLI
                                 case 1:
                                     Console.WriteLine(Constants.Messages.Name);
                                     bankAccount.Name = Console.ReadLine();
+                                    string query1 = $"Update Account set Name=N'{bankAccount.Name}' where id=N'{bankAccount.Id}' ";
+                                    SqlCommand command1 = new SqlCommand(query1, conn);
+                                    command1.ExecuteNonQuery();
                                     break;
                                 case 2:
                                     Console.WriteLine(Constants.Messages.PhoneNumber);
                                     try
                                     {
                                         bankAccount.PhoneNumber = Convert.ToInt32(Console.ReadLine());
+                                        string query2 = $"Update Account set PhoneNumber=N'{bankAccount.PhoneNumber}' where id=N'{bankAccount.Id}' ";
+                                        SqlCommand command2 = new SqlCommand(query2, conn);
+                                        command2.ExecuteNonQuery();
                                     }
                                     catch (Exception ex)
                                     {
@@ -208,6 +214,9 @@ namespace ATM.CLI
                                     break;
                                 case 3:
                                     bankAccount.Password = ConsoleInput.Password();
+                                    string query3 = $"Update Account set Password=N'{bankAccount.Password}' where id=N'{bankAccount.Id}' ";
+                                    SqlCommand command3 = new SqlCommand(query3, conn);
+                                    command3.ExecuteNonQuery();
                                     break;
                                 default:
                                     ConsoleOutput.InValidOption();
@@ -232,7 +241,7 @@ namespace ATM.CLI
                             }
                             try
                             {
-                                staffMember.DeleteAccount(bankId, userId);
+                                staffMember.DeleteAccount(conn, bankId, userId);
                             }
                             catch (Exception ex)
                             {

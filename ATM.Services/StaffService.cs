@@ -106,6 +106,7 @@ namespace ATM.Services
                     throw new Exception("Bank does not exist");
                 }
                 user = commonServices.FindAccount(bank, userId);
+
             }
             catch (Exception ex)
             {
@@ -115,7 +116,7 @@ namespace ATM.Services
             return user;
 
         }
-        public void DeleteAccount(string bankId, string userId)
+        public void DeleteAccount(SqlConnection conn ,string bankId, string userId)
         {
             Account user;
             try
@@ -134,6 +135,9 @@ namespace ATM.Services
 
             }
             Library.AccountList.Remove(user);
+            string query = $"Delete from Account where id=N'{user.Id}' ";
+            SqlCommand commandd = new SqlCommand(query, conn);
+            commandd.ExecuteNonQuery();
         }
         public void AddCurrency(string code, double rate)
         {
@@ -184,7 +188,7 @@ namespace ATM.Services
                         {
                             if (j.Id == accountid)
                             {
-                                foreach (var k in j.Transactions)
+                                foreach (var k in Library.TransactionList)
                                 {
                                     if (k.Id == transid)
                                     {

@@ -7,31 +7,26 @@ namespace ATM.Services
 {
     public class CommonServices
     {
-        Bank bank;
+        //Bank bank;
         const string DefaultPrefix = "TXN";
         const string DefaultTimeFormat = "ddHHmmss";
 
-        public dynamic Login(string bankId, string userId, string pass, string choice)
+        public dynamic Login(string userId, string pass, string choice)
         {
             try
             {
-                bank = FindBank(bankId);
-                if (bank == null)
-                {
-                    throw new Exception("Bank does not exist");
-                }
                 if (choice == "1")
                 {
-                    foreach (var account in bank.StaffAccount.Where(account => account.Id == userId & account.Password == pass))
+                    foreach (var staff in Library.StaffList.Where(staff => staff.Id == userId & staff.Password == pass))
                     {
-                        return account;
+                        return staff;
                     }
-                    
+
                 }
-                
+
                 else
                 {
-                    foreach (var account in bank.UserAccount.Where(account => account.Id == userId & account.Password == pass))
+                    foreach (var account in Library.AccountList.Where(account => account.Id == userId & account.Password == pass))
                     {
                         return account;
                     }
@@ -42,6 +37,7 @@ namespace ATM.Services
                 throw new Exception(ex.Message);
             }
             return null;
+
         }
         public string GenerateBankId(string bankName)
         {
@@ -79,7 +75,7 @@ namespace ATM.Services
         }
         public Bank FindBank(string bankId)
         {
-            foreach (var i in UserDatabase.Banks.Where(i => i.Id == bankId))
+            foreach (var i in Library.BankList.Where(i => i.Id == bankId))
             {
                 return i;
             }
@@ -88,7 +84,7 @@ namespace ATM.Services
         }
         public Account FindAccount(Bank bank, string userId)
         {
-            foreach (var account in bank.UserAccount.Where(account => account.Id == userId))
+            foreach (var account in Library.AccountList.Where(account => account.Id == userId))
             {
                 return account;
             }

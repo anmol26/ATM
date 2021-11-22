@@ -2,6 +2,7 @@
 using ATM.Models;
 using System.IO;
 using System.Linq;
+using System.Data.SqlClient;
 
 namespace ATM.Services
 {
@@ -9,42 +10,64 @@ namespace ATM.Services
     {
         Bank bank;
         readonly CommonServices commonServices = new CommonServices();
-        public string CreateBank(string name, string address, string branch, string currencyCode)
+        public string CreateBank(SqlConnection conn, string name, string address, string branch, string currencyCode)
         {
             if (string.IsNullOrEmpty(name))
                 throw new Exception("Bank name is not valid!");
-            if (UserDatabase.Banks.Count != 0 & UserDatabase.Banks.Any(p => p.Name == name))
+            if (Library.BankList.Count != 0 & Library.BankList.Any(p => p.Name == name))
                 throw new Exception("Bank already exists!");
             if (!Currency.curr.ContainsKey(currencyCode))
                 throw new Exception("Invalid currency code!");
 
             Bank bank = new Bank(name, address, branch, currencyCode, commonServices.GenerateBankId(name));
-            UserDatabase.Banks.Add(bank);
+            Library.BankList.Add(bank);
+            //(id,Name,Address,Branch,Currency,SameRTGS,SameIMPS,DiffRTGS,DiffIMPS)
+            string query = $"INSERT INTO Bank" +
+                $" VALUES(N'{commonServices.GenerateBankId(name)}',N'{name}',N'{address}',N'{branch}',N'{currencyCode}'," +
+                $"N'{bank.SameRTGS}',N'{bank.SameIMPS}',N'{bank.DiffRTGS}',N'{bank.DiffIMPS}')";
+            SqlCommand command = new SqlCommand(query, conn);
+            int rows= command.ExecuteNonQuery();
+            Console.WriteLine("Query Executed! "+rows+" row(s) affected.");
             return bank.Id;
         }
-        public string CreateAccount(string bankId, string name, string password, long phoneNumber, string gender, int choice)
+        public string CreateAccount(SqlConnection conn,string bankId, string name, string password, long phoneNumber, string gender, int choice)
         {
             string Id;
             bank = commonServices.FindBank(bankId);
 
             if (string.IsNullOrEmpty(name))
                 throw new Exception("Name is not valid!");
-            if (bank.UserAccount.Count != 0 & bank.UserAccount.Any(p => p.Name == name) == true)
+            if (Library.AccountList.Any(p => p.Name == name) == true)
                 throw new Exception("Account already exists!");
-            if (UserDatabase.Banks.Count != 0 & UserDatabase.Banks.Any(p => p.Id == bankId) != true)
+            if (Library.BankList.Count != 0 & Library.BankList.Any(p => p.Id == bankId) != true)
                 throw new Exception("Bank doesn't exists!");
 
             if (choice == 1)
             {
-                Staff s = new Staff(name, phoneNumber, password, gender, commonServices.GenerateAccountId(name));
-                bank.StaffAccount.Add(s);
+                Staff s = new Staff(bankId, name, phoneNumber, password, gender, commonServices.GenerateAccountId(name));
+                //bank.StaffAccount.Add(s);
+                Library.StaffList.Add(s);
+
                 Id = s.Id;
+                string query = $"INSERT INTO Staff" +
+               $" VALUES(N'{commonServices.GenerateBankId(name)}',N'{name}',N'{password}',N'{phoneNumber}',1," +
+               $"N'{DateTime.Now}',N'{gender}',N'{bankId}')";
+                SqlCommand command = new SqlCommand(query, conn);
+                int rows = command.ExecuteNonQuery();
+                Console.WriteLine("Query Executed! " + rows + " row(s) affected.");
             }
             else
             {
-                Account a = new Account(name, phoneNumber, password, gender, commonServices.GenerateAccountId(name));
-                bank.UserAccount.Add(a);
+                Account a = new Account(bankId, name, phoneNumber, password, gender, commonServices.GenerateAccountId(name),0);
+                //bank.UserAccount.Add(a);
+                Library.AccountList.Add(a);
                 Id = a.Id;
+                string query = $"INSERT INTO Account" +
+               $" VALUES(N'{commonServices.GenerateBankId(name)}',N'{name}',N'{password}',N'{phoneNumber}',0,1," +
+               $"N'{gender}',N'{DateTime.Now}',N'{bankId}')";
+                SqlCommand command = new SqlCommand(query, conn);
+                int rows = command.ExecuteNonQuery();
+                Console.WriteLine("Query Executed! " + rows + " row(s) affected.");
             }
 
 
@@ -61,7 +84,7 @@ namespace ATM.Services
                     throw new Exception("Bank does not exist");
                 }
 
-                foreach (var account in bank.UserAccount.Where(account => account.Name == accountHolder))
+                foreach (var account in Library.AccountList.Where(account => account.Name == accountHolder))
                 {
                     user = account;
                 }
@@ -110,7 +133,7 @@ namespace ATM.Services
                 throw new Exception(ex.Message);
 
             }
-            bank.UserAccount.Remove(user);
+            Library.AccountList.Remove(user);
         }
         public void AddCurrency(string code, double rate)
         {
@@ -134,7 +157,7 @@ namespace ATM.Services
             Account user = null;
             try
             {
-                foreach (var account in bank.UserAccount.Where(account => account.Id == Id))
+                foreach (var account in Library.AccountList.Where(account => account.Id == Id))
                 {
                     user = account;
                 }
@@ -153,11 +176,11 @@ namespace ATM.Services
             Account rcvr = null;
             try
             {
-                foreach (var i in UserDatabase.Banks)
+                foreach (var i in Library.BankList)
                 {
                     if (i.Id == bankid)
                     {
-                        foreach (var j in i.UserAccount)
+                        foreach (var j in Library.AccountList)
                         {
                             if (j.Id == accountid)
                             {
@@ -179,11 +202,11 @@ namespace ATM.Services
                 {
                     throw new Exception();
                 }
-                foreach (var i in UserDatabase.Banks)
+                foreach (var i in Library.BankList)
                 {
                     if (i.Id == revert.RecieverBankId)
                     {
-                        foreach (var j in i.UserAccount)
+                        foreach (var j in Library.AccountList)
                         {
                             if (j.Id == revert.RecieverAccountId)
                             {
@@ -219,9 +242,13 @@ namespace ATM.Services
                     using (StreamWriter file = new StreamWriter(fileName, append: true))
                     {
                         file.WriteLine();
-                        foreach (Staff s in bank.StaffAccount)
+                        //foreach (Staff s in bank.StaffAccount)
+                        foreach (Staff s in Library.StaffList)
                         {
-                            file.WriteLine(s.Name);
+                            if (s.BankId == bank.Id)
+                            {
+                                file.WriteLine(s.Name);
+                            }
                         }
                         file.WriteLine("\n-----------------------------------------------------------------\n\n");
                     }
@@ -232,9 +259,13 @@ namespace ATM.Services
                     using (StreamWriter file = new StreamWriter(fileName, append: true))
                     {
                         file.WriteLine();
-                        foreach (Account acc in bank.UserAccount)
+                        //foreach (Account acc in bank.UserAccount)
+                        foreach (Account acc in Library.AccountList)
                         {
-                            file.WriteLine(acc.Name);
+                            if (acc.BankId == bank.Id)
+                            {
+                                file.WriteLine(acc.Name);
+                            }
                         }
                         file.WriteLine("\n-----------------------------------------------------------------\n\n");
                     }
@@ -258,12 +289,15 @@ namespace ATM.Services
                     {
                         throw new Exception("Bank does not exist");
                     }
-                    foreach (var account in bank.UserAccount)
+                    //foreach (var account in bank.UserAccount)
+                    foreach (var account in Library.AccountList)
                     {
                         if (account == null)
                         {
                             throw new Exception("Account does not exist");
                         }
+                        if (bankId == account.BankId) 
+                        { 
                         foreach (var transaction in account.Transactions)
                         {
                             file.WriteLine(account.Name);
@@ -278,6 +312,7 @@ namespace ATM.Services
                             file.WriteLine(transaction.CurrentDate.ToString());
                         }
                         file.WriteLine("\n-----------------------------------------------------------------\n\n");
+                        }
                     }
                 }
             }

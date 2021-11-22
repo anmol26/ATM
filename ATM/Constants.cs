@@ -5,7 +5,8 @@ namespace ATM.CLI
     {
         public static class Messages
         {
-            public const string AccountDoesNotExist = "\nAccount does not exist";
+            public const string ConnString = @"Data Source=ANMOL\SQLEXPRESS;Initial Catalog=ATM;integrated security=SSPI";
+            public const string AccountDoesNotExist = "\nAccount does not exist!!!";
             public const string AccountHolderListSuccessFull = "Account holder list printed successfully";
             public const string AccountId="\nPlease Enter AccouontId:";
             public const string AccountSuccessfullCreation = "\nAccount Created Successfully!!\n";

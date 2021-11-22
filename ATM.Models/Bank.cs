@@ -16,15 +16,15 @@ namespace ATM.Models
             this.Branch = branch;
             this.Id = bankId;
             this.CurrencyCode = currencyCode;
-            UserAccount = new List<Account>();
-            StaffAccount= new List<Staff>();
+            //UserAccount = new List<Account>();
+            //StaffAccount= new List<Staff>();
         }
         public string Name { get; set; }
         public string Id { get; set; }
         public string Branch { get; set; }
         public string Address { get; set; }
-        public List<Account> UserAccount { get; set; }
-        public List<Staff> StaffAccount { get; set; }
+        //public List<Account> UserAccount { get; set; }
+        //public List<Staff> StaffAccount { get; set; }
 
         public double sameRTGS = DefaultRTGSChargeToSameBank;
         public double sameIMPS = DefaultIMPSChargeToSameBank;

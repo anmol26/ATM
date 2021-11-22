@@ -64,7 +64,6 @@ namespace ATM.Services
                 var staffData = (IDataReader)reader;
                 string num = Convert.ToString(staffData[3]);
                 long number = long.Parse(num);
-                //(string bankId, string name, long number, string password, string gender,string id)
                 Staff staff = new Staff(Convert.ToString(staffData[7]), Convert.ToString(staffData[1]), number, Convert.ToString(staffData[2]), Convert.ToString(staffData[6]), Convert.ToString(staffData[0]));
                 StaffList.Add(staff);
             }
@@ -81,7 +80,6 @@ namespace ATM.Services
                 string num = Convert.ToString(AccountData[3]);
                 long number = long.Parse(num);
                 double balance= Convert.ToDouble(AccountData[4]);
-                //(string bankId, string name, long phoneNumber, string password, string gender, string id)
                 Account account = new Account(Convert.ToString(AccountData[8]), Convert.ToString(AccountData[1]),number, Convert.ToString(AccountData[2]), Convert.ToString(AccountData[6]), Convert.ToString(AccountData[0]),balance);
                 AccountList.Add(account);
             }
@@ -89,7 +87,6 @@ namespace ATM.Services
         }
         public void GetTransaction()
         {
-            //string query = "SELECT * FROM Transaction";
             string query = "SELECT * FROM [ATM].[dbo].[Transaction]";
             SqlCommand command = new SqlCommand(query, conn);
             SqlDataReader reader = command.ExecuteReader();
@@ -102,7 +99,6 @@ namespace ATM.Services
                 int type;
                 if (t == "Credit") { type = 1; }
                 else { type = 2; }
-                //(double amt, int type, string senderId, string recieverId, string sBankId, string rBankId,string id)
                 Transaction trans = new Transaction( amount, type, Convert.ToString(transactionData[1]), Convert.ToString(transactionData[2]),Convert.ToString(transactionData[3]), Convert.ToString(transactionData[4]), Convert.ToString(transactionData[0]));
                 TransactionList.Add(trans);
             }

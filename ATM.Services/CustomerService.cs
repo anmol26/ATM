@@ -19,8 +19,6 @@ namespace ATM.Services
                 SqlCommand commandd = new SqlCommand(queryy, conn);
                 commandd.ExecuteNonQuery();
 
-                //todo
-                //double amt, int type, string senderId, string recieverId, string sBankId, string rBankId,string id
                 Transaction trans = new Transaction(amount, 1, user.Id, user.Id, bankId, bankId, commonServices.GenerateTransactionId(bankId, user.Id));
                 user.Transactions.Add(trans);
                 string type = "Credit";
@@ -108,8 +106,6 @@ namespace ATM.Services
                 }
                 if (sender.Balance >= amt + charge)
                 {
-                    //amt-=charge;
-                    //user.Balance -= amt;
                     sender.Balance -= amt + charge;
                     Console.WriteLine("Updated Balance is: " + sender.Balance);
                     string queryy = $"Update Account set Balance=N'{sender.Balance}' where id=N'{sender.Id}' ";
@@ -156,7 +152,6 @@ namespace ATM.Services
         }
         public double DeductCharges(double amount, double percent)
         {
-            //return (double)Math.Round(amount * ((100 - Convert.ToDouble(percent)) / 100), 2);
             return (double)Math.Round(amount * (Convert.ToDouble(percent) / 100), 2);
         }
         public double ViewBalance(Account user)

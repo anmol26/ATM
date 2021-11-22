@@ -7,7 +7,6 @@ namespace ATM.Services
 {
     public class CommonServices
     {
-        //Bank bank;
         const string DefaultPrefix = "TXN";
         const string DefaultTimeFormat = "ddHHmmss";
 
@@ -82,7 +81,7 @@ namespace ATM.Services
 
             return null;
         }
-        public Account FindAccount(Bank bank, string userId)
+        public Account FindAccount(string userId)
         {
             foreach (var account in Library.AccountList.Where(account => account.Id == userId))
             {

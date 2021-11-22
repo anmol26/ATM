@@ -21,7 +21,6 @@ namespace ATM.Services
 
             Bank bank = new Bank(name, address, branch, currencyCode, commonServices.GenerateBankId(name));
             Library.BankList.Add(bank);
-            //(id,Name,Address,Branch,Currency,SameRTGS,SameIMPS,DiffRTGS,DiffIMPS)
             string query = $"INSERT INTO Bank" +
                 $" VALUES(N'{commonServices.GenerateBankId(name)}',N'{name}',N'{address}',N'{branch}',N'{currencyCode}'," +
                 $"N'{bank.SameRTGS}',N'{bank.SameIMPS}',N'{bank.DiffRTGS}',N'{bank.DiffIMPS}')";
@@ -45,7 +44,6 @@ namespace ATM.Services
             if (choice == 1)
             {
                 Staff s = new Staff(bankId, name, phoneNumber, password, gender, commonServices.GenerateAccountId(name));
-                //bank.StaffAccount.Add(s);
                 Library.StaffList.Add(s);
 
                 Id = s.Id;
@@ -59,7 +57,6 @@ namespace ATM.Services
             else
             {
                 Account a = new Account(bankId, name, phoneNumber, password, gender, commonServices.GenerateAccountId(name),0);
-                //bank.UserAccount.Add(a);
                 Library.AccountList.Add(a);
                 Id = a.Id;
                 string query = $"INSERT INTO Account" +
@@ -105,7 +102,7 @@ namespace ATM.Services
                 {
                     throw new Exception("Bank does not exist");
                 }
-                user = commonServices.FindAccount(bank, userId);
+                user = commonServices.FindAccount(userId);
 
             }
             catch (Exception ex)
@@ -126,7 +123,7 @@ namespace ATM.Services
                 {
                     throw new Exception("Bank does not exist");
                 }
-                user = commonServices.FindAccount(bank, userId);
+                user = commonServices.FindAccount(userId);
 
             }
             catch (Exception ex)
@@ -246,7 +243,6 @@ namespace ATM.Services
                     using (StreamWriter file = new StreamWriter(fileName, append: true))
                     {
                         file.WriteLine();
-                        //foreach (Staff s in bank.StaffAccount)
                         foreach (Staff s in Library.StaffList)
                         {
                             if (s.BankId == bank.Id)
@@ -263,7 +259,6 @@ namespace ATM.Services
                     using (StreamWriter file = new StreamWriter(fileName, append: true))
                     {
                         file.WriteLine();
-                        //foreach (Account acc in bank.UserAccount)
                         foreach (Account acc in Library.AccountList)
                         {
                             if (acc.BankId == bank.Id)
@@ -293,7 +288,6 @@ namespace ATM.Services
                     {
                         throw new Exception("Bank does not exist");
                     }
-                    //foreach (var account in bank.UserAccount)
                     foreach (var account in Library.AccountList)
                     {
                         if (account == null)

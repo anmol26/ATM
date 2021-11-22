@@ -455,7 +455,7 @@ namespace ATM.CLI
                         Console.WriteLine();
                         try
                         {   bank = commonServices.FindBank(sbankId);
-                            bankAccount=commonServices.FindAccount(bank,accountID);
+                            bankAccount=commonServices.FindAccount(accountID);
                             reciever = staffMember.CheckAccount(ToBankId, hName);
                         }
                         catch (Exception ex)
@@ -487,7 +487,6 @@ namespace ATM.CLI
                         Console.Clear();
                         double amt;
                         string currCode, bankId, accountID;
-                        Bank bank;
                         try
                         {
                             amt = Convert.ToDouble(ConsoleInput.DepositAmount());
@@ -497,8 +496,7 @@ namespace ATM.CLI
                             bankId = Console.ReadLine();
                             Console.WriteLine(Constants.Messages.AccountId);
                             accountID = Console.ReadLine();
-                            bank = commonServices.FindBank(bankId);
-                            bankAccount = commonServices.FindAccount(bank,accountID);
+                            bankAccount = commonServices.FindAccount(accountID);
                         }
                         catch (Exception ex)
                         {

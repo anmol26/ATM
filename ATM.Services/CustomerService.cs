@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using ATM.Models;
 
@@ -13,7 +14,8 @@ namespace ATM.Services
         {
             try
             {
-                user.Balance += Math.Round(amount * (double)(Currency.curr[currCode] / Currency.curr[DefaultCurrency]), 2);
+
+                user.Balance += Math.Round(amount * (double)(commonServices.FindExchangeRate(conn,currCode) / commonServices.FindExchangeRate(conn, DefaultCurrency)), 2);
                 Console.WriteLine("Updated Balance is: "+user.Balance);
                 string queryy = $"Update Account set Balance=N'{user.Balance}' where id=N'{user.Id}' ";
                 SqlCommand commandd = new SqlCommand(queryy, conn);
@@ -112,8 +114,7 @@ namespace ATM.Services
                     SqlCommand commandd = new SqlCommand(queryy, conn);
                     commandd.ExecuteNonQuery();
 
-
-                    rcvr.Balance += Math.Round(amt * (double)(Currency.curr[bank.CurrencyCode] / Currency.curr[reciever.CurrencyCode]), 2);
+                    rcvr.Balance += Math.Round(amt * (double)(commonServices.FindExchangeRate(conn, bank.CurrencyCode) / commonServices.FindExchangeRate(conn, reciever.CurrencyCode)), 2);
                     Console.WriteLine("Updated Balance is: " + rcvr.Balance);
                     string query = $"Update Account set Balance=N'{rcvr.Balance}' where id=N'{rcvr.Id}' ";
                     SqlCommand command = new SqlCommand(query, conn);

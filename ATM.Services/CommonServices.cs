@@ -2,6 +2,8 @@
 using ATM.Models;
 using System.IO;
 using System.Linq;
+using System.Data.SqlClient;
+using System.Data;
 
 namespace ATM.Services
 {
@@ -112,6 +114,21 @@ namespace ATM.Services
                 throw new Exception(ex.Message);
             }
 
+        }
+        public double FindExchangeRate(SqlConnection conn, string currCode) 
+        {
+            double value=0;
+            string query1 = $"select ExchangeRate from [ATM].[dbo].[Currency] where CurrencyCode=N'{currCode}'";
+            SqlCommand command1 = new SqlCommand(query1, conn);
+            SqlDataReader reader = command1.ExecuteReader();
+            while (reader.Read())
+            {
+                var CurrencyData = (IDataReader)reader;
+                string v = Convert.ToString(CurrencyData[0]);
+                value = Convert.ToDouble(v);
+            }
+            reader.Close();
+            return value;
         }
     }
 }

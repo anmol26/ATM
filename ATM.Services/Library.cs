@@ -11,18 +11,19 @@ namespace ATM.Services
     {
         public Library()
         {
-
             ConnectDatabase();
             GetBanks();
             GetStaff();
             GetAccount();
             GetTransaction();
+            GetCurrency();
         }
 
         public static List<Bank> BankList = new List<Bank>();
         public static List<Staff> StaffList = new List<Staff>();
         public static List<Account> AccountList = new List<Account>();
         public static List<Transaction> TransactionList = new List<Transaction>();
+        public static List<Currency> CurrencyList = new List<Currency>();
 
         private SqlConnection conn;
         public SqlConnection ConnectDatabase()
@@ -101,6 +102,21 @@ namespace ATM.Services
                 else { type = 2; }
                 Transaction trans = new Transaction( amount, type, Convert.ToString(transactionData[1]), Convert.ToString(transactionData[2]),Convert.ToString(transactionData[3]), Convert.ToString(transactionData[4]), Convert.ToString(transactionData[0]));
                 TransactionList.Add(trans);
+            }
+            reader.Close();
+        }
+        public void GetCurrency()
+        {
+            string query = "SELECT * FROM [ATM].[dbo].[Currency]";
+            SqlCommand command = new SqlCommand(query, conn);
+            SqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                var CurrencyData = (IDataReader)reader;
+                string er = Convert.ToString(CurrencyData[2]);
+                double exchangerate = Convert.ToDouble(er);
+                Currency currency = new Currency(Convert.ToString(CurrencyData[1]), exchangerate);
+                CurrencyList.Add(currency);
             }
             reader.Close();
         }

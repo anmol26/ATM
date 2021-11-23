@@ -24,5 +24,6 @@ namespace ATM.Models
         public TransactionType Type { get; set; }
         public DateTime CurrentDate { get; set; }
         public double Amount { get; set; }
+
     }
 }

@@ -23,6 +23,7 @@ namespace ATM.Models
         public string Id { get; set; }
         public string Branch { get; set; }
         public string Address { get; set; }
+        
         //public List<Account> UserAccount { get; set; }
         //public List<Staff> StaffAccount { get; set; }
 

@@ -16,7 +16,7 @@ namespace ATM.Services
                 throw new Exception("Bank name is not valid!");
             if (Library.BankList.Count != 0 & Library.BankList.Any(p => p.Name == name))
                 throw new Exception("Bank already exists!");
-            if (!Currency.curr.ContainsKey(currencyCode))
+            if (!Library.CurrencyList.Any(c=> c.CurrencyCode==currencyCode))
                 throw new Exception("Invalid currency code!");
 
             Bank bank = new Bank(name, address, branch, currencyCode, commonServices.GenerateBankId(name));
@@ -26,7 +26,7 @@ namespace ATM.Services
                 $"N'{bank.SameRTGS}',N'{bank.SameIMPS}',N'{bank.DiffRTGS}',N'{bank.DiffIMPS}')";
             SqlCommand command = new SqlCommand(query, conn);
             int rows= command.ExecuteNonQuery();
-            Console.WriteLine("Query Executed! "+rows+" row(s) affected.");
+            Console.WriteLine("Create Bank Query Executed! "+rows+" row(s) affected.");
             return bank.Id;
         }
         public string CreateAccount(SqlConnection conn,string bankId, string name, string password, long phoneNumber, string gender, int choice)
@@ -52,7 +52,7 @@ namespace ATM.Services
                $"N'{DateTime.Now}',N'{gender}',N'{bankId}')";
                 SqlCommand command = new SqlCommand(query, conn);
                 int rows = command.ExecuteNonQuery();
-                Console.WriteLine("Query Executed! " + rows + " row(s) affected.");
+                Console.WriteLine("Create Account Query Executed! " + rows + " row(s) affected.");
             }
             else
             {
@@ -64,7 +64,7 @@ namespace ATM.Services
                $"N'{gender}',N'{DateTime.Now}',N'{bankId}')";
                 SqlCommand command = new SqlCommand(query, conn);
                 int rows = command.ExecuteNonQuery();
-                Console.WriteLine("Query Executed! " + rows + " row(s) affected.");
+                Console.WriteLine("Create Account Query Executed! " + rows + " row(s) affected.");
             }
 
 
@@ -92,27 +92,6 @@ namespace ATM.Services
             }
             return user;
         }
-        public Account UpdateChanges(string bankId, string userId)
-        {
-            Account user;
-            try
-            {
-                bank = commonServices.FindBank(bankId);
-                if (bank == null)
-                {
-                    throw new Exception("Bank does not exist");
-                }
-                user = commonServices.FindAccount(userId);
-
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-
-            return user;
-
-        }
         public void DeleteAccount(SqlConnection conn ,string bankId, string userId)
         {
             Account user;
@@ -136,21 +115,31 @@ namespace ATM.Services
             SqlCommand commandd = new SqlCommand(query, conn);
             commandd.ExecuteNonQuery();
         }
-        public void AddCurrency(string code, double rate)
+        public void AddCurrency(SqlConnection conn,string code, double rate)
         {
-            Currency.curr[code] = rate;
+            //Currency.curr[code] = rate;
+            string query = $"Insert into Currency Values(N'{code}',N'{rate}') ";
+            SqlCommand command = new SqlCommand(query, conn);
+            command.ExecuteNonQuery();
+
         }
-        public void UpdateCharges(double rtgs, double imps, int choice)
+        public void UpdateCharges(SqlConnection conn, string bankId,double rtgs, double imps, int choice)
         {
             if (choice == 1)
             {
                 bank.SameRTGS = rtgs;
                 bank.SameIMPS = imps;
+                string query1 = $"Update Bank set SameRTGS=N'{rtgs}', SameIMPS=N'{imps}' where id=N'{bankId}' ";
+                SqlCommand command1 = new SqlCommand(query1, conn);
+                command1.ExecuteNonQuery();
             }
             else if (choice == 2)
             {
                 bank.DiffRTGS = rtgs;
                 bank.DiffIMPS = imps;
+                string query2 = $"Update Bank set DiffRTGS=N'{rtgs}', DiffIMPS=N'{imps}' where id=N'{bankId}' ";
+                SqlCommand command2 = new SqlCommand(query2, conn);
+                command2.ExecuteNonQuery();
             }
         }
         public Account ViewHistory(string Id)
@@ -165,12 +154,12 @@ namespace ATM.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error in ViewHistory: {0}", ex.Message);
+                Console.WriteLine(ex.Message);
 
             }
             return user;
         }
-        public void RevertTransaction(string bankid, string accountid, string transid)
+        public void RevertTransaction( SqlConnection conn, string bankid, string accountid, string transid)
         {
             Transaction revert = null;
             Account sender = null;
@@ -224,7 +213,16 @@ namespace ATM.Services
             try
             {
                 sender.Balance += revert.Amount;
+                Console.WriteLine("Updated Sender Balance is: " + sender.Balance);
+                string query1 = $"Update Account set Balance=N'{sender.Balance}' where id=N'{sender.Id}' ";
+                SqlCommand command1 = new SqlCommand(query1, conn);
+                command1.ExecuteNonQuery();
+
                 rcvr.Balance -= revert.Amount;
+                Console.WriteLine("Updated Reciever Balance is: " + rcvr.Balance);
+                string query2 = $"Update Account set Balance=N'{rcvr.Balance}' where id=N'{rcvr.Id}' ";
+                SqlCommand command2 = new SqlCommand(query2, conn);
+                command2.ExecuteNonQuery();
             }
             catch (Exception ex)
             {

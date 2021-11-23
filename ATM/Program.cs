@@ -171,16 +171,14 @@ namespace ATM.CLI
                         if (choice == "1")
                         {
                             int uChoice;
-                            string userId, bankId;
+                            string userId;
                             try
                             {
                                 Console.WriteLine(Constants.Messages.AccountUpdateChoice);
                                 uChoice = Convert.ToInt32(Console.ReadLine());
                                 Console.WriteLine(Constants.Messages.AccountId);
                                 userId = Console.ReadLine();
-                                Console.WriteLine(Constants.Messages.BankId);
-                                bankId = Console.ReadLine();
-                                bankAccount = staffMember.UpdateChanges(bankId, userId);
+                                bankAccount = commonServices.FindAccount(userId);
                             }
                             catch (Exception ex)
                             {
@@ -201,7 +199,7 @@ namespace ATM.CLI
                                     Console.WriteLine(Constants.Messages.PhoneNumber);
                                     try
                                     {
-                                        bankAccount.PhoneNumber = Convert.ToInt32(Console.ReadLine());
+                                        bankAccount.PhoneNumber = Convert.ToInt64(Console.ReadLine());
                                         string query2 = $"Update Account set PhoneNumber=N'{bankAccount.PhoneNumber}' where id=N'{bankAccount.Id}' ";
                                         SqlCommand command2 = new SqlCommand(query2, conn);
                                         command2.ExecuteNonQuery();
@@ -272,7 +270,7 @@ namespace ATM.CLI
                             Console.WriteLine(ex.Message);
                             goto StaffOperations;
                         }
-                        staffMember.AddCurrency(code, rate);
+                        staffMember.AddCurrency(conn, code, rate);
                     }
                     else if (staffOperation == StaffOperationType.UpdateServiceCharges)
                     {
@@ -294,7 +292,7 @@ namespace ATM.CLI
                                 Console.WriteLine(ex.Message);
                                 goto UpdateServiceCharge;
                             }
-                            staffMember.UpdateCharges(rtgs, imps, 1);
+                            staffMember.UpdateCharges(conn, bankstaff.BankId ,rtgs, imps, 1);
                         }
                         else if (choice == "2")
                         {
@@ -311,7 +309,7 @@ namespace ATM.CLI
                                 Console.WriteLine(ex.Message);
                                 goto UpdateServiceCharge;
                             }
-                            staffMember.UpdateCharges(rtgs, imps, 2);
+                            staffMember.UpdateCharges(conn, bankstaff.BankId,rtgs, imps, 2);
                         }
                         else
                         {
@@ -378,7 +376,7 @@ namespace ATM.CLI
                         string transId = Console.ReadLine();
                         try
                         {
-                            staffMember.RevertTransaction(bankId, accountId, transId);
+                            staffMember.RevertTransaction(conn, bankId, accountId, transId);
                         }
                         catch (Exception ex)
                         {

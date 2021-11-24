@@ -3,54 +3,72 @@ using ATM.Models;
 using ATM.Repository;
 using System.IO;
 using System.Linq;
-using System.Data.SqlClient;
 
 namespace ATM.Services
 {
     public class StaffService
     {
         Bank bank;
+        static string TransactionListFilename = @"C:\Users\dell\OneDrive\Desktop\TransactionHistory.txt";
+        static string StaffListFilename = @"C:\Users\dell\OneDrive\Desktop\StaffList.txt";
+        static string CustomerListFilename = @"C:\Users\dell\OneDrive\Desktop\AccountHolderList.txt";
+        static string LineSeparater = "\n-----------------------------------------------------------------\n\n";
         readonly CommonServices commonServices = new CommonServices();
         readonly StaffDBOperations staffOperations = new StaffDBOperations();
         public string CreateBank(string name, string address, string branch, string currencyCode)
         {
-            if (string.IsNullOrEmpty(name))
-                throw new Exception("Bank name is not valid!");
-            if (Library.BankList.Count != 0 & Library.BankList.Any(p => p.Name == name))
-                throw new Exception("Bank already exists!");
-            if (!Library.CurrencyList.Any(c=> c.CurrencyCode==currencyCode))
-                throw new Exception("Invalid currency code!");
+            try
+            {
+                if (string.IsNullOrEmpty(name))
+                    throw new Exception("Bank name is not valid!");
+                if (Library.BankList.Count != 0 & Library.BankList.Any(p => p.Name == name))
+                    throw new Exception("Bank already exists!");
+                if (!Library.CurrencyList.Any(c => c.CurrencyCode == currencyCode))
+                    throw new Exception("Invalid currency code!");
 
-            Bank bank = new Bank(name, address, branch, currencyCode, commonServices.GenerateBankId(name));
-            staffOperations.InsertNewBank(commonServices.GenerateBankId(name), bank, name, address, branch, currencyCode);
-            return bank.Id;
+                Bank bank = new Bank(name, address, branch, currencyCode, commonServices.GenerateBankId(name));
+                staffOperations.InsertNewBank(commonServices.GenerateBankId(name), bank, name, address, branch, currencyCode);
+                return bank.Id;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
         public string CreateAccount(string bankId, string name, string password, long phoneNumber, string gender, int choice)
         {
             string Id;
-            bank = commonServices.FindBank(bankId);
-
-            if (string.IsNullOrEmpty(name))
-                throw new Exception("Name is not valid!");
-            if (Library.AccountList.Any(p => p.Name == name) == true)
-                throw new Exception("Account already exists!");
-            if (Library.BankList.Count != 0 & Library.BankList.Any(p => p.Id == bankId) != true)
-                throw new Exception("Bank doesn't exists!");
-
-            if (choice == 1)
+            try
             {
-                Staff s = new Staff(bankId, name, phoneNumber, password, gender, commonServices.GenerateAccountId(name));
-                Id = s.Id;
-                staffOperations.InsertNewStaff(s, commonServices.GenerateAccountId(name), name, password, phoneNumber, gender, bankId);
+                bank = commonServices.FindBank(bankId);
+
+                if (string.IsNullOrEmpty(name))
+                    throw new Exception("Name is not valid!");
+                if (Library.AccountList.Any(p => p.Name == name) == true)
+                    throw new Exception("Account already exists!");
+                if (Library.BankList.Count != 0 & Library.BankList.Any(p => p.Id == bankId) != true)
+                    throw new Exception("Bank doesn't exists!");
+
+                if (choice == 1)
+                {
+                    Staff s = new Staff(bankId, name, phoneNumber, password, gender, commonServices.GenerateAccountId(name));
+                    Id = s.Id;
+                    staffOperations.InsertNewStaff(s, commonServices.GenerateAccountId(name), name, password, phoneNumber, gender, bankId);
+                }
+                else
+                {
+                    Account a = new Account(bankId, name, phoneNumber, password, gender, commonServices.GenerateAccountId(name), 0);
+                    Id = a.Id;
+                    staffOperations.InsertNewAccount(a, commonServices.GenerateAccountId(name), name, password, phoneNumber, gender, bankId);
+
+                }
+                return Id;
             }
-            else
+            catch (Exception ex)
             {
-                Account a = new Account(bankId, name, phoneNumber, password, gender, commonServices.GenerateAccountId(name),0);
-                Id = a.Id;
-                staffOperations.InsertNewAccount(a, commonServices.GenerateAccountId(name), name, password, phoneNumber, gender, bankId);
+                throw new Exception(ex.Message);
 
             }
-            return Id;
         }
         public Account CheckAccount(string bankId, string accountHolder)
         {
@@ -96,7 +114,15 @@ namespace ATM.Services
         }
         public void AddCurrency(string code, double rate)
         {
-            staffOperations.InsertNewCurrency(code, rate);
+            try
+            {
+                staffOperations.InsertNewCurrency(code, rate);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+
+            }
         }
         public void UpdateCharges(string bankId,double rtgs, double imps, int choice)
         {
@@ -202,7 +228,7 @@ namespace ATM.Services
             {
                 if (a == 1)
                 {
-                    string fileName = @"C:\Users\dell\OneDrive\Desktop\StaffList.txt";
+                    string fileName = StaffListFilename;
                     using (StreamWriter file = new StreamWriter(fileName, append: true))
                     {
                         file.WriteLine();
@@ -213,12 +239,12 @@ namespace ATM.Services
                                 file.WriteLine(s.Name);
                             }
                         }
-                        file.WriteLine("\n-----------------------------------------------------------------\n\n");
+                        file.WriteLine(LineSeparater);
                     }
                 }
                 else 
                 {
-                    string fileName = @"C:\Users\dell\OneDrive\Desktop\AccountHolderList.txt";
+                    string fileName = CustomerListFilename;
                     using (StreamWriter file = new StreamWriter(fileName, append: true))
                     {
                         file.WriteLine();
@@ -229,7 +255,7 @@ namespace ATM.Services
                                 file.WriteLine(acc.Name);
                             }
                         }
-                        file.WriteLine("\n-----------------------------------------------------------------\n\n");
+                        file.WriteLine(LineSeparater);
                     }
                 }
             }
@@ -242,7 +268,7 @@ namespace ATM.Services
         {
             try
             {
-                string fileName = @"C:\Users\dell\OneDrive\Desktop\TransactionHistory.txt";
+                string fileName = TransactionListFilename;
                 using (StreamWriter file = new StreamWriter(fileName, append: true))
                 {
                     file.WriteLine();
@@ -272,7 +298,7 @@ namespace ATM.Services
                             }
                             file.WriteLine(transaction.CurrentDate.ToString());
                         }
-                        file.WriteLine("\n-----------------------------------------------------------------\n\n");
+                        file.WriteLine(LineSeparater);
                         }
                     }
                 }

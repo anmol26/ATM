@@ -3,12 +3,9 @@ using ATM.Models;
 using ATM.Models.Enums;
 using ATM.Services;
 using ATM.Repository;
-using System.Data.SqlClient;
-using System.Data;
 
 
 // bank creation after exception handling
-// start from staffServices separation of queries
 namespace ATM.CLI
 {
     public class Program

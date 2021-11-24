@@ -4,10 +4,11 @@ using System.Data.SqlClient;
 using System.Collections.Generic;
 using System.Data;
 
-namespace ATM.Repository
+namespace ATM.Repository 
 {
     public class Library
     {
+        static readonly string connectionString=@"Data Source=ANMOL\SQLEXPRESS;Initial Catalog=ATM;integrated security=SSPI";
         public Library()
         {
             ConnectDatabase();
@@ -28,7 +29,7 @@ namespace ATM.Repository
         public SqlConnection ConnectDatabase()
         {
             Console.WriteLine("Getting Connection to Database...");
-            conn = new SqlConnection(@"Data Source=ANMOL\SQLEXPRESS;Initial Catalog=ATM;integrated security=SSPI");
+            conn = new SqlConnection(connectionString);
             try
             {
                 Console.WriteLine("Openning Database Connection...");
@@ -37,7 +38,7 @@ namespace ATM.Repository
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error: " + e.Message);
+                Console.WriteLine(e.Message);
             }
             return conn;
         }

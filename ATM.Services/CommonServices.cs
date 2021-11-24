@@ -3,7 +3,6 @@ using ATM.Models;
 using ATM.Repository;
 using System.IO;
 using System.Linq;
-using System.Data.SqlClient;
 using System.Data;
 
 namespace ATM.Services
@@ -13,6 +12,7 @@ namespace ATM.Services
         const string DefaultPrefix = "TXN";
         const string DefaultTimeFormat = "ddHHmmss";
         const string FileName = @"C:\Users\dell\OneDrive\Desktop\TransactionHistory.txt";
+        static string LineSeparater = "\n-----------------------------------------------------------------\n\n";
         public dynamic UserLogin(string userId, string pass, string choice)
         {
             try
@@ -106,7 +106,7 @@ namespace ATM.Services
                         file.WriteLine("From " + i.SenderAccountId + " to " + i.RecieverAccountId);
                     }
                     file.WriteLine(i.CurrentDate.ToString());
-                    file.WriteLine("\n-----------------------------------------------------------------\n\n");
+                    file.WriteLine(LineSeparater);
                 }
             }
             catch (Exception ex)

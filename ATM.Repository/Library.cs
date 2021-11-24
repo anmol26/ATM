@@ -1,11 +1,10 @@
 ﻿using System;
 using ATM.Models;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Collections.Generic;
 using System.Data;
 
-namespace ATM.Services
+namespace ATM.Repository
 {
     public class Library
     {

@@ -1,5 +1,6 @@
 ﻿using System;
 using ATM.Models;
+using ATM.Repository;
 using System.IO;
 using System.Linq;
 using System.Data.SqlClient;
@@ -11,8 +12,8 @@ namespace ATM.Services
     {
         const string DefaultPrefix = "TXN";
         const string DefaultTimeFormat = "ddHHmmss";
-
-        public dynamic Login(string userId, string pass, string choice)
+        const string FileName = @"C:\Users\dell\OneDrive\Desktop\TransactionHistory.txt";
+        public dynamic UserLogin(string userId, string pass, string choice)
         {
             try
             {
@@ -95,8 +96,7 @@ namespace ATM.Services
         {
             try
             {
-                string fileName = @"C:\Users\dell\OneDrive\Desktop\TransactionHistory.txt";
-                using (StreamWriter file = new StreamWriter(fileName, append: true))
+                using (StreamWriter file = new StreamWriter(FileName, append: true))
                 {
                     file.WriteLine("Transaction ID:" + i.Id);
                     file.WriteLine(i.Amount);
@@ -114,21 +114,6 @@ namespace ATM.Services
                 throw new Exception(ex.Message);
             }
 
-        }
-        public double FindExchangeRate(SqlConnection conn, string currCode) 
-        {
-            double value=0;
-            string query1 = $"select ExchangeRate from [ATM].[dbo].[Currency] where CurrencyCode=N'{currCode}'";
-            SqlCommand command1 = new SqlCommand(query1, conn);
-            SqlDataReader reader = command1.ExecuteReader();
-            while (reader.Read())
-            {
-                var CurrencyData = (IDataReader)reader;
-                string v = Convert.ToString(CurrencyData[0]);
-                value = Convert.ToDouble(v);
-            }
-            reader.Close();
-            return value;
         }
     }
 }

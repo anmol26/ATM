@@ -2,9 +2,13 @@
 using ATM.Models;
 using ATM.Models.Enums;
 using ATM.Services;
+using ATM.Repository;
 using System.Data.SqlClient;
 using System.Data;
 
+
+// bank creation after exception handling
+// start from staffServices separation of queries
 namespace ATM.CLI
 {
     public class Program
@@ -13,8 +17,6 @@ namespace ATM.CLI
         {
             ConsoleOutput.Welcome();
             Library lib = new Library();
-            SqlConnection conn = lib.ConnectDatabase();
-
             StaffService staffMember = new StaffService();
             CustomerService accountHolder = new CustomerService();
             CommonServices commonServices = new CommonServices();
@@ -46,7 +48,7 @@ namespace ATM.CLI
                 string bankID;
                 try
                 {
-                    bankID = staffMember.CreateBank(conn, bankName, address, branch, currencyCode);
+                    bankID = staffMember.CreateBank(bankName, address, branch, currencyCode);
                     ConsoleOutput.BankSuccessfullCreation();
                     ConsoleOutput.BankId(bankID);
                 }
@@ -77,7 +79,7 @@ namespace ATM.CLI
                 string accountID;
                 try
                 {
-                    accountID = staffMember.CreateAccount(conn,bankID, sName, sPass, sNum, sGender, 1);
+                    accountID = staffMember.CreateAccount(bankID, sName, sPass, sNum, sGender, 1);
                     ConsoleOutput.AccountId(accountID);
                     ConsoleOutput.WelcomeUser();
                 }
@@ -97,7 +99,7 @@ namespace ATM.CLI
                 string pass = ConsoleInput.Password();
                 try
                 {
-                    bankstaff = commonServices.Login(aId, pass,"1");
+                    bankstaff = commonServices.UserLogin(aId, pass,"1");
                     if (bankstaff == null) 
                     {
                         throw new Exception(Constants.Messages.AccountDoesNotExist);
@@ -150,7 +152,7 @@ namespace ATM.CLI
                         }
                         try
                         {
-                            Id = staffMember.CreateAccount(conn, bankId, name, password, phoneNumber, gender, choice);
+                            Id = staffMember.CreateAccount(bankId, name, password, phoneNumber, gender, choice);
                         }
                         catch (Exception ex)
                         {
@@ -190,19 +192,15 @@ namespace ATM.CLI
                             {
                                 case 1:
                                     Console.WriteLine(Constants.Messages.Name);
-                                    bankAccount.Name = Console.ReadLine();
-                                    string query1 = $"Update Account set Name=N'{bankAccount.Name}' where id=N'{bankAccount.Id}' ";
-                                    SqlCommand command1 = new SqlCommand(query1, conn);
-                                    command1.ExecuteNonQuery();
+                                    string name = Console.ReadLine();
+                                    staffMember.UpdateName(bankAccount, name);
                                     break;
                                 case 2:
                                     Console.WriteLine(Constants.Messages.PhoneNumber);
                                     try
                                     {
-                                        bankAccount.PhoneNumber = Convert.ToInt64(Console.ReadLine());
-                                        string query2 = $"Update Account set PhoneNumber=N'{bankAccount.PhoneNumber}' where id=N'{bankAccount.Id}' ";
-                                        SqlCommand command2 = new SqlCommand(query2, conn);
-                                        command2.ExecuteNonQuery();
+                                        long phoneNumber = Convert.ToInt64(Console.ReadLine());
+                                        staffMember.UpdatePhoneNumber(bankAccount, phoneNumber);
                                     }
                                     catch (Exception ex)
                                     {
@@ -211,10 +209,8 @@ namespace ATM.CLI
                                     }
                                     break;
                                 case 3:
-                                    bankAccount.Password = ConsoleInput.Password();
-                                    string query3 = $"Update Account set Password=N'{bankAccount.Password}' where id=N'{bankAccount.Id}' ";
-                                    SqlCommand command3 = new SqlCommand(query3, conn);
-                                    command3.ExecuteNonQuery();
+                                    string password = ConsoleInput.Password();
+                                    staffMember.UpdatePassword(bankAccount, password);
                                     break;
                                 default:
                                     ConsoleOutput.InValidOption();
@@ -239,7 +235,7 @@ namespace ATM.CLI
                             }
                             try
                             {
-                                staffMember.DeleteAccount(conn, bankId, userId);
+                                staffMember.DeleteAccount(bankId, userId);
                             }
                             catch (Exception ex)
                             {
@@ -270,7 +266,7 @@ namespace ATM.CLI
                             Console.WriteLine(ex.Message);
                             goto StaffOperations;
                         }
-                        staffMember.AddCurrency(conn, code, rate);
+                        staffMember.AddCurrency(code, rate);
                     }
                     else if (staffOperation == StaffOperationType.UpdateServiceCharges)
                     {
@@ -292,7 +288,7 @@ namespace ATM.CLI
                                 Console.WriteLine(ex.Message);
                                 goto UpdateServiceCharge;
                             }
-                            staffMember.UpdateCharges(conn, bankstaff.BankId ,rtgs, imps, 1);
+                            staffMember.UpdateCharges(bankstaff.BankId ,rtgs, imps, 1);
                         }
                         else if (choice == "2")
                         {
@@ -309,7 +305,7 @@ namespace ATM.CLI
                                 Console.WriteLine(ex.Message);
                                 goto UpdateServiceCharge;
                             }
-                            staffMember.UpdateCharges(conn, bankstaff.BankId,rtgs, imps, 2);
+                            staffMember.UpdateCharges(bankstaff.BankId,rtgs, imps, 2);
                         }
                         else
                         {
@@ -376,7 +372,7 @@ namespace ATM.CLI
                         string transId = Console.ReadLine();
                         try
                         {
-                            staffMember.RevertTransaction(conn, bankId, accountId, transId);
+                            staffMember.RevertTransaction(bankId, accountId, transId);
                         }
                         catch (Exception ex)
                         {
@@ -465,7 +461,7 @@ namespace ATM.CLI
                         {
                             Console.WriteLine(Constants.Messages.Amount);
                             double amtToTransfer = Convert.ToDouble(Console.ReadLine());
-                            if (accountHolder.Transfer(conn, bankAccount, amtToTransfer, reciever, sbankId, ToBankId, choice))
+                            if (accountHolder.Transfer(bankAccount, amtToTransfer, reciever, sbankId, ToBankId, choice))
                             {
                                 ConsoleOutput.TransferSuccessfull(amtToTransfer);
                             }
@@ -503,7 +499,7 @@ namespace ATM.CLI
                         }
                         try
                         {
-                            accountHolder.Deposit(conn,bankAccount, amt, currCode, bankId);
+                            accountHolder.Deposit(bankAccount, amt, currCode, bankId);
                         }
                         catch (Exception ex)
                         {
@@ -534,7 +530,7 @@ namespace ATM.CLI
                 string pass = ConsoleInput.Password();
                 try
                 {
-                    bankAccount = commonServices.Login(aId, pass,"2");
+                    bankAccount = commonServices.UserLogin(aId, pass,"2");
                 }
                 catch 
                 {
@@ -585,7 +581,7 @@ namespace ATM.CLI
                             try
                             {
                                 Console.WriteLine(bankAccount.Id,bankAccount.Balance);
-                                accountHolder.Deposit(conn,bankAccount, amt, currCode, bankId);
+                                accountHolder.Deposit(bankAccount, amt, currCode, bankId);
 
                             }
                             catch (Exception ex)
@@ -611,7 +607,7 @@ namespace ATM.CLI
                                 Console.WriteLine(ex.Message);
                                 goto CustomerOperations;
                             }
-                            if (accountHolder.Withdraw(conn, bankAccount, amt,bankId))
+                            if (accountHolder.Withdraw(bankAccount, amt,bankId))
                             {
                                 ConsoleOutput.WithdrawSuccessfull(amt);
                             }
@@ -645,7 +641,7 @@ namespace ATM.CLI
                             {
                                 Console.WriteLine(Constants.Messages.Amount);
                                 double amtToTransfer = Convert.ToDouble(Console.ReadLine());
-                                if (accountHolder.Transfer(conn, bankAccount, amtToTransfer, reciever, sbankId, ToBankId, choice))
+                                if (accountHolder.Transfer(bankAccount, amtToTransfer, reciever, sbankId, ToBankId, choice))
                                 {
                                     ConsoleOutput.TransferSuccessfull(amtToTransfer);
                                 }

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
@@ -11,7 +11,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ATM.Models\ATM.Models.csproj" />
-    <ProjectReference Include="..\ATM.Repository\ATM.Repository.csproj" />
   </ItemGroup>
 
 </Project>

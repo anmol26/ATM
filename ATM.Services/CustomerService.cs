@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Data;
 using System.Data.SqlClient;
 using ATM.Models;
+using ATM.Repository;
 
 namespace ATM.Services
 {
@@ -10,33 +10,28 @@ namespace ATM.Services
         Bank bank;
         const string DefaultCurrency = "INR";
         readonly CommonServices commonServices = new CommonServices();
-        public void Deposit(SqlConnection conn, Account user, double amount, string currCode, string bankId)
+        readonly CustomerDBOperations customerOperations = new CustomerDBOperations();
+        public void Deposit(Account user, double amount, string currCode, string bankId)
         {
             try
             {
 
-                user.Balance += Math.Round(amount * (double)(commonServices.FindExchangeRate(conn,currCode) / commonServices.FindExchangeRate(conn, DefaultCurrency)), 2);
+                user.Balance += Math.Round(amount * (double)(customerOperations.FindExchangeRate(currCode) / customerOperations.FindExchangeRate(DefaultCurrency)), 2);
                 Console.WriteLine("Updated Balance is: "+user.Balance);
-                string queryy = $"Update Account set Balance=N'{user.Balance}' where id=N'{user.Id}' ";
-                SqlCommand commandd = new SqlCommand(queryy, conn);
-                commandd.ExecuteNonQuery();
+                customerOperations.UpdateBalance(user.Id, user.Balance);
 
                 Transaction trans = new Transaction(amount, 1, user.Id, user.Id, bankId, bankId, commonServices.GenerateTransactionId(bankId, user.Id));
                 user.Transactions.Add(trans);
                 string type = "Credit";
-                string query = $"INSERT INTO [ATM].[dbo].[Transaction]" +
-                $" VALUES(N'{commonServices.GenerateTransactionId(bankId,user.Id)}',N'{user.Id}',N'{user.Id}',N'{bankId}',N'{bankId}'," +
-                $"N'{type}',N'{DateTime.Now}',N'{amount}')";
-                SqlCommand command = new SqlCommand(query, conn);
-                command.ExecuteNonQuery();
-                Library.TransactionList.Add(trans);
+                customerOperations.InsertTransaction(bankId,user, commonServices.GenerateTransactionId(bankId, user.Id),type,amount,trans);
+                
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
-        public bool Withdraw(SqlConnection conn, Account user, double amount, string bankId)
+        public bool Withdraw(Account user, double amount, string bankId)
         {
             try
             {
@@ -44,19 +39,12 @@ namespace ATM.Services
                 {
                     user.Balance -= amount;
                     Console.WriteLine("Updated Balance is: " + user.Balance);
-                    string queryy = $"Update Account set Balance=N'{user.Balance}' where id=N'{user.Id}' ";
-                    SqlCommand commandd = new SqlCommand(queryy, conn);
-                    commandd.ExecuteNonQuery();
+                    customerOperations.UpdateBalance(user.Id, user.Balance);
 
                     Transaction trans = new Transaction(amount, 2, user.Id, user.Id, bankId, bankId, commonServices.GenerateTransactionId(bankId, user.Id));
                     user.Transactions.Add(trans);
                     string type = "Debit";
-                    string query = $"INSERT INTO [ATM].[dbo].[Transaction]" +
-                    $" VALUES(N'{commonServices.GenerateTransactionId(bankId, user.Id)}',N'{user.Id}',N'{user.Id}',N'{bankId}',N'{bankId}'," +
-                    $"N'{type}',N'{DateTime.Now}',N'{amount}')";
-                    SqlCommand command = new SqlCommand(query, conn);
-                    command.ExecuteNonQuery();
-                    Library.TransactionList.Add(trans);
+                    customerOperations.InsertTransaction(bankId, user, commonServices.GenerateTransactionId(bankId, user.Id), type, amount, trans);
                     return true;
                 }
             }
@@ -66,7 +54,7 @@ namespace ATM.Services
             }
             return false;
         }
-        public bool Transfer(SqlConnection conn, Account sender, double amt, Account rcvr, string fromid, string toid, string choice)
+        public bool Transfer(Account sender, double amt, Account rcvr, string fromid, string toid, string choice)
         {
             Bank reciever = null;
             try
@@ -110,34 +98,22 @@ namespace ATM.Services
                 {
                     sender.Balance -= amt + charge;
                     Console.WriteLine("Updated Balance is: " + sender.Balance);
-                    string queryy = $"Update Account set Balance=N'{sender.Balance}' where id=N'{sender.Id}' ";
-                    SqlCommand commandd = new SqlCommand(queryy, conn);
-                    commandd.ExecuteNonQuery();
+                    customerOperations.UpdateBalance(sender.Id, sender.Balance);
 
-                    rcvr.Balance += Math.Round(amt * (double)(commonServices.FindExchangeRate(conn, bank.CurrencyCode) / commonServices.FindExchangeRate(conn, reciever.CurrencyCode)), 2);
-                    Console.WriteLine("Updated Balance is: " + rcvr.Balance);
-                    string query = $"Update Account set Balance=N'{rcvr.Balance}' where id=N'{rcvr.Id}' ";
-                    SqlCommand command = new SqlCommand(query, conn);
-                    command.ExecuteNonQuery();
+
+                    rcvr.Balance += Math.Round(amt * (double)(customerOperations.FindExchangeRate(bank.CurrencyCode) / customerOperations.FindExchangeRate(reciever.CurrencyCode)), 2);
+                    customerOperations.UpdateBalance(rcvr.Id, rcvr.Balance);
 
                     Transaction senderTrans = new Transaction(amt, 2, sender.Id, rcvr.Id, fromid, toid, commonServices.GenerateTransactionId(fromid, sender.Id));
                     sender.Transactions.Add(senderTrans);
                     string type = "Debit";
-                    string query1 = $"INSERT INTO [ATM].[dbo].[Transaction]" +
-                    $" VALUES(N'{commonServices.GenerateTransactionId(fromid, sender.Id)}',N'{sender.Id}',N'{rcvr.Id}',N'{fromid}',N'{toid}'," +
-                    $"N'{type}',N'{DateTime.Now}',N'{amt + charge}')";
-                    SqlCommand command1 = new SqlCommand(query1, conn);
-                    command1.ExecuteNonQuery();
+                    customerOperations.InsertTransaction(fromid, sender, commonServices.GenerateTransactionId(fromid, sender.Id), type, amt+charge, senderTrans);
                     Library.TransactionList.Add(senderTrans);
 
                     Transaction rcvrTrans = new Transaction(amt, 1, sender.Id, rcvr.Id, fromid, toid, commonServices.GenerateTransactionId(toid, rcvr.Id));
                     rcvr.Transactions.Add(rcvrTrans);
                     string type2 = "Credit";
-                    string query2 = $"INSERT INTO [ATM].[dbo].[Transaction]" +
-                    $" VALUES(N'{commonServices.GenerateTransactionId(toid, rcvr.Id)}',N'{sender.Id}',N'{rcvr.Id}',N'{fromid}',N'{toid}'," +
-                    $"N'{type2}',N'{DateTime.Now}',N'{amt}')";
-                    SqlCommand command2 = new SqlCommand(query2, conn);
-                    command2.ExecuteNonQuery();
+                    customerOperations.InsertTransaction(toid, rcvr, commonServices.GenerateTransactionId(toid, rcvr.Id), type2, amt, rcvrTrans);
                     Library.TransactionList.Add(rcvrTrans);
 
                     return true;
@@ -146,7 +122,7 @@ namespace ATM.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error in Transfer: {0}", ex.Message);
+                Console.WriteLine(ex.Message);
             }
             return false;
 

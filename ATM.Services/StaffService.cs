@@ -1,5 +1,6 @@
 ﻿using System;
 using ATM.Models;
+using ATM.Repository;
 using System.IO;
 using System.Linq;
 using System.Data.SqlClient;
@@ -10,7 +11,8 @@ namespace ATM.Services
     {
         Bank bank;
         readonly CommonServices commonServices = new CommonServices();
-        public string CreateBank(SqlConnection conn, string name, string address, string branch, string currencyCode)
+        readonly StaffDBOperations staffOperations = new StaffDBOperations();
+        public string CreateBank(string name, string address, string branch, string currencyCode)
         {
             if (string.IsNullOrEmpty(name))
                 throw new Exception("Bank name is not valid!");
@@ -20,16 +22,10 @@ namespace ATM.Services
                 throw new Exception("Invalid currency code!");
 
             Bank bank = new Bank(name, address, branch, currencyCode, commonServices.GenerateBankId(name));
-            Library.BankList.Add(bank);
-            string query = $"INSERT INTO Bank" +
-                $" VALUES(N'{commonServices.GenerateBankId(name)}',N'{name}',N'{address}',N'{branch}',N'{currencyCode}'," +
-                $"N'{bank.SameRTGS}',N'{bank.SameIMPS}',N'{bank.DiffRTGS}',N'{bank.DiffIMPS}')";
-            SqlCommand command = new SqlCommand(query, conn);
-            int rows= command.ExecuteNonQuery();
-            Console.WriteLine("Create Bank Query Executed! "+rows+" row(s) affected.");
+            staffOperations.InsertNewBank(commonServices.GenerateBankId(name), bank, name, address, branch, currencyCode);
             return bank.Id;
         }
-        public string CreateAccount(SqlConnection conn,string bankId, string name, string password, long phoneNumber, string gender, int choice)
+        public string CreateAccount(string bankId, string name, string password, long phoneNumber, string gender, int choice)
         {
             string Id;
             bank = commonServices.FindBank(bankId);
@@ -44,30 +40,16 @@ namespace ATM.Services
             if (choice == 1)
             {
                 Staff s = new Staff(bankId, name, phoneNumber, password, gender, commonServices.GenerateAccountId(name));
-                Library.StaffList.Add(s);
-
                 Id = s.Id;
-                string query = $"INSERT INTO Staff" +
-               $" VALUES(N'{commonServices.GenerateBankId(name)}',N'{name}',N'{password}',N'{phoneNumber}',1," +
-               $"N'{DateTime.Now}',N'{gender}',N'{bankId}')";
-                SqlCommand command = new SqlCommand(query, conn);
-                int rows = command.ExecuteNonQuery();
-                Console.WriteLine("Create Account Query Executed! " + rows + " row(s) affected.");
+                staffOperations.InsertNewStaff(s, commonServices.GenerateAccountId(name), name, password, phoneNumber, gender, bankId);
             }
             else
             {
                 Account a = new Account(bankId, name, phoneNumber, password, gender, commonServices.GenerateAccountId(name),0);
-                Library.AccountList.Add(a);
                 Id = a.Id;
-                string query = $"INSERT INTO Account" +
-               $" VALUES(N'{commonServices.GenerateBankId(name)}',N'{name}',N'{password}',N'{phoneNumber}',0,1," +
-               $"N'{gender}',N'{DateTime.Now}',N'{bankId}')";
-                SqlCommand command = new SqlCommand(query, conn);
-                int rows = command.ExecuteNonQuery();
-                Console.WriteLine("Create Account Query Executed! " + rows + " row(s) affected.");
+                staffOperations.InsertNewAccount(a, commonServices.GenerateAccountId(name), name, password, phoneNumber, gender, bankId);
+
             }
-
-
             return Id;
         }
         public Account CheckAccount(string bankId, string accountHolder)
@@ -92,7 +74,7 @@ namespace ATM.Services
             }
             return user;
         }
-        public void DeleteAccount(SqlConnection conn ,string bankId, string userId)
+        public void DeleteAccount(string bankId, string userId)
         {
             Account user;
             try
@@ -110,36 +92,25 @@ namespace ATM.Services
                 throw new Exception(ex.Message);
 
             }
-            Library.AccountList.Remove(user);
-            string query = $"Delete from Account where id=N'{user.Id}' ";
-            SqlCommand commandd = new SqlCommand(query, conn);
-            commandd.ExecuteNonQuery();
+            staffOperations.DeleteAccount(user);
         }
-        public void AddCurrency(SqlConnection conn,string code, double rate)
+        public void AddCurrency(string code, double rate)
         {
-            //Currency.curr[code] = rate;
-            string query = $"Insert into Currency Values(N'{code}',N'{rate}') ";
-            SqlCommand command = new SqlCommand(query, conn);
-            command.ExecuteNonQuery();
-
+            staffOperations.InsertNewCurrency(code, rate);
         }
-        public void UpdateCharges(SqlConnection conn, string bankId,double rtgs, double imps, int choice)
+        public void UpdateCharges(string bankId,double rtgs, double imps, int choice)
         {
             if (choice == 1)
             {
                 bank.SameRTGS = rtgs;
                 bank.SameIMPS = imps;
-                string query1 = $"Update Bank set SameRTGS=N'{rtgs}', SameIMPS=N'{imps}' where id=N'{bankId}' ";
-                SqlCommand command1 = new SqlCommand(query1, conn);
-                command1.ExecuteNonQuery();
+                staffOperations.UpdateCharges(bankId,rtgs,imps,choice);
             }
             else if (choice == 2)
             {
                 bank.DiffRTGS = rtgs;
                 bank.DiffIMPS = imps;
-                string query2 = $"Update Bank set DiffRTGS=N'{rtgs}', DiffIMPS=N'{imps}' where id=N'{bankId}' ";
-                SqlCommand command2 = new SqlCommand(query2, conn);
-                command2.ExecuteNonQuery();
+                staffOperations.UpdateCharges(bankId, rtgs, imps, choice);
             }
         }
         public Account ViewHistory(string Id)
@@ -159,7 +130,7 @@ namespace ATM.Services
             }
             return user;
         }
-        public void RevertTransaction( SqlConnection conn, string bankid, string accountid, string transid)
+        public void RevertTransaction(string bankid, string accountid, string transid)
         {
             Transaction revert = null;
             Account sender = null;
@@ -213,16 +184,10 @@ namespace ATM.Services
             try
             {
                 sender.Balance += revert.Amount;
-                Console.WriteLine("Updated Sender Balance is: " + sender.Balance);
-                string query1 = $"Update Account set Balance=N'{sender.Balance}' where id=N'{sender.Id}' ";
-                SqlCommand command1 = new SqlCommand(query1, conn);
-                command1.ExecuteNonQuery();
+                staffOperations.UpdateBalance(sender.Id,sender.Balance);
 
                 rcvr.Balance -= revert.Amount;
-                Console.WriteLine("Updated Reciever Balance is: " + rcvr.Balance);
-                string query2 = $"Update Account set Balance=N'{rcvr.Balance}' where id=N'{rcvr.Id}' ";
-                SqlCommand command2 = new SqlCommand(query2, conn);
-                command2.ExecuteNonQuery();
+                staffOperations.UpdateBalance(rcvr.Id, rcvr.Balance);
             }
             catch (Exception ex)
             {
@@ -316,6 +281,21 @@ namespace ATM.Services
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+        public void UpdateName(Account bankAccount, string name)
+        {
+            bankAccount.Name = name;
+            staffOperations.UpdateName(bankAccount, name);
+        }
+        public void UpdatePhoneNumber(Account bankAccount, long phoneNumber)
+        {
+            bankAccount.PhoneNumber = phoneNumber;
+            staffOperations.UpdatePhoneNumber(bankAccount, phoneNumber);
+        }
+        public void UpdatePassword(Account bankAccount, string password)
+        {
+            bankAccount.Password = password;
+            staffOperations.UpdatePassword(bankAccount, password);
         }
     }
 }

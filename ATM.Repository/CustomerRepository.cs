@@ -5,7 +5,7 @@ using System.Data;
 
 namespace ATM.Repository
 {
-    public class CustomerDBOperations
+    public class CustomerRepository
     {
         public static string connectionString = @"Data Source=ANMOL\SQLEXPRESS;Initial Catalog=ATM;integrated security=SSPI";
         public void UpdateBalance(string id, double balance) 
@@ -22,7 +22,6 @@ namespace ATM.Repository
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
-
             }
         }
         public void InsertTransaction(string bankId, Account user, string transId, string type,double amount,Transaction trans) 
@@ -42,7 +41,6 @@ namespace ATM.Repository
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
-
             }
         }
         public double FindExchangeRate(string currCode)

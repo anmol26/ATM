@@ -6,10 +6,9 @@ namespace ATM.Services
 {
     public class CustomerService
     {
-        Bank bank;
         const string DefaultCurrency = "INR";
         readonly CommonServices commonServices = new CommonServices();
-        readonly CustomerDBOperations customerOperations = new CustomerDBOperations();
+        readonly CustomerRepository customerOperations = new CustomerRepository();
         public void Deposit(Account user, double amount, string currCode, string bankId)
         {
             try
@@ -55,6 +54,7 @@ namespace ATM.Services
         }
         public bool Transfer(Account sender, double amt, Account rcvr, string fromid, string toid, string choice)
         {
+            Bank bank=null;
             Bank reciever = null;
             try
             {

@@ -5,10 +5,11 @@ namespace ATM.CLI
     {
         public static class Messages
         {
+            public const string PrintAllAccountTransaction = "All Account Holder's Transaction history printed successfully";
             public const string ConnString = @"Data Source=ANMOL\SQLEXPRESS;Initial Catalog=ATM;integrated security=SSPI";
             public const string AccountDoesNotExist = "\nAccount does not exist!!!";
             public const string AccountHolderListSuccessFull = "Account holder list printed successfully";
-            public const string AccountId="\nPlease Enter AccouontId:";
+            public const string AccountId="\nPlease Enter AccountId:";
             public const string AccountSuccessfullCreation = "\nAccount Created Successfully!!\n";
             public const string AccountSuccessfullDeletion = "\nAccount deleted successfully!!\n";
             public const string AccountUpdateChoice = "\nWhat do you want to update!\n1.Name\n2.Phone Number\n3.Password\n";

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ATM.Repository
 {
-    public class StaffDBOperations
+    public class StaffRepository
     {
         public static string connectionString = @"Data Source=ANMOL\SQLEXPRESS;Initial Catalog=ATM;integrated security=SSPI";
         public void InsertNewBank(string bankId,Bank bank, string name,string address, string branch, string currencyCode) 

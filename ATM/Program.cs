@@ -4,8 +4,6 @@ using ATM.Models.Enums;
 using ATM.Services;
 using ATM.Repository;
 
-
-// bank creation after exception handling
 namespace ATM.CLI
 {
     public class Program
@@ -420,7 +418,7 @@ namespace ATM.CLI
                         try
                         {
                             staffMember.WriteAllAccountHistory(bankId);
-                            Console.WriteLine("All Account Holder's Transaction history printed successfully");
+                            Console.WriteLine(Constants.Messages.PrintAllAccountTransaction);
                         }
                         catch (Exception ex)
                         {

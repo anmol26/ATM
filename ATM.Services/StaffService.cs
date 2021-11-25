@@ -14,7 +14,7 @@ namespace ATM.Services
         static string CustomerListFilename = @"C:\Users\dell\OneDrive\Desktop\AccountHolderList.txt";
         static string LineSeparater = "\n-----------------------------------------------------------------\n\n";
         readonly CommonServices commonServices = new CommonServices();
-        readonly StaffDBOperations staffOperations = new StaffDBOperations();
+        readonly StaffRepository staffOperations = new StaffRepository();
         public string CreateBank(string name, string address, string branch, string currencyCode)
         {
             try

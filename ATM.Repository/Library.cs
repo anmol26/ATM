@@ -12,11 +12,6 @@ namespace ATM.Repository
         public Library()
         {
             ConnectDatabase();
-            GetBanks();
-            GetStaff();
-            GetAccount();
-            GetTransaction();
-            GetCurrency();
         }
 
         public static List<Bank> BankList = new List<Bank>();
@@ -35,6 +30,11 @@ namespace ATM.Repository
                 Console.WriteLine("Openning Database Connection...");
                 conn.Open();
                 Console.WriteLine("Database Connection successful!");
+                GetBankList();
+                GetStaffList();
+                GetAccountHolderList();
+                GetTransactionList();
+                GetCurrency();
             }
             catch (Exception e)
             {
@@ -42,7 +42,7 @@ namespace ATM.Repository
             }
             return conn;
         }
-        public void GetBanks()
+        public void GetBankList()
         {
             string query = "SELECT * FROM Bank";
             SqlCommand command = new SqlCommand(query, conn);
@@ -55,7 +55,7 @@ namespace ATM.Repository
             }
             reader.Close();
         }
-        public void GetStaff()
+        public void GetStaffList()
         {
             string query = "SELECT * FROM Staff";
             SqlCommand command = new SqlCommand(query, conn);
@@ -70,7 +70,7 @@ namespace ATM.Repository
             }
             reader.Close();
         }
-        public void GetAccount()
+        public void GetAccountHolderList()
         {
             string query = "SELECT * FROM Account";
             SqlCommand command = new SqlCommand(query, conn);
@@ -86,7 +86,7 @@ namespace ATM.Repository
             }
             reader.Close();
         }
-        public void GetTransaction()
+        public void GetTransactionList()
         {
             string query = "SELECT * FROM [ATM].[dbo].[Transaction]";
             SqlCommand command = new SqlCommand(query, conn);

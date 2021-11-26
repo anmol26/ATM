@@ -19,7 +19,6 @@ namespace ATM.Repository
         public static List<Account> AccountList = new List<Account>();
         public static List<Transaction> TransactionList = new List<Transaction>();
         public static List<Currency> CurrencyList = new List<Currency>();
-
         private SqlConnection conn;
         public SqlConnection ConnectDatabase()
         {

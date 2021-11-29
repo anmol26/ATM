@@ -4,120 +4,98 @@ using System.Data.SqlClient;
 using System.Collections.Generic;
 using System.Data;
 
-namespace ATM.Repository 
+namespace ATM.Repository
 {
     public class Library
     {
-        static readonly string connectionString=@"Data Source=ANMOL\SQLEXPRESS;Initial Catalog=ATM;integrated security=SSPI";
-        public Library()
+        public List<Bank> GetBankList()
         {
-            ConnectDatabase();
-        }
-
-        public static List<Bank> BankList = new List<Bank>();
-        public static List<Staff> StaffList = new List<Staff>();
-        public static List<Account> AccountList = new List<Account>();
-        public static List<Transaction> TransactionList = new List<Transaction>();
-        public static List<Currency> CurrencyList = new List<Currency>();
-        private SqlConnection conn;
-        public SqlConnection ConnectDatabase()
-        {
-            Console.WriteLine("Getting Connection to Database...");
-            conn = new SqlConnection(connectionString);
-            try
-            {
-                Console.WriteLine("Openning Database Connection...");
-                conn.Open();
-                Console.WriteLine("Database Connection successful!");
-                GetBankList();
-                GetStaffList();
-                GetAccountHolderList();
-                GetTransactionList();
-                GetCurrency();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-            return conn;
-        }
-        public void GetBankList()
-        {
+            List<Bank> BankList = new List<Bank>();
             string query = "SELECT * FROM Bank";
-            SqlCommand command = new SqlCommand(query, conn);
+            SqlCommand command = new SqlCommand(query, DatabaseConnection.ConnectDatabase());
             SqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
                 var bankData = (IDataReader)reader;
-                Bank bank = new Bank(Convert.ToString(bankData[1]), Convert.ToString(bankData[2]), Convert.ToString(bankData[3]), Convert.ToString(bankData[4]), Convert.ToString(bankData[0]));
+                Bank bank = new Bank(Convert.ToString(bankData["Name"]), Convert.ToString(bankData["Address"]), Convert.ToString(bankData["Branch"]), Convert.ToString(bankData["Currency"]), Convert.ToString(bankData["id"]));
                 BankList.Add(bank);
             }
             reader.Close();
+            return BankList;
         }
-        public void GetStaffList()
+
+        public List<Staff> GetStaffList()
         {
+            List<Staff> StaffList = new List<Staff>();
             string query = "SELECT * FROM Staff";
-            SqlCommand command = new SqlCommand(query, conn);
+            SqlCommand command = new SqlCommand(query, DatabaseConnection.ConnectDatabase());
             SqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
                 var staffData = (IDataReader)reader;
-                string num = Convert.ToString(staffData[3]);
+                string num = Convert.ToString(staffData["PhoneNumber"]);
                 long number = long.Parse(num);
-                Staff staff = new Staff(Convert.ToString(staffData[7]), Convert.ToString(staffData[1]), number, Convert.ToString(staffData[2]), Convert.ToString(staffData[6]), Convert.ToString(staffData[0]));
+                Staff staff = new Staff(Convert.ToString(staffData["BankId"]), Convert.ToString(staffData["Name"]), number, Convert.ToString(staffData["Password"]), Convert.ToString(staffData["Gender"]), Convert.ToString(staffData["id"]));
                 StaffList.Add(staff);
             }
             reader.Close();
+            return StaffList;
         }
-        public void GetAccountHolderList()
+        public List<Account> GetAccountHolderList()
         {
+            List<Account> AccountList = new List<Account>();
             string query = "SELECT * FROM Account";
-            SqlCommand command = new SqlCommand(query, conn);
+            SqlCommand command = new SqlCommand(query, DatabaseConnection.ConnectDatabase());
             SqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
                 var AccountData = (IDataReader)reader;
-                string num = Convert.ToString(AccountData[3]);
+                string num = Convert.ToString(AccountData["PhoneNumber"]);
                 long number = long.Parse(num);
-                double balance= Convert.ToDouble(AccountData[4]);
-                Account account = new Account(Convert.ToString(AccountData[8]), Convert.ToString(AccountData[1]),number, Convert.ToString(AccountData[2]), Convert.ToString(AccountData[6]), Convert.ToString(AccountData[0]),balance);
+                double balance = Convert.ToDouble(AccountData["Balance"]);
+                Account account = new Account(Convert.ToString(AccountData["BankId"]), Convert.ToString(AccountData["Name"]), number, Convert.ToString(AccountData["Password"]), Convert.ToString(AccountData["Gender"]), Convert.ToString(AccountData["id"]), balance);
                 AccountList.Add(account);
             }
             reader.Close();
+            return AccountList;
         }
-        public void GetTransactionList()
+        public List<Transaction> GetTransactionList()
         {
+            List<Transaction> TransactionList = new List<Transaction>();
             string query = "SELECT * FROM [ATM].[dbo].[Transaction]";
-            SqlCommand command = new SqlCommand(query, conn);
+            SqlCommand command = new SqlCommand(query, DatabaseConnection.ConnectDatabase());
             SqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
                 var transactionData = (IDataReader)reader;
-                string amt = Convert.ToString(transactionData[7]);
+                string amt = Convert.ToString(transactionData["Amount"]);
                 double amount = double.Parse(amt);
-                string t= Convert.ToString(transactionData[5]);
+                string t = Convert.ToString(transactionData["Type"]);
                 int type;
                 if (t == "Credit") { type = 1; }
                 else { type = 2; }
-                Transaction trans = new Transaction( amount, type, Convert.ToString(transactionData[1]), Convert.ToString(transactionData[2]),Convert.ToString(transactionData[3]), Convert.ToString(transactionData[4]), Convert.ToString(transactionData[0]));
+                Transaction trans = new Transaction(amount, type, Convert.ToString(transactionData["SenderAcountId"]), Convert.ToString(transactionData["RecieverAccountId"]), Convert.ToString(transactionData["SenderBankId"]), Convert.ToString(transactionData["RecieverBankId"]), Convert.ToString(transactionData["id"]));
                 TransactionList.Add(trans);
             }
             reader.Close();
+            return TransactionList;
         }
-        public void GetCurrency()
+        public List<Currency> GetCurrency()
         {
+            List<Currency> CurrencyList = new List<Currency>();
             string query = "SELECT * FROM [ATM].[dbo].[Currency]";
-            SqlCommand command = new SqlCommand(query, conn);
+            SqlCommand command = new SqlCommand(query, DatabaseConnection.ConnectDatabase());
             SqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
                 var CurrencyData = (IDataReader)reader;
-                string er = Convert.ToString(CurrencyData[2]);
+                string er = Convert.ToString(CurrencyData["ExchangeRate"]);
                 double exchangerate = Convert.ToDouble(er);
-                Currency currency = new Currency(Convert.ToString(CurrencyData[1]), exchangerate);
+                Currency currency = new Currency(Convert.ToString(CurrencyData["CurrencyCode"]), exchangerate);
                 CurrencyList.Add(currency);
             }
             reader.Close();
+            return CurrencyList;
         }
 
     }

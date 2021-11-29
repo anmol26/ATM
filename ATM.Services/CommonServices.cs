@@ -9,6 +9,7 @@ namespace ATM.Services
 {
     public class CommonServices
     {
+        readonly Library lib = new Library();
         const string DefaultPrefix = "TXN";
         const string DefaultTimeFormat = "ddHHmmss";
         const string FileName = @"C:\Users\dell\OneDrive\Desktop\TransactionHistory.txt";
@@ -19,7 +20,7 @@ namespace ATM.Services
             {
                 if (choice == "1")
                 {
-                    foreach (var staff in Library.StaffList.Where(staff => staff.Id == userId & staff.Password == pass))
+                    foreach (var staff in lib.GetStaffList().Where(staff => staff.Id == userId & staff.Password == pass))
                     {
                         return staff;
                     }
@@ -28,7 +29,7 @@ namespace ATM.Services
 
                 else
                 {
-                    foreach (var account in Library.AccountList.Where(account => account.Id == userId & account.Password == pass))
+                    foreach (var account in lib.GetAccountHolderList().Where(account => account.Id == userId & account.Password == pass))
                     {
                         return account;
                     }
@@ -77,7 +78,7 @@ namespace ATM.Services
         }
         public Bank FindBank(string bankId)
         {
-            foreach (var i in Library.BankList.Where(i => i.Id == bankId))
+            foreach (var i in lib.GetBankList().Where(i => i.Id == bankId))
             {
                 return i;
             }
@@ -86,7 +87,7 @@ namespace ATM.Services
         }
         public Account FindAccount(string userId)
         {
-            foreach (var account in Library.AccountList.Where(account => account.Id == userId))
+            foreach (var account in lib.GetAccountHolderList().Where(account => account.Id == userId))
             {
                 return account;
             }

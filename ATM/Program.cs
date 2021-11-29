@@ -8,7 +8,7 @@ namespace ATM.CLI
 {
     public class Program
     {
-        public static void Main(string[] args )
+        public static void Main(string[] args)
         {
             ConsoleOutput.Welcome();
             Library lib = new Library();
@@ -23,7 +23,7 @@ namespace ATM.CLI
             {
                 loginOption = (LoginType)(Convert.ToInt32(Console.ReadLine()));
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 goto LoginPage;
@@ -87,20 +87,20 @@ namespace ATM.CLI
 
             }
             else if (loginOption == LoginType.StaffMember)
-            {   
+            {
                 Staff bankstaff;
                 Console.WriteLine(Constants.Messages.AccountId);
                 string aId = Console.ReadLine();
                 string pass = ConsoleInput.Password();
                 try
                 {
-                    bankstaff = commonServices.UserLogin(aId, pass,"1");
-                    if (bankstaff == null) 
+                    bankstaff = commonServices.UserLogin(aId, pass, "1");
+                    if (bankstaff == null)
                     {
                         throw new Exception(Constants.Messages.AccountDoesNotExist);
                     }
                 }
-                catch(Exception ex) 
+                catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                     goto LoginPage;
@@ -114,7 +114,7 @@ namespace ATM.CLI
                 {
                     staffOperation = (StaffOperationType)Convert.ToInt32(Console.ReadLine());
                 }
-                catch (Exception ex) 
+                catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                     goto StaffOperations;
@@ -283,7 +283,7 @@ namespace ATM.CLI
                                 Console.WriteLine(ex.Message);
                                 goto UpdateServiceCharge;
                             }
-                            staffMember.UpdateCharges(bankstaff.BankId ,rtgs, imps, 1);
+                            staffMember.UpdateCharges(bankstaff.BankId, rtgs, imps, 1);
                         }
                         else if (choice == "2")
                         {
@@ -300,7 +300,7 @@ namespace ATM.CLI
                                 Console.WriteLine(ex.Message);
                                 goto UpdateServiceCharge;
                             }
-                            staffMember.UpdateCharges(bankstaff.BankId,rtgs, imps, 2);
+                            staffMember.UpdateCharges(bankstaff.BankId, rtgs, imps, 2);
                         }
                         else
                         {
@@ -324,7 +324,7 @@ namespace ATM.CLI
                                 Console.WriteLine(Constants.Messages.InvalidDetail);
                                 goto ShowTransactionHistory;
                             }
-                            foreach (var i in Library.TransactionList)
+                            foreach (var i in lib.GetTransactionList())
                             {
                                 ConsoleOutput.History(i);
                             }
@@ -337,7 +337,7 @@ namespace ATM.CLI
                                 Console.WriteLine(Constants.Messages.InvalidDetail);
                                 goto ShowTransactionHistory;
                             }
-                            foreach (var i in Library.TransactionList)
+                            foreach (var i in lib.GetTransactionList())
                             {
                                 try
                                 {
@@ -443,8 +443,9 @@ namespace ATM.CLI
                         string hName = Console.ReadLine();
                         Console.WriteLine();
                         try
-                        {   bank = commonServices.FindBank(sbankId);
-                            bankAccount=commonServices.FindAccount(accountID);
+                        {
+                            bank = commonServices.FindBank(sbankId);
+                            bankAccount = commonServices.FindAccount(accountID);
                             reciever = staffMember.CheckAccount(ToBankId, hName);
                         }
                         catch (Exception ex)
@@ -525,9 +526,9 @@ namespace ATM.CLI
                 string pass = ConsoleInput.Password();
                 try
                 {
-                    bankAccount = commonServices.UserLogin(aId, pass,"2");
+                    bankAccount = commonServices.UserLogin(aId, pass, "2");
                 }
-                catch 
+                catch
                 {
                     Console.WriteLine(Constants.Messages.InvalidDetail);
                     goto LoginPage;
@@ -575,7 +576,7 @@ namespace ATM.CLI
                             }
                             try
                             {
-                                Console.WriteLine(bankAccount.Id,bankAccount.Balance);
+                                Console.WriteLine(bankAccount.Id, bankAccount.Balance);
                                 accountHolder.Deposit(bankAccount, amt, currCode, bankId);
 
                             }
@@ -602,7 +603,7 @@ namespace ATM.CLI
                                 Console.WriteLine(ex.Message);
                                 goto CustomerOperations;
                             }
-                            if (accountHolder.Withdraw(bankAccount, amt,bankId))
+                            if (accountHolder.Withdraw(bankAccount, amt, bankId))
                             {
                                 ConsoleOutput.WithdrawSuccessfull(amt);
                             }
@@ -659,14 +660,14 @@ namespace ATM.CLI
                             if (choice == "1")
                             {
                                 ConsoleOutput.TransactionHistory();
-                                foreach (var i in Library.TransactionList)
+                                foreach (var i in lib.GetTransactionList())
                                 {
                                     ConsoleOutput.History(i);
                                 }
                             }
-                            else if(choice=="2")
+                            else if (choice == "2")
                             {
-                                foreach (var i in Library.TransactionList)
+                                foreach (var i in lib.GetTransactionList())
                                 {
                                     commonServices.WriteHistory(i);
                                     Console.WriteLine(Constants.Messages.TransactionListSuccessFull);
@@ -696,7 +697,7 @@ namespace ATM.CLI
                         goto CustomerOperations;
                     }
                 }
-                 
+
             }
             else
             {
@@ -708,7 +709,7 @@ namespace ATM.CLI
         Finish:
             ConsoleOutput.Exit();
         }
-        
+
 
     }
 }

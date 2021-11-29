@@ -21,12 +21,12 @@ namespace ATM.Repository
                 throw new Exception(ex.Message);
             }
         }
-        public void InsertTransaction(string bankId, Account user, string transId, string type, double amount, Transaction trans)
+        public void InsertTransaction(string transId, string type, double amount, Transaction trans)
         {
             try
             {
                 string query = $"INSERT INTO [ATM].[dbo].[Transaction]" +
-                    $" VALUES(N'{transId}',N'{user.Id}',N'{user.Id}',N'{bankId}',N'{bankId}'," +
+                    $" VALUES(N'{transId}',N'{trans.SenderAccountId}',N'{trans.RecieverAccountId}',N'{trans.SenderBankId}',N'{trans.RecieverBankId}'," +
                     $"N'{type}',N'{DateTime.Now}',N'{amount}')";
                 SqlCommand command = new SqlCommand(query, DatabaseConnection.ConnectDatabase());
                 command.ExecuteNonQuery();

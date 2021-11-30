@@ -19,7 +19,6 @@ namespace ATM.Services
                 customerOperations.UpdateBalance(user.Id, user.Balance);
 
                 Transaction trans = new Transaction(amount, 1, user.Id, user.Id, bankId, bankId, commonServices.GenerateTransactionId(bankId, user.Id));
-                user.Transactions.Add(trans);
                 string type = "Credit";
                 customerOperations.InsertTransaction(commonServices.GenerateTransactionId(bankId, user.Id), type, amount, trans);
             }
@@ -39,7 +38,6 @@ namespace ATM.Services
                     customerOperations.UpdateBalance(user.Id, user.Balance);
 
                     Transaction trans = new Transaction(amount, 2, user.Id, user.Id, bankId, bankId, commonServices.GenerateTransactionId(bankId, user.Id));
-                    user.Transactions.Add(trans);
                     string type = "Debit";
                     customerOperations.InsertTransaction(commonServices.GenerateTransactionId(bankId, user.Id), type, amount, trans);
                     return true;
@@ -103,16 +101,14 @@ namespace ATM.Services
                     customerOperations.UpdateBalance(rcvr.Id, rcvr.Balance);
 
                     Transaction senderTrans = new Transaction(amt, 2, sender.Id, rcvr.Id, fromBankId, toBankId, commonServices.GenerateTransactionId(fromBankId, sender.Id));
-                    sender.Transactions.Add(senderTrans);
                     string type = "Debit";
                     customerOperations.InsertTransaction(commonServices.GenerateTransactionId(fromBankId, sender.Id), type, amt + charge, senderTrans);
-                    lib.GetTransactionList().Add(senderTrans);
+                    //lib.GetTransactionList().Add(senderTrans);
 
                     Transaction rcvrTrans = new Transaction(amt, 1, sender.Id, rcvr.Id, fromBankId, toBankId, commonServices.GenerateTransactionId(toBankId, rcvr.Id));
-                    rcvr.Transactions.Add(rcvrTrans);
                     string type2 = "Credit";
                     customerOperations.InsertTransaction(commonServices.GenerateTransactionId(toBankId, rcvr.Id), type2, amt, rcvrTrans);
-                    lib.GetTransactionList().Add(rcvrTrans);
+                    //lib.GetTransactionList().Add(rcvrTrans);
 
                     return true;
                 }

@@ -11,6 +11,30 @@ namespace ATM.CLI
         public static void Main(string[] args)
         {
             ConsoleOutput.Welcome();
+
+            //testing begin
+            Console.WriteLine("DBContext 1");
+            BankDbContext dbContext = new BankDbContext();
+            Console.WriteLine("DBContext 2");
+            //(string name, string address, string branch, string currencyCode, string bankId)
+            var b = new Bank("Testing","testing","testing","INR","testing1234");
+            //var b = new Bank
+            //{
+            //    Name = "testing",
+            //    Address = "testing",
+            //    Branch = "testing",
+            //    CurrencyCode = "INR",
+            //    Id = "testing"
+            //};
+            dbContext.Banks.Add(b);
+            //var a = new Account("1234", "testing", 32423, "1234", "Male", "abcd1234", 100);
+            //dbContext.Accounts.Add(a);
+            //(string bankId, string name,long phoneNumber,string password,string gender,string id,double balance)
+            dbContext.SaveChanges();
+            Console.WriteLine("DBContext 3");
+
+            //testing end
+
             Library lib = new Library();
             StaffService staffMember = new StaffService();
             CustomerService accountHolder = new CustomerService();

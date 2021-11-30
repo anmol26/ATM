@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace ATM.Models
 {
     public class Bank
     {
         const string DefaultCurrency = "INR";
-        const double DefaultRTGSChargeToSameBank=0;
+        const double DefaultRTGSChargeToSameBank = 0;
         const double DefaultIMPSChargeToSameBank = 5;
         const double DefaultRTGSChargeToOtherBank = 2;
         const double DefaultIMPSChargeToOtherBank = 6;
@@ -16,16 +17,12 @@ namespace ATM.Models
             this.Branch = branch;
             this.Id = bankId;
             this.CurrencyCode = currencyCode;
-            //UserAccount = new List<Account>();
-            //StaffAccount= new List<Staff>();
         }
         public string Name { get; set; }
+        [Key]
         public string Id { get; set; }
         public string Branch { get; set; }
         public string Address { get; set; }
-        
-        //public List<Account> UserAccount { get; set; }
-        //public List<Staff> StaffAccount { get; set; }
 
         public double sameRTGS = DefaultRTGSChargeToSameBank;
         public double sameIMPS = DefaultIMPSChargeToSameBank;

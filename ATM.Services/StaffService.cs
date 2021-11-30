@@ -234,7 +234,6 @@ namespace ATM.Services
                     {
                         file.WriteLine();
                         foreach (Staff s in lib.GetStaffList())
-                        //foreach (Staff s in Library.StaffList)
                         {
                             if (s.BankId == bank.Id)
                             {
@@ -287,7 +286,7 @@ namespace ATM.Services
                         }
                         if (bankId == account.BankId)
                         {
-                            foreach (var transaction in account.Transactions)
+                            foreach (var transaction in lib.GetTransactionList())
                             {
                                 file.WriteLine(account.Name);
                                 file.WriteLine();

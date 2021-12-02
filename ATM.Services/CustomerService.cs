@@ -1,12 +1,13 @@
 ﻿using System;
 using ATM.Models;
 using ATM.Repository;
+using ATM.Repository.Models;
 
 namespace ATM.Services
 {
     public class CustomerService
     {
-        readonly Library lib = new Library();
+        readonly BankDbContext dbContext = new BankDbContext();
         const string DefaultCurrency = "INR";
         readonly CommonServices commonServices = new CommonServices();
         readonly CustomerRepository customerOperations = new CustomerRepository();
@@ -51,11 +52,11 @@ namespace ATM.Services
         }
         public bool Transfer(Account sender, double amt, Account rcvr, string fromBankId, string toBankId, string choice)
         {
-            Bank bank = null;
-            Bank reciever = null;
+            BankDb bank = null;
+            BankDb reciever = null;
             try
             {
-                foreach (var i in lib.GetBankList())
+                foreach (var i in dbContext.Banks)
                 {
                     if (i.Id == fromBankId)
                     {
@@ -71,11 +72,11 @@ namespace ATM.Services
                 {
                     if (choice == "1")
                     {
-                        charge = DeductCharges(amt, bank.SameRTGS);
+                        charge = DeductCharges(amt,Convert.ToDouble(bank.SameRtgs));
                     }
                     else
                     {
-                        charge = DeductCharges(amt, bank.SameIMPS);
+                        charge = DeductCharges(amt, Convert.ToDouble(bank.SameImps));
                     }
 
                 }
@@ -83,11 +84,11 @@ namespace ATM.Services
                 {
                     if (choice == "1")
                     {
-                        charge = DeductCharges(amt, bank.DiffRTGS);
+                        charge = DeductCharges(amt, Convert.ToDouble(bank.DiffRtgs));
                     }
                     else
                     {
-                        charge = DeductCharges(amt, bank.DiffIMPS);
+                        charge = DeductCharges(amt, Convert.ToDouble(bank.DiffImps));
                     }
                 }
                 if (sender.Balance >= amt + charge)
@@ -96,20 +97,17 @@ namespace ATM.Services
                     Console.WriteLine("Updated Balance is: " + sender.Balance);
                     customerOperations.UpdateBalance(sender.Id, sender.Balance);
 
-
-                    rcvr.Balance += Math.Round(amt * (double)(customerOperations.FindExchangeRate(bank.CurrencyCode) / customerOperations.FindExchangeRate(reciever.CurrencyCode)), 2);
+                    rcvr.Balance += Math.Round(amt * (double)(customerOperations.FindExchangeRate(bank.Currency) / customerOperations.FindExchangeRate(reciever.Currency)), 2);
                     customerOperations.UpdateBalance(rcvr.Id, rcvr.Balance);
 
                     Transaction senderTrans = new Transaction(amt, 2, sender.Id, rcvr.Id, fromBankId, toBankId, commonServices.GenerateTransactionId(fromBankId, sender.Id));
                     string type = "Debit";
                     customerOperations.InsertTransaction(commonServices.GenerateTransactionId(fromBankId, sender.Id), type, amt + charge, senderTrans);
-                    //lib.GetTransactionList().Add(senderTrans);
-
+                    
                     Transaction rcvrTrans = new Transaction(amt, 1, sender.Id, rcvr.Id, fromBankId, toBankId, commonServices.GenerateTransactionId(toBankId, rcvr.Id));
                     string type2 = "Credit";
                     customerOperations.InsertTransaction(commonServices.GenerateTransactionId(toBankId, rcvr.Id), type2, amt, rcvrTrans);
-                    //lib.GetTransactionList().Add(rcvrTrans);
-
+                    
                     return true;
                 }
 

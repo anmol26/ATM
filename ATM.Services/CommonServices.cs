@@ -9,28 +9,29 @@ namespace ATM.Services
 {
     public class CommonServices
     {
-        readonly Library lib = new Library();
+        BankDbContext dbContext = new BankDbContext();
         const string DefaultPrefix = "TXN";
         const string DefaultTimeFormat = "ddHHmmss";
         const string FileName = @"C:\Users\dell\OneDrive\Desktop\TransactionHistory.txt";
-        static string LineSeparater = "\n-----------------------------------------------------------------\n\n";
+        const string LineSeparater = "\n-----------------------------------------------------------------\n\n";
         public dynamic UserLogin(string userId, string pass, string choice)
         {
             try
             {
                 if (choice == "1")
                 {
-                    foreach (var staff in lib.GetStaffList().Where(staff => staff.Id == userId & staff.Password == pass))
+                    foreach (var s in dbContext.Staffs.Where(staff => staff.Id == userId & staff.Password == pass).ToList())
                     {
+                        var staff = new Staff(s.BankId,s.Name,long.Parse(s.PhoneNumber),s.Password,s.Gender,s.Id);
                         return staff;
                     }
-
                 }
 
                 else
                 {
-                    foreach (var account in lib.GetAccountHolderList().Where(account => account.Id == userId & account.Password == pass))
+                    foreach (var a in dbContext.Accounts.Where(account => account.Id == userId & account.Password == pass).ToList())
                     {
+                        var account = new Account(a.BankId,a.Name,long.Parse(a.PhoneNumber),a.Password,a.Gender,a.Id,Convert.ToDouble(a.Balance));
                         return account;
                     }
                 }
@@ -78,35 +79,38 @@ namespace ATM.Services
         }
         public Bank FindBank(string bankId)
         {
-            foreach (var i in lib.GetBankList().Where(i => i.Id == bankId))
+            foreach (var i in dbContext.Banks.Where(i => i.Id == bankId).ToList())
             {
-                return i;
+                Bank bank = new Bank(i.Name,i.Address,i.Branch,i.Currency,i.Id);
+                return bank;
             }
 
             return null;
         }
         public Account FindAccount(string userId)
         {
-            foreach (var account in lib.GetAccountHolderList().Where(account => account.Id == userId))
+            foreach (var a in dbContext.Accounts.Where(account => account.Id == userId).ToList())
             {
+                Account account = new Account(a.BankId,a.Name,long.Parse(a.PhoneNumber),a.Password,a.Gender,a.Id,Convert.ToDouble(a.Balance));
                 return account;
             }
             return null;
         }
-        public void WriteHistory(Transaction i)
+        public void WriteHistory(Account bankAccount)
         {
+            foreach(var t in dbContext.Transactions.Where(trans=> trans.RecieverAccountId== bankAccount.Id || trans.SenderAcountId==bankAccount.Id).ToList())
             try
             {
                 using (StreamWriter file = new StreamWriter(FileName, append: true))
                 {
-                    file.WriteLine("Transaction ID:" + i.Id);
-                    file.WriteLine(i.Amount);
-                    file.WriteLine(i.Type + " to/from your account ");
-                    if (i.SenderAccountId != i.RecieverAccountId)
+                    file.WriteLine("Transaction ID:" + t.Id);
+                    file.WriteLine(t.Amount);
+                    file.WriteLine(t.Type + " to/from your account ");
+                    if (t.SenderAcountId != t.RecieverAccountId)
                     {
-                        file.WriteLine("From " + i.SenderAccountId + " to " + i.RecieverAccountId);
+                        file.WriteLine("From " + t.SenderAcountId + " to " + t.RecieverAccountId);
                     }
-                    file.WriteLine(i.CurrentDate.ToString());
+                    file.WriteLine(t.CurrentDate.ToString());
                     file.WriteLine(LineSeparater);
                 }
             }
@@ -116,5 +120,6 @@ namespace ATM.Services
             }
 
         }
+
     }
 }

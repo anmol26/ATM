@@ -2,19 +2,27 @@
 using ATM.Models;
 using System.Data.SqlClient;
 using System.Data;
+using ATM.Repository.Models;
+using System.Linq;
 
 namespace ATM.Repository
 {
     public class CustomerRepository
     {
-        readonly Library lib = new Library();
+        readonly BankDbContext dbContext = new BankDbContext();
         public void UpdateBalance(string id, double balance)
         {
             try
             {
-                string query = $"Update Account set Balance=N'{balance}' where id=N'{id}' ";
-                SqlCommand command = new SqlCommand(query, DatabaseConnection.ConnectDatabase());
-                command.ExecuteNonQuery();
+                foreach (var a in dbContext.Accounts.ToList())
+                {
+                    if (a.Id == id)
+                    {
+                        a.Balance= Convert.ToDecimal(balance);
+                        dbContext.Accounts.Update(a);
+                        dbContext.SaveChanges();
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -25,12 +33,19 @@ namespace ATM.Repository
         {
             try
             {
-                string query = $"INSERT INTO [ATM].[dbo].[Transaction]" +
-                    $" VALUES(N'{transId}',N'{trans.SenderAccountId}',N'{trans.RecieverAccountId}',N'{trans.SenderBankId}',N'{trans.RecieverBankId}'," +
-                    $"N'{type}',N'{DateTime.Now}',N'{amount}')";
-                SqlCommand command = new SqlCommand(query, DatabaseConnection.ConnectDatabase());
-                command.ExecuteNonQuery();
-                lib.GetTransactionList().Add(trans);
+                var transaction = new TransactionDb
+                {
+                    Id = transId,
+                    SenderAcountId = trans.SenderAccountId,
+                    RecieverAccountId=trans.RecieverAccountId,
+                    SenderBankId=trans.SenderBankId,
+                    RecieverBankId=trans.RecieverBankId,
+                    Type=type,
+                    Amount=Convert.ToDecimal(amount),
+                    CurrentDate=Convert.ToString(DateTime.Now),
+                };
+                dbContext.Transactions.Add(transaction);
+                dbContext.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -42,16 +57,13 @@ namespace ATM.Repository
             double value = 0;
             try
             {
-                string query1 = $"select ExchangeRate from [ATM].[dbo].[Currency] where CurrencyCode=N'{currCode}'";
-                SqlCommand command = new SqlCommand(query1, DatabaseConnection.ConnectDatabase());
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
+                foreach (var c in dbContext.Currencies.ToList()) 
                 {
-                    var CurrencyData = (IDataReader)reader;
-                    string v = Convert.ToString(CurrencyData[0]);
-                    value = Convert.ToDouble(v);
+                    if (c.CurrencyCode == currCode) 
+                    {
+                        value = Convert.ToDouble(c.ExchangeRate);
+                    }
                 }
-                reader.Close();
                 return value;
             }
             catch (Exception ex)

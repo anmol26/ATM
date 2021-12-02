@@ -1,6 +1,7 @@
 ﻿using System;
 using ATM.Models;
 using ATM.Repository;
+using ATM.Repository.Models;
 using System.IO;
 using System.Linq;
 
@@ -8,7 +9,7 @@ namespace ATM.Services
 {
     public class StaffService
     {
-        readonly Library lib = new Library();
+        readonly BankDbContext dbContext= new BankDbContext();
         Bank bank;
         static string TransactionListFilename = @"C:\Users\dell\OneDrive\Desktop\TransactionHistory.txt";
         static string StaffListFilename = @"C:\Users\dell\OneDrive\Desktop\StaffList.txt";
@@ -22,13 +23,13 @@ namespace ATM.Services
             {
                 if (string.IsNullOrEmpty(name))
                     throw new Exception("Bank name is not valid!");
-                if (lib.GetBankList().Count != 0 & lib.GetBankList().Any(p => p.Name == name))
+                if (dbContext.Banks.Any(p => p.Name == name))
                     throw new Exception("Bank already exists!");
-                if (!lib.GetCurrency().Any(c => c.CurrencyCode == currencyCode))
+                if (dbContext.Currencies.Any(c => c.CurrencyCode == currencyCode))
                     throw new Exception("Invalid currency code!");
 
                 Bank bank = new Bank(name, address, branch, currencyCode, commonServices.GenerateBankId(name));
-                staffOperations.InsertNewBank(commonServices.GenerateBankId(name), bank, name, address, branch, currencyCode);
+                staffOperations.InsertNewBank(bank);
                 return bank.Id;
             }
             catch (Exception ex)
@@ -45,22 +46,22 @@ namespace ATM.Services
 
                 if (string.IsNullOrEmpty(name))
                     throw new Exception("Name is not valid!");
-                if (lib.GetAccountHolderList().Any(p => p.Name == name) == true)
+                if (dbContext.Accounts.Any(p => p.Name == name) == true)
                     throw new Exception("Account already exists!");
-                if (lib.GetBankList().Count != 0 & lib.GetBankList().Any(p => p.Id == bankId) != true)
+                if (dbContext.Banks.Any(p => p.Id == bankId) != true)
                     throw new Exception("Bank doesn't exists!");
 
                 if (choice == 1)
                 {
                     Staff s = new Staff(bankId, name, phoneNumber, password, gender, commonServices.GenerateAccountId(name));
                     Id = s.Id;
-                    staffOperations.InsertNewStaff(s, commonServices.GenerateAccountId(name), name, password, phoneNumber, gender, bankId);
+                    staffOperations.InsertNewStaff(s);
                 }
                 else
                 {
                     Account a = new Account(bankId, name, phoneNumber, password, gender, commonServices.GenerateAccountId(name), 0);
                     Id = a.Id;
-                    staffOperations.InsertNewAccount(a, commonServices.GenerateAccountId(name), name, password, phoneNumber, gender, bankId);
+                    staffOperations.InsertNewAccount(a);
 
                 }
                 return Id;
@@ -82,9 +83,10 @@ namespace ATM.Services
                     throw new Exception("Bank does not exist");
                 }
 
-                foreach (var account in lib.GetAccountHolderList().Where(account => account.Name == accountHolder))
+                foreach (var account in dbContext.Accounts.Where(account => account.Name == accountHolder).ToList())
                 {
-                    user = account;
+                    var a = new Account(account.BankId,account.Name,Convert.ToInt64(account.PhoneNumber),account.Password,account.Gender,account.Id,Convert.ToDouble(account.Balance));
+                    user =a;
                 }
             }
             catch (Exception ex)
@@ -127,6 +129,7 @@ namespace ATM.Services
         }
         public void UpdateCharges(string bankId, double rtgs, double imps, int choice)
         {
+            bank = commonServices.FindBank(bankId);
             if (choice == 1)
             {
                 bank.SameRTGS = rtgs;
@@ -145,9 +148,10 @@ namespace ATM.Services
             Account user = null;
             try
             {
-                foreach (var account in lib.GetAccountHolderList().Where(account => account.Id == Id))
+                foreach (var account in dbContext.Accounts.Where(account => account.Id == Id).ToList())
                 {
-                    user = account;
+                    var a = new Account(account.BankId, account.Name, Convert.ToInt64(account.PhoneNumber), account.Password, account.Gender, account.Id, Convert.ToDouble(account.Balance));
+                    user = a;
                 }
             }
             catch (Exception ex)
@@ -159,20 +163,20 @@ namespace ATM.Services
         }
         public void RevertTransaction(string bankid, string accountid, string transid)
         {
-            Transaction revert = null;
-            Account sender = null;
-            Account rcvr = null;
+            TransactionDb revert = null;
+            AccountDb sender = null;
+            AccountDb rcvr = null;
             try
             {
-                foreach (var i in lib.GetBankList())
+                foreach (var i in dbContext.Banks.ToList())
                 {
                     if (i.Id == bankid)
                     {
-                        foreach (var j in lib.GetAccountHolderList())
+                        foreach (var j in dbContext.Accounts.ToList())
                         {
                             if (j.Id == accountid)
                             {
-                                foreach (var k in lib.GetTransactionList())
+                                foreach (var k in dbContext.Transactions.ToList())
                                 {
                                     if (k.Id == transid)
                                     {
@@ -190,11 +194,11 @@ namespace ATM.Services
                 {
                     throw new Exception();
                 }
-                foreach (var i in lib.GetBankList())
+                foreach (var i in dbContext.Banks.ToList())
                 {
                     if (i.Id == revert.RecieverBankId)
                     {
-                        foreach (var j in lib.GetAccountHolderList())
+                        foreach (var j in dbContext.Accounts.ToList())
                         {
                             if (j.Id == revert.RecieverAccountId)
                             {
@@ -211,10 +215,10 @@ namespace ATM.Services
             try
             {
                 sender.Balance += revert.Amount;
-                staffOperations.UpdateBalance(sender.Id, sender.Balance);
+                staffOperations.UpdateBalance(sender.Id,Convert.ToDouble( sender.Balance));
 
                 rcvr.Balance -= revert.Amount;
-                staffOperations.UpdateBalance(rcvr.Id, rcvr.Balance);
+                staffOperations.UpdateBalance(rcvr.Id,Convert.ToDouble( rcvr.Balance));
             }
             catch (Exception ex)
             {
@@ -233,7 +237,7 @@ namespace ATM.Services
                     using (StreamWriter file = new StreamWriter(fileName, append: true))
                     {
                         file.WriteLine();
-                        foreach (Staff s in lib.GetStaffList())
+                        foreach (var s in dbContext.Staffs.ToList())
                         {
                             if (s.BankId == bank.Id)
                             {
@@ -249,7 +253,7 @@ namespace ATM.Services
                     using (StreamWriter file = new StreamWriter(fileName, append: true))
                     {
                         file.WriteLine();
-                        foreach (Account acc in lib.GetAccountHolderList())
+                        foreach (var acc in dbContext.Accounts.ToList())
                         {
                             if (acc.BankId == bank.Id)
                             {
@@ -278,7 +282,7 @@ namespace ATM.Services
                     {
                         throw new Exception("Bank does not exist");
                     }
-                    foreach (var account in lib.GetAccountHolderList())
+                    foreach (var account in dbContext.Accounts.ToList())
                     {
                         if (account == null)
                         {
@@ -286,16 +290,16 @@ namespace ATM.Services
                         }
                         if (bankId == account.BankId)
                         {
-                            foreach (var transaction in lib.GetTransactionList())
+                            foreach (var transaction in dbContext.Transactions)
                             {
                                 file.WriteLine(account.Name);
                                 file.WriteLine();
                                 file.WriteLine("Transaction ID:" + transaction.Id);
                                 file.WriteLine(transaction.Amount);
                                 file.WriteLine(transaction.Type + " to/from your account ");
-                                if (transaction.SenderAccountId != transaction.RecieverAccountId)
+                                if (transaction.SenderAcountId != transaction.RecieverAccountId)
                                 {
-                                    file.WriteLine("From " + transaction.SenderAccountId + " to " + transaction.RecieverAccountId);
+                                    file.WriteLine("From " + transaction.SenderAcountId + " to " + transaction.RecieverAccountId);
                                 }
                                 file.WriteLine(transaction.CurrentDate.ToString());
                             }

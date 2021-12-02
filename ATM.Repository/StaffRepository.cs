@@ -2,22 +2,27 @@
 using ATM.Models;
 using System.Data.SqlClient;
 using System.Linq;
+using ATM.Repository.Models;
 
 namespace ATM.Repository
 {
     public class StaffRepository
     {
-        readonly Library lib = new Library();
-        public void InsertNewBank(string bankId, Bank bank, string name, string address, string branch, string currencyCode)
+        readonly BankDbContext dbContext = new BankDbContext(); 
+        public void InsertNewBank(Bank bank)
         {
             try
             {
-                lib.GetBankList().Add(bank);
-                string query = $"INSERT INTO Bank" +
-                    $" VALUES(N'{bankId}',N'{name}',N'{address}',N'{branch}',N'{currencyCode}'," +
-                    $"N'{bank.SameRTGS}',N'{bank.SameIMPS}',N'{bank.DiffRTGS}',N'{bank.DiffIMPS}')";
-                SqlCommand command = new SqlCommand(query, DatabaseConnection.ConnectDatabase());
-                command.ExecuteNonQuery();
+                var newBank = new BankDb
+                {
+                    Id=bank.Id,
+                    Name=bank.Name,
+                    Address=bank.Address,
+                    Branch=bank.Branch,
+                };
+                dbContext.Banks.Add(newBank);
+                dbContext.SaveChanges();
+
             }
             catch (Exception ex)
             {
@@ -25,41 +30,46 @@ namespace ATM.Repository
             }
         }
 
-        public void InsertNewStaff(Staff s, string staffId, string name, string password, long phoneNumber, string gender, string bankId)
+        public void InsertNewStaff(Staff s)
         {
             try
             {
-                lib.GetStaffList().Add(s);
-                string query = $"INSERT INTO Staff" +
-               $" VALUES(N'{staffId}',N'{name}',N'{password}',N'{phoneNumber}',1," +
-               $"N'{DateTime.Now}',N'{gender}',N'{bankId}')";
-                SqlCommand command = new SqlCommand(query, DatabaseConnection.ConnectDatabase());
-                command.ExecuteNonQuery();
+                var newStaff = new StaffDb
+                {
+                    Id = s.Id,
+                    Name=s.Name,
+                    Password=s.Password,
+                    PhoneNumber=Convert.ToString(s.PhoneNumber),
+                    CurrentDate=Convert.ToString(s.CurrentDate),
+                    Gender=s.Gender,
+                    BankId=s.BankId
+                };
+                dbContext.Staffs.Add(newStaff);
+                dbContext.SaveChanges();
+
             }
             catch (Exception ex)
             {
-                int counter = 0;
-                foreach (var staff in lib.GetStaffList().Where(staff => staff.BankId == bankId))
-                {
-                    counter += 1;
-                }
-                if (counter == 0)
-                {
-                    DeleteBank(bankId);
-                }
                 throw new Exception(ex.Message);
             }
         }
-        public void InsertNewAccount(Account a, string accountId, string name, string password, long phoneNumber, string gender, string bankId)
+        public void InsertNewAccount(Account a)
         {
             try
             {
-                lib.GetAccountHolderList().Add(a);
-                string query = $"INSERT INTO Account" +
-               $" VALUES(N'{accountId}',N'{name}',N'{password}',N'{phoneNumber}',0,1," +
-               $"N'{gender}',N'{DateTime.Now}',N'{bankId}')";
-                SqlCommand command = new SqlCommand(query, DatabaseConnection.ConnectDatabase());
-                command.ExecuteNonQuery();
+                var newAccount = new AccountDb
+                {
+                    Id=a.Id,
+                    Name=a.Name,
+                    Password=a.Password,
+                    PhoneNumber= Convert.ToString(a.PhoneNumber),
+                    Gender=a.Gender,
+                    CurrentDate=Convert.ToString(DateTime.Now),
+                    Balance=Convert.ToDecimal(a.Balance),
+                    BankId=a.BankId
+                };
+                dbContext.Accounts.Add(newAccount);
+                dbContext.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -70,10 +80,14 @@ namespace ATM.Repository
         {
             try
             {
-                lib.GetAccountHolderList().Remove(user);
-                string query = $"Delete from Account where id=N'{user.Id}' ";
-                SqlCommand command = new SqlCommand(query, DatabaseConnection.ConnectDatabase());
-                command.ExecuteNonQuery();
+                foreach (var a in dbContext.Accounts.ToList())
+                {
+                    if (a.Id == user.Id) 
+                    {
+                        dbContext.Accounts.Remove(a);
+                        dbContext.SaveChanges();
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -84,9 +98,13 @@ namespace ATM.Repository
         {
             try
             {
-                string query = $"Insert into Currency Values(N'{code}',N'{rate}') ";
-                SqlCommand command = new SqlCommand(query, DatabaseConnection.ConnectDatabase());
-                command.ExecuteNonQuery();
+                var newCurrency = new CurrencyDb
+                {
+                    CurrencyCode=code,
+                    ExchangeRate=Convert.ToDecimal(rate)
+                };
+                dbContext.Currencies.Add(newCurrency);
+                dbContext.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -99,15 +117,29 @@ namespace ATM.Repository
             {
                 if (choice == 1)
                 {
-                    string query1 = $"Update Bank set SameRTGS=N'{rtgs}', SameIMPS=N'{imps}' where id=N'{bankId}' ";
-                    SqlCommand command = new SqlCommand(query1, DatabaseConnection.ConnectDatabase());
-                    command.ExecuteNonQuery();
+                    foreach (var b in dbContext.Banks.ToList()) 
+                    {
+                        if (b.Id == bankId) 
+                        {
+                            b.SameRtgs =Convert.ToDecimal(rtgs);
+                            b.SameImps = Convert.ToDecimal(imps);
+                            dbContext.Banks.Update(b);
+                            dbContext.SaveChanges();
+                        }
+                    }
                 }
                 else if (choice == 2)
                 {
-                    string query2 = $"Update Bank set DiffRTGS=N'{rtgs}', DiffIMPS=N'{imps}' where id=N'{bankId}' ";
-                    SqlCommand command = new SqlCommand(query2, DatabaseConnection.ConnectDatabase());
-                    command.ExecuteNonQuery();
+                    foreach (var b in dbContext.Banks.ToList())
+                    {
+                        if (b.Id == bankId)
+                        {
+                            b.DiffRtgs = Convert.ToDecimal(rtgs);
+                            b.DiffImps = Convert.ToDecimal(imps);
+                            dbContext.Banks.Update(b);
+                            dbContext.SaveChanges();
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -119,9 +151,15 @@ namespace ATM.Repository
         {
             try
             {
-                string query = $"Update Account set Balance=N'{balance}' where id=N'{id}' ";
-                SqlCommand command = new SqlCommand(query, DatabaseConnection.ConnectDatabase());
-                command.ExecuteNonQuery();
+                foreach (var a in dbContext.Accounts.ToList())
+                {
+                    if (a.Id == id)
+                    {
+                        a.Balance = Convert.ToDecimal(balance);
+                        dbContext.Accounts.Update(a);
+                        dbContext.SaveChanges();
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -132,9 +170,15 @@ namespace ATM.Repository
         {
             try
             {
-                string query = $"Update Account set Name=N'{name}' where id=N'{bankAccount.Id}' ";
-                SqlCommand command = new SqlCommand(query, DatabaseConnection.ConnectDatabase());
-                command.ExecuteNonQuery();
+                foreach (var a in dbContext.Accounts.ToList())
+                {
+                    if (a.Id == bankAccount.Id)
+                    {
+                        a.Name = name;
+                        dbContext.Accounts.Update(a);
+                        dbContext.SaveChanges();
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -145,9 +189,15 @@ namespace ATM.Repository
         {
             try
             {
-                string query = $"Update Account set PhoneNumber=N'{number}' where id=N'{bankAccount.Id}' ";
-                SqlCommand command = new SqlCommand(query, DatabaseConnection.ConnectDatabase());
-                command.ExecuteNonQuery();
+                foreach (var a in dbContext.Accounts.ToList())
+                {
+                    if (a.Id == bankAccount.Id)
+                    {
+                        a.PhoneNumber=Convert.ToString(number);
+                        dbContext.Accounts.Update(a);
+                        dbContext.SaveChanges();
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -158,9 +208,15 @@ namespace ATM.Repository
         {
             try
             {
-                string query = $"Update Account set Password=N'{password}' where id=N'{bankAccount.Id}' ";
-                SqlCommand command = new SqlCommand(query, DatabaseConnection.ConnectDatabase());
-                command.ExecuteNonQuery();
+                foreach (var a in dbContext.Accounts.ToList())
+                {
+                    if (a.Id == bankAccount.Id)
+                    {
+                        a.Password = password;
+                        dbContext.Accounts.Update(a);
+                        dbContext.SaveChanges();
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -171,9 +227,14 @@ namespace ATM.Repository
         {
             try
             {
-                string query = $"Delete from Bank where id=N'{bankId}' ";
-                SqlCommand command = new SqlCommand(query, DatabaseConnection.ConnectDatabase());
-                command.ExecuteNonQuery();
+                foreach (var b in dbContext.Banks.ToList())
+                {
+                    if (b.Id == bankId)
+                    {
+                        dbContext.Banks.Remove(b);
+                        dbContext.SaveChanges();
+                    }
+                }
             }
             catch (Exception ex)
             {

@@ -2,7 +2,6 @@
 using ATM.Models;
 using ATM.Models.Enums;
 using ATM.Services;
-using ATM.Repository;
 
 namespace ATM.CLI
 {
@@ -12,30 +11,6 @@ namespace ATM.CLI
         {
             ConsoleOutput.Welcome();
 
-            //testing begin
-            Console.WriteLine("DBContext 1");
-            BankDbContext dbContext = new BankDbContext();
-            Console.WriteLine("DBContext 2");
-            //(string name, string address, string branch, string currencyCode, string bankId)
-            var b = new Bank("Testing","testing","testing","INR","testing1234");
-            //var b = new Bank
-            //{
-            //    Name = "testing",
-            //    Address = "testing",
-            //    Branch = "testing",
-            //    CurrencyCode = "INR",
-            //    Id = "testing"
-            //};
-            dbContext.Banks.Add(b);
-            //var a = new Account("1234", "testing", 32423, "1234", "Male", "abcd1234", 100);
-            //dbContext.Accounts.Add(a);
-            //(string bankId, string name,long phoneNumber,string password,string gender,string id,double balance)
-            dbContext.SaveChanges();
-            Console.WriteLine("DBContext 3");
-
-            //testing end
-
-            Library lib = new Library();
             StaffService staffMember = new StaffService();
             CustomerService accountHolder = new CustomerService();
             CommonServices commonServices = new CommonServices();
@@ -348,10 +323,10 @@ namespace ATM.CLI
                                 Console.WriteLine(Constants.Messages.InvalidDetail);
                                 goto ShowTransactionHistory;
                             }
-                            foreach (var i in lib.GetTransactionList())
-                            {
-                                ConsoleOutput.History(i);
-                            }
+                            //foreach (var i in lib.GetTransactionList())
+                            //{
+                            //    ConsoleOutput.History(i);
+                            //}
 
                         }
                         else if (choice == "2")
@@ -361,19 +336,7 @@ namespace ATM.CLI
                                 Console.WriteLine(Constants.Messages.InvalidDetail);
                                 goto ShowTransactionHistory;
                             }
-                            foreach (var i in lib.GetTransactionList())
-                            {
-                                try
-                                {
-                                    commonServices.WriteHistory(i);
-                                }
-                                catch (Exception ex)
-                                {
-                                    Console.WriteLine(ex.Message);
-                                    goto ShowTransactionHistory;
-                                }
-                            }
-
+                            commonServices.WriteHistory(bankAccount);
                         }
                         else
                         {
@@ -684,18 +647,14 @@ namespace ATM.CLI
                             if (choice == "1")
                             {
                                 ConsoleOutput.TransactionHistory();
-                                foreach (var i in lib.GetTransactionList())
-                                {
-                                    ConsoleOutput.History(i);
-                                }
+                                //foreach (var i in lib.GetTransactionList())
+                                //{
+                                //    ConsoleOutput.History(i);
+                                //}
                             }
                             else if (choice == "2")
                             {
-                                foreach (var i in lib.GetTransactionList())
-                                {
-                                    commonServices.WriteHistory(i);
-                                    Console.WriteLine(Constants.Messages.TransactionListSuccessFull);
-                                }
+                                commonServices.WriteHistory(bankAccount);
                             }
                             else
                             {

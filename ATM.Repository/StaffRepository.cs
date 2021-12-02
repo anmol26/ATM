@@ -1,6 +1,5 @@
 ﻿using System;
 using ATM.Models;
-using System.Data.SqlClient;
 using System.Linq;
 using ATM.Repository.Models;
 

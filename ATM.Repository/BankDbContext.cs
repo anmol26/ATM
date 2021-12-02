@@ -1,9 +1,5 @@
-﻿using ATM.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ATM.Repository.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ATM.Repository
 {

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-
+﻿
 namespace ATM.Models
 {
     public class Currency

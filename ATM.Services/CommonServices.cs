@@ -120,6 +120,28 @@ namespace ATM.Services
             }
 
         }
+        public void TransactionHistory(Account bankAccount)
+        {
+            foreach (var t in dbContext.Transactions.Where(trans => trans.RecieverAccountId == bankAccount.Id || trans.SenderAcountId == bankAccount.Id).ToList())
+                try
+                {
+                        Console.WriteLine("Transaction ID:" + t.Id);
+                        Console.WriteLine(t.Amount);
+                        Console.WriteLine(t.Type + " to/from your account ");
+                        if (t.SenderAcountId != t.RecieverAccountId)
+                        {
+                        Console.WriteLine("From " + t.SenderAcountId + " to " + t.RecieverAccountId);
+                        }
+                        Console.WriteLine(t.CurrentDate.ToString());
+                        Console.WriteLine(LineSeparater);
+                    
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+
+        }
 
     }
 }

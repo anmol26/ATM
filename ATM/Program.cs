@@ -323,10 +323,8 @@ namespace ATM.CLI
                                 Console.WriteLine(Constants.Messages.InvalidDetail);
                                 goto ShowTransactionHistory;
                             }
-                            //foreach (var i in lib.GetTransactionList())
-                            //{
-                            //    ConsoleOutput.History(i);
-                            //}
+                            ConsoleOutput.TransactionHistory();
+                            commonServices.TransactionHistory(bankAccount);
 
                         }
                         else if (choice == "2")
@@ -647,10 +645,7 @@ namespace ATM.CLI
                             if (choice == "1")
                             {
                                 ConsoleOutput.TransactionHistory();
-                                //foreach (var i in lib.GetTransactionList())
-                                //{
-                                //    ConsoleOutput.History(i);
-                                //}
+                                commonServices.TransactionHistory(bankAccount);
                             }
                             else if (choice == "2")
                             {

@@ -25,7 +25,7 @@ namespace ATM.Services
                     throw new Exception("Bank name is not valid!");
                 if (dbContext.Banks.Any(p => p.Name == name))
                     throw new Exception("Bank already exists!");
-                if (dbContext.Currencies.Any(c => c.CurrencyCode == currencyCode))
+                if (!dbContext.Currencies.Any(c => c.CurrencyCode == currencyCode))
                     throw new Exception("Invalid currency code!");
 
                 Bank bank = new Bank(name, address, branch, currencyCode, commonServices.GenerateBankId(name));

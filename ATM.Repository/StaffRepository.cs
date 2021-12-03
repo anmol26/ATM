@@ -49,6 +49,15 @@ namespace ATM.Repository
             }
             catch (Exception ex)
             {
+                int counter = 0;
+                foreach (var staff in dbContext.Staffs.Where(staff => staff.BankId == s.BankId).ToList())
+                {
+                    counter += 1;
+                }
+                if (counter == 0)
+                {
+                    DeleteBank(s.BankId);
+                }
                 throw new Exception(ex.Message);
             }
         }

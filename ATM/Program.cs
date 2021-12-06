@@ -124,14 +124,12 @@ namespace ATM.CLI
                     if (staffOperation == StaffOperationType.CreateAccount)
                     {
                         int choice;
-                        string bankId, name, password, gender, Id;
+                        string name, password, gender, Id;
                         long phoneNumber;
                         try
                         {
                             Console.WriteLine(Constants.Messages.CreateAccountChoice);
                             choice = Convert.ToInt32(Console.ReadLine());
-                            Console.WriteLine(Constants.Messages.BankId);
-                            bankId = Console.ReadLine();
                             name = ConsoleInput.UserName();
                             password = ConsoleInput.Password();
                             Console.WriteLine(Constants.Messages.PhoneNumber);
@@ -146,7 +144,7 @@ namespace ATM.CLI
                         }
                         try
                         {
-                            Id = staffMember.CreateAccount(bankId, name, password, phoneNumber, gender, choice);
+                            Id = staffMember.CreateAccount(bankstaff.BankId, name, password, phoneNumber, gender, choice);
                         }
                         catch (Exception ex)
                         {
@@ -545,14 +543,12 @@ namespace ATM.CLI
                         {
                             Console.Clear();
                             double amt;
-                            string currCode, bankId;
+                            string currCode;
                             try
                             {
                                 amt = Convert.ToDouble(ConsoleInput.DepositAmount());
                                 Console.WriteLine(Constants.Messages.CurrencyCode);
                                 currCode = Console.ReadLine();
-                                Console.WriteLine(Constants.Messages.BankId);
-                                bankId = Console.ReadLine();
                             }
                             catch (Exception ex)
                             {
@@ -561,9 +557,7 @@ namespace ATM.CLI
                             }
                             try
                             {
-                                Console.WriteLine(bankAccount.Id, bankAccount.Balance);
-                                accountHolder.Deposit(bankAccount, amt, currCode, bankId);
-
+                                accountHolder.Deposit(bankAccount, amt, currCode, bankAccount.BankId);
                             }
                             catch (Exception ex)
                             {
@@ -576,19 +570,16 @@ namespace ATM.CLI
                         {
                             Console.Clear();
                             double amt;
-                            string bankId;
                             try
                             {
                                 amt = Convert.ToDouble(ConsoleInput.WithdrawAmount());
-                                Console.WriteLine(Constants.Messages.BankId);
-                                bankId = Console.ReadLine();
                             }
                             catch (Exception ex)
                             {
                                 Console.WriteLine(ex.Message);
                                 goto CustomerOperations;
                             }
-                            if (accountHolder.Withdraw(bankAccount, amt, bankId))
+                            if (accountHolder.Withdraw(bankAccount, amt, bankAccount.BankId))
                             {
                                 ConsoleOutput.WithdrawSuccessfull(amt);
                             }

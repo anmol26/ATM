@@ -14,11 +14,7 @@ namespace ATM.Repository
             try
             {
                 var b = dbContext.Accounts.SingleOrDefault(x => x.Id == id);
-                if (b == null)
-                { 
-                    throw new Exception(); 
-                }
-                else 
+                if (b != null)
                 {
                     b.Balance = Convert.ToDecimal(balance);
                     dbContext.Accounts.Update(b);
@@ -34,15 +30,7 @@ namespace ATM.Repository
         {
             try
             {
-                string type;
-                if (trans.Type == (TransactionType)1)
-                {
-                    type = "Credit";
-                }
-                else 
-                {
-                    type = "Debit";
-                }
+                string type = trans.Type == (TransactionType)1?"Credit":"Debit";
                 var transaction = new TransactionDb
                 {
                     Id = trans.Id,
@@ -66,15 +54,8 @@ namespace ATM.Repository
         {
             try
             {
-                var c = dbContext.Currencies.SingleOrDefault(x=> x.CurrencyCode== currCode);
-                if (c == null)
-                {
-                    throw new Exception("CurrencyCode not Registered");
-                }
-                else
-                {
-                    return(Convert.ToDouble(c.ExchangeRate));
-                }
+                var c = dbContext.Currencies.Single(x => x.CurrencyCode == currCode);
+                return (Convert.ToDouble(c.ExchangeRate));
             }
             catch (Exception ex)
             {

@@ -20,30 +20,15 @@ namespace ATM.Services
             {
                 if (choice == "1")
                 {
-                    var s = dbContext.Staffs.FirstOrDefault(staff => staff.Id == userId & staff.Password == pass);
-                    if (s == null)
-                    {
-                        throw new Exception();
-                    }
-                    else 
-                    {
-                        var staff = new Staff(s.BankId, s.Name, long.Parse(s.PhoneNumber), s.Password, s.Gender, s.Id);
-                        return staff;
-                    }
+                    var s = dbContext.Staffs.Single(staff => staff.Id == userId && staff.Password == pass);
+                    var staff = new Staff(s.BankId, s.Name, long.Parse(s.PhoneNumber), s.Password, s.Gender, s.Id);
+                    return staff;
                 }
-
                 else
                 {
-                    var a = dbContext.Accounts.FirstOrDefault(x => x.Id == userId & x.Password == pass);
-                    if (a == null)
-                    {
-                        throw new Exception();
-                    }
-                    else
-                    {
-                        var account = new Account(a.BankId, a.Name, long.Parse(a.PhoneNumber), a.Password, a.Gender, a.Id, Convert.ToDouble(a.Balance));
-                        return account;
-                    }
+                    var a = dbContext.Accounts.Single(x => x.Id == userId && x.Password == pass);
+                    var account = new Account(a.BankId, a.Name, long.Parse(a.PhoneNumber), a.Password, a.Gender, a.Id, Convert.ToDouble(a.Balance));
+                    return account;
                 }
             }
             catch (Exception ex)
@@ -89,16 +74,9 @@ namespace ATM.Services
         {
             try
             {
-                var i = dbContext.Banks.FirstOrDefault(i => i.Id == bankId);
-                if (i == null)
-                {
-                    throw new Exception();
-                }
-                else
-                {
-                    Bank bank = new Bank(i.Name, i.Address, i.Branch, i.Currency, i.Id);
-                    return bank;
-                }
+                var i = dbContext.Banks.Single(i => i.Id == bankId);
+                Bank bank = new Bank(i.Name, i.Address, i.Branch, i.Currency, i.Id);
+                return bank;
             }
             catch (Exception ex)
             {
@@ -109,16 +87,9 @@ namespace ATM.Services
         {
             try
             {
-                var a = dbContext.Accounts.FirstOrDefault(account => account.Id == userId);
-                if (a == null)
-                {
-                    throw new Exception();
-                }
-                else
-                {
-                    Account account = new Account(a.BankId, a.Name, long.Parse(a.PhoneNumber), a.Password, a.Gender, a.Id, Convert.ToDouble(a.Balance));
-                    return account;
-                }
+                var a = dbContext.Accounts.Single(account => account.Id == userId);
+                Account account = new Account(a.BankId, a.Name, long.Parse(a.PhoneNumber), a.Password, a.Gender, a.Id, Convert.ToDouble(a.Balance));
+                return account;
             }
             catch (Exception ex)
             {

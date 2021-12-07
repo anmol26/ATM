@@ -12,7 +12,7 @@ namespace ATM.Services
         const string DefaultCurrency = "INR";
         readonly CommonServices commonServices = new CommonServices();
         readonly CustomerRepository customerOperations = new CustomerRepository();
-        public void Deposit(Account user, double amount, string currCode, string bankId)
+        public void Deposit(Account user, double amount, string currCode)
         {
             try
             {
@@ -20,7 +20,7 @@ namespace ATM.Services
                 Console.WriteLine("Updated Balance is: " + user.Balance);
                 customerOperations.UpdateBalance(user.Id, user.Balance);
 
-                Transaction trans = new Transaction(amount, 1, user.Id, user.Id, bankId, bankId, commonServices.GenerateTransactionId(bankId, user.Id));
+                Transaction trans = new Transaction(amount, 1, user.Id, user.Id, user.BankId, user.BankId, commonServices.GenerateTransactionId(user.BankId, user.Id));
                 customerOperations.InsertTransaction(trans);
             }
             catch (Exception ex)
@@ -28,7 +28,7 @@ namespace ATM.Services
                 throw new Exception(ex.Message);
             }
         }
-        public bool Withdraw(Account user, double amount, string bankId)
+        public bool Withdraw(Account user, double amount)
         {
             try
             {
@@ -38,7 +38,7 @@ namespace ATM.Services
                     Console.WriteLine("Updated Balance is: " + user.Balance);
                     customerOperations.UpdateBalance(user.Id, user.Balance);
 
-                    Transaction trans = new Transaction(amount, 2, user.Id, user.Id, bankId, bankId, commonServices.GenerateTransactionId(bankId, user.Id));
+                    Transaction trans = new Transaction(amount, 2, user.Id, user.Id, user.BankId, user.BankId, commonServices.GenerateTransactionId(user.BankId, user.Id));
                     customerOperations.InsertTransaction(trans);
                     return true;
                 }

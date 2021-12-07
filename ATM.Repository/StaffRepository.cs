@@ -80,16 +80,9 @@ namespace ATM.Repository
         {
             try
             {
-                var a = dbContext.Accounts.SingleOrDefault(x => x.Id == userId);
-                if (a == null)
-                {
-                    throw new Exception("Account does not exist");
-                }
-                else 
-                {
-                    dbContext.Accounts.Remove(a);
-                    dbContext.SaveChanges();
-                }
+                var a = dbContext.Accounts.Single(x => x.Id == userId);
+                dbContext.Accounts.Remove(a);
+                dbContext.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -119,35 +112,20 @@ namespace ATM.Repository
             {
                 if (choice == 1)
                 {
-                    var b = dbContext.Banks.SingleOrDefault(x=> x.Id==bankId);
-                    if (b == null)
-                    {
-                        throw new Exception();
-                    }
-                    else 
-                    {
-
-                        b.SameRtgs = Convert.ToDecimal(rtgs);
-                        b.SameImps = Convert.ToDecimal(imps);
-                        dbContext.Banks.Update(b);
-                        dbContext.SaveChanges();
-                    }
+                    var b = dbContext.Banks.Single(x=> x.Id==bankId);
+                    b.SameRtgs = Convert.ToDecimal(rtgs);
+                    b.SameImps = Convert.ToDecimal(imps);
+                    dbContext.Banks.Update(b);
+                    dbContext.SaveChanges();
+                  
                 }
                 else if (choice == 2)
                 {
-                    var b = dbContext.Banks.SingleOrDefault(x => x.Id == bankId);
-                    if (b == null)
-                    {
-                        throw new Exception();
-                    }
-                    else
-                    {
-
-                        b.DiffRtgs = Convert.ToDecimal(rtgs);
-                        b.DiffImps = Convert.ToDecimal(imps);
-                        dbContext.Banks.Update(b);
-                        dbContext.SaveChanges();
-                    }
+                    var b = dbContext.Banks.Single(x => x.Id == bankId);
+                    b.DiffRtgs = Convert.ToDecimal(rtgs);
+                    b.DiffImps = Convert.ToDecimal(imps);
+                    dbContext.Banks.Update(b);
+                    dbContext.SaveChanges();
                 }
             }
             catch (Exception ex)
@@ -159,17 +137,10 @@ namespace ATM.Repository
         {
             try
             {
-                var a = dbContext.Accounts.SingleOrDefault(x=>x.Id==accountId);
-                if (a == null)
-                {
-                    throw new Exception();
-                }
-                else 
-                {
-                    a.Balance = Convert.ToDecimal(balance);
-                    dbContext.Accounts.Update(a);
-                    dbContext.SaveChanges();
-                }
+                var a = dbContext.Accounts.Single(x=>x.Id==accountId);
+                a.Balance = Convert.ToDecimal(balance);
+                dbContext.Accounts.Update(a);
+                dbContext.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -180,19 +151,12 @@ namespace ATM.Repository
         {
             try
             {
-                var a = dbContext.Accounts.SingleOrDefault(y => y.Id == accountId);
-                if (a == null)
-                {
-                    throw new Exception();
-                }
-                else
-                {
-                    a.Name = name == null ? a.Name : name;
-                    a.PhoneNumber = phoneNumber == null ? a.PhoneNumber : Convert.ToString(phoneNumber);
-                    a.Password = password == null ? a.Password : password;
-                    dbContext.Accounts.Update(a);
-                    dbContext.SaveChanges();
-                }
+                var a = dbContext.Accounts.Single(y => y.Id == accountId);
+                a.Name = name == null ? a.Name : name;
+                a.PhoneNumber = phoneNumber == null ? a.PhoneNumber : Convert.ToString(phoneNumber);
+                a.Password = password == null ? a.Password : password;
+                dbContext.Accounts.Update(a);
+                dbContext.SaveChanges();
             }
             catch (Exception ex)
             {

@@ -446,8 +446,6 @@ namespace ATM.CLI
                             amt = Convert.ToDouble(ConsoleInput.DepositAmount());
                             Console.WriteLine(Constants.Messages.CurrencyCode);
                             currCode = Console.ReadLine();
-                            Console.WriteLine(Constants.Messages.BankId);
-                            bankId = Console.ReadLine();
                             Console.WriteLine(Constants.Messages.AccountId);
                             accountID = Console.ReadLine();
                             bankAccount = commonServices.FindAccount(accountID);
@@ -459,7 +457,7 @@ namespace ATM.CLI
                         }
                         try
                         {
-                            accountHolder.Deposit(bankAccount, amt, currCode, bankId);
+                            accountHolder.Deposit(bankAccount, amt, currCode);
                         }
                         catch (Exception ex)
                         {
@@ -538,7 +536,7 @@ namespace ATM.CLI
                             }
                             try
                             {
-                                accountHolder.Deposit(bankAccount, amt, currCode, bankAccount.BankId);
+                                accountHolder.Deposit(bankAccount, amt, currCode);
                             }
                             catch (Exception ex)
                             {
@@ -560,7 +558,7 @@ namespace ATM.CLI
                                 Console.WriteLine(ex.Message);
                                 goto CustomerOperations;
                             }
-                            if (accountHolder.Withdraw(bankAccount, amt, bankAccount.BankId))
+                            if (accountHolder.Withdraw(bankAccount, amt))
                             {
                                 ConsoleOutput.WithdrawSuccessfull(amt);
                             }

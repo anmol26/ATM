@@ -43,7 +43,6 @@ namespace ATM.Services
             try
             {
                 bank = commonServices.FindBank(bankId);
-
                 if (string.IsNullOrEmpty(name))
                     throw new Exception("Name is not valid!");
                 if (dbContext.Accounts.Any(p => p.Name == name) == true)
@@ -74,18 +73,15 @@ namespace ATM.Services
         }
         public void DeleteAccount(string userId)
         {
-            Account user;
             try
             {
-                user = commonServices.FindAccount(userId);
+                staffOperations.DeleteAccount(userId);
 
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
-
             }
-            staffOperations.DeleteAccount(user.Id);
         }
         public void AddCurrency(string code, double rate)
         {
@@ -96,7 +92,6 @@ namespace ATM.Services
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
-
             }
         }
         public void UpdateCharges(string bankId, double rtgs, double imps, int choice)
@@ -122,13 +117,9 @@ namespace ATM.Services
             AccountDb rcvr;
             try
             {
-                revertTransaction = dbContext.Transactions.FirstOrDefault(x=> x.Id==transid);
-                sender = dbContext.Accounts.FirstOrDefault(x => x.Id == revertTransaction.SenderAcountId);
-                rcvr = dbContext.Accounts.FirstOrDefault(x=> x.Id== revertTransaction.RecieverAccountId);
-                if ((revertTransaction == null) || (sender == null) || (rcvr==null))
-                {
-                    throw new Exception();
-                }
+                revertTransaction = dbContext.Transactions.Single(x=> x.Id==transid);
+                sender = dbContext.Accounts.Single(x => x.Id == revertTransaction.SenderAcountId);
+                rcvr = dbContext.Accounts.Single(x=> x.Id== revertTransaction.RecieverAccountId);
             }
             catch (Exception ex)
             {
@@ -138,7 +129,6 @@ namespace ATM.Services
             {
                 sender.Balance += revertTransaction.Amount;
                 staffOperations.UpdateBalance(sender.Id,Convert.ToDouble(sender.Balance));
-
                 rcvr.Balance -= revertTransaction.Amount;
                 staffOperations.UpdateBalance(rcvr.Id,Convert.ToDouble(rcvr.Balance));
             }

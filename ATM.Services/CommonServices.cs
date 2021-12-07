@@ -9,7 +9,7 @@ namespace ATM.Services
 {
     public class CommonServices
     {
-        ATMDbContext dbContext = new ATMDbContext();
+        readonly ATMDbContext dbContext = new ATMDbContext();
         const string DefaultPrefix = "TXN";
         const string DefaultTimeFormat = "ddHHmmss";
         const string FileName = @"C:\Users\dell\OneDrive\Desktop\TransactionHistory.txt";

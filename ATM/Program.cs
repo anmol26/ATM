@@ -309,46 +309,50 @@ namespace ATM.CLI
                     ShowTransactionHistory:
                         Console.WriteLine(Constants.Messages.AccountId);
                         string accountId = Console.ReadLine();
-                        bankAccount = staffMember.ViewHistory(accountId);
-                        Console.WriteLine(Constants.Messages.StaffTransactionHistoryChoice);
-                        string choice = Console.ReadLine();
-                        if (choice == "1")
+                        try
                         {
-                            if (bankAccount == null)
+                            bankAccount = commonServices.FindAccount(accountId);
+                            Console.WriteLine(Constants.Messages.StaffTransactionHistoryChoice);
+                            string choice = Console.ReadLine();
+                            if (choice == "1")
                             {
-                                Console.WriteLine(Constants.Messages.InvalidDetail);
-                                goto ShowTransactionHistory;
-                            }
-                            ConsoleOutput.TransactionHistory();
-                            commonServices.TransactionHistory(bankAccount);
+                                if (bankAccount == null)
+                                {
+                                    Console.WriteLine(Constants.Messages.InvalidDetail);
+                                    goto ShowTransactionHistory;
+                                }
+                                ConsoleOutput.TransactionHistory();
+                                commonServices.TransactionHistory(bankAccount);
 
-                        }
-                        else if (choice == "2")
-                        {
-                            if (bankAccount == null)
-                            {
-                                Console.WriteLine(Constants.Messages.InvalidDetail);
-                                goto ShowTransactionHistory;
                             }
-                            commonServices.WriteHistory(bankAccount);
+                            else if (choice == "2")
+                            {
+                                if (bankAccount == null)
+                                {
+                                    Console.WriteLine(Constants.Messages.InvalidDetail);
+                                    goto ShowTransactionHistory;
+                                }
+                                commonServices.WriteHistory(bankAccount);
+                            }
+                            else
+                            {
+                                Console.Clear();
+                                ConsoleOutput.InValidOption();
+                            }
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            Console.Clear();
-                            ConsoleOutput.InValidOption();
+                            Console.WriteLine(ex.Message);
+                            goto StaffOperations;
                         }
                     }
                     else if (staffOperation == StaffOperationType.RevertTransaction)
                     {
-                        Console.WriteLine(Constants.Messages.RevertBankId);
-                        string bankId = Console.ReadLine();
-                        Console.WriteLine(Constants.Messages.RevertAccountId);
-                        string accountId = Console.ReadLine();
                         Console.WriteLine(Constants.Messages.RevertTransactiontId);
                         string transId = Console.ReadLine();
                         try
                         {
-                            staffMember.RevertTransaction(bankId, accountId, transId);
+                            staffMember.RevertTransaction(transId);
                         }
                         catch (Exception ex)
                         {
@@ -396,9 +400,9 @@ namespace ATM.CLI
                     {
                         Console.Clear();
                         Account senderAccount,recieverAccount;
-                        Console.WriteLine("\nPlease Enter Sender Account Id: ");
+                        Console.WriteLine(Constants.Messages.SenderAccountId);
                         string senderAccountId = Console.ReadLine();
-                        Console.WriteLine("\nPlease Enter Reciever Account Id: ");
+                        Console.WriteLine(Constants.Messages.ReceiverAccountId);
                         string recieverAccountId = Console.ReadLine();
                         Console.WriteLine(Constants.Messages.ServiceChargeType);
                         string choice = Console.ReadLine();
@@ -571,7 +575,7 @@ namespace ATM.CLI
                             Account recieverAccount;
                             Console.WriteLine(Constants.Messages.ServiceChargeType);
                             string choice = Console.ReadLine();
-                            Console.WriteLine("\nPlease write Reciever AccountId");
+                            Console.WriteLine(Constants.Messages.ReceiverAccountId);
                             string recieverAccountId = Console.ReadLine();
                             try
                             {

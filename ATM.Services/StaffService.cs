@@ -115,70 +115,20 @@ namespace ATM.Services
                 staffOperations.UpdateCharges(bankId, rtgs, imps, choice);
             }
         }
-        public Account ViewHistory(string Id)
+        public void RevertTransaction(string transid)
         {
-            Account user = null;
+            TransactionDb revertTransaction;
+            AccountDb sender;
+            AccountDb rcvr;
             try
             {
-                foreach (var account in dbContext.Accounts.Where(account => account.Id == Id).ToList())
-                {
-                    var a = new Account(account.BankId, account.Name, Convert.ToInt64(account.PhoneNumber), account.Password, account.Gender, account.Id, Convert.ToDouble(account.Balance));
-                    user = a;
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-
-            }
-            return user;
-        }
-        public void RevertTransaction(string bankid, string accountid, string transid)
-        {
-            TransactionDb revert = null;
-            AccountDb sender = null;
-            AccountDb rcvr = null;
-            try
-            {
-                foreach (var i in dbContext.Banks.ToList())
-                {
-                    if (i.Id == bankid)
-                    {
-                        foreach (var j in dbContext.Accounts.ToList())
-                        {
-                            if (j.Id == accountid)
-                            {
-                                foreach (var k in dbContext.Transactions.ToList())
-                                {
-                                    if (k.Id == transid)
-                                    {
-                                        revert = k;
-                                        sender = j;
-
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                }
-                if ((revert == null) || (sender == null))
+                revertTransaction = dbContext.Transactions.FirstOrDefault(x=> x.Id==transid);
+                sender = dbContext.Accounts.FirstOrDefault(x => x.Id == revertTransaction.SenderAcountId);
+                rcvr = dbContext.Accounts.FirstOrDefault(x=> x.Id== revertTransaction.RecieverAccountId);
+                if ((revertTransaction == null) || (sender == null) || (rcvr==null))
                 {
                     throw new Exception();
                 }
-                foreach (var i in dbContext.Banks.ToList())
-                {
-                    if (i.Id == revert.RecieverBankId)
-                    {
-                        foreach (var j in dbContext.Accounts.ToList())
-                        {
-                            if (j.Id == revert.RecieverAccountId)
-                            {
-                                rcvr = j;
-                            }
-                        }
-                    }
-                }
             }
             catch (Exception ex)
             {
@@ -186,18 +136,16 @@ namespace ATM.Services
             }
             try
             {
-                sender.Balance += revert.Amount;
-                staffOperations.UpdateBalance(sender.Id,Convert.ToDouble( sender.Balance));
+                sender.Balance += revertTransaction.Amount;
+                staffOperations.UpdateBalance(sender.Id,Convert.ToDouble(sender.Balance));
 
-                rcvr.Balance -= revert.Amount;
-                staffOperations.UpdateBalance(rcvr.Id,Convert.ToDouble( rcvr.Balance));
+                rcvr.Balance -= revertTransaction.Amount;
+                staffOperations.UpdateBalance(rcvr.Id,Convert.ToDouble(rcvr.Balance));
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
-
             }
-
         }
         public void PrintList(Bank bank, int a)
         {

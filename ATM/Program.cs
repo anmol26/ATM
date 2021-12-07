@@ -391,22 +391,7 @@ namespace ATM.CLI
                             staffMember.PrintList(bank, 2);
                             Console.WriteLine(Constants.Messages.AccountHolderListSuccessFull);
                         }
-                    }
-                    else if (staffOperation == StaffOperationType.PrintAllAccountTransaction)
-                    {
-                        Console.WriteLine(Constants.Messages.BankId);
-                        string bankId = Console.ReadLine();
-                        try
-                        {
-                            staffMember.WriteAllAccountHistory(bankId);
-                            Console.WriteLine(Constants.Messages.PrintAllAccountTransaction);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
-
-                    }
+                    } 
                     else if (staffOperation == StaffOperationType.TransferMoney)
                     {
                         Console.Clear();

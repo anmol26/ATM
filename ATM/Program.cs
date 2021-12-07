@@ -212,13 +212,11 @@ namespace ATM.CLI
                         }
                         else if (choice == "2")
                         {
-                            string userId, bankId;
+                            string userId;
                             try
                             {
                                 Console.WriteLine(Constants.Messages.AccountId);
                                 userId = Console.ReadLine();
-                                Console.WriteLine(Constants.Messages.BankId);
-                                bankId = Console.ReadLine();
                             }
                             catch (Exception ex)
                             {
@@ -227,7 +225,7 @@ namespace ATM.CLI
                             }
                             try
                             {
-                                staffMember.DeleteAccount(bankId, userId);
+                                staffMember.DeleteAccount(userId);
                             }
                             catch (Exception ex)
                             {
@@ -412,35 +410,29 @@ namespace ATM.CLI
                     else if (staffOperation == StaffOperationType.TransferMoney)
                     {
                         Console.Clear();
-                        Account reciever;
-                        Bank bank;
-                        Console.WriteLine(Constants.Messages.AccountId);
-                        string accountID = Console.ReadLine();
-                        Console.WriteLine(Constants.Messages.SenderBankId);
-                        string sbankId = Console.ReadLine();
-                        Console.WriteLine(Constants.Messages.ReceiverBankId);
-                        string ToBankId = Console.ReadLine();
+                        Account senderAccount,recieverAccount;
+                        Console.WriteLine("\nPlease Enter Sender Account Id: ");
+                        string senderAccountId = Console.ReadLine();
+                        Console.WriteLine("\nPlease Enter Reciever Account Id: ");
+                        string recieverAccountId = Console.ReadLine();
                         Console.WriteLine(Constants.Messages.ServiceChargeType);
                         string choice = Console.ReadLine();
-                        Console.WriteLine(Constants.Messages.TransferToAccountHolderName);
-                        string hName = Console.ReadLine();
                         Console.WriteLine();
                         try
                         {
-                            bank = commonServices.FindBank(sbankId);
-                            bankAccount = commonServices.FindAccount(accountID);
-                            reciever = staffMember.CheckAccount(ToBankId, hName);
+                            senderAccount = commonServices.FindAccount(senderAccountId);
+                            recieverAccount = commonServices.FindAccount(recieverAccountId);
                         }
                         catch (Exception ex)
                         {
                             Console.WriteLine(ex.Message);
                             goto StaffOperations;
                         }
-                        if (reciever != null)
+                        if (recieverAccount != null)
                         {
                             Console.WriteLine(Constants.Messages.Amount);
                             double amtToTransfer = Convert.ToDouble(Console.ReadLine());
-                            if (accountHolder.Transfer(bankAccount, amtToTransfer, reciever, sbankId, ToBankId, choice))
+                            if (accountHolder.Transfer(senderAccount, amtToTransfer, recieverAccount,choice))
                             {
                                 ConsoleOutput.TransferSuccessfull(amtToTransfer);
                             }
@@ -591,29 +583,25 @@ namespace ATM.CLI
                         else if (customerOperation == CustomerOperationType.Transfer)
                         {
                             Console.Clear();
-                            Account reciever;
-                            Console.WriteLine(Constants.Messages.SenderBankId);
-                            string sbankId = Console.ReadLine();
-                            Console.WriteLine(Constants.Messages.ReceiverBankId);
-                            string ToBankId = Console.ReadLine();
+                            Account recieverAccount;
                             Console.WriteLine(Constants.Messages.ServiceChargeType);
                             string choice = Console.ReadLine();
-                            Console.WriteLine(Constants.Messages.TransferToAccountHolderName);
-                            string hName = Console.ReadLine();
+                            Console.WriteLine("\nPlease write Reciever AccountId");
+                            string recieverAccountId = Console.ReadLine();
                             try
                             {
-                                reciever = staffMember.CheckAccount(ToBankId, hName);
+                                recieverAccount = commonServices.FindAccount(recieverAccountId);
                             }
                             catch (Exception ex)
                             {
                                 Console.WriteLine(ex.Message);
                                 goto CustomerOperations;
                             }
-                            if (reciever != null)
+                            if (recieverAccount != null)
                             {
                                 Console.WriteLine(Constants.Messages.Amount);
                                 double amtToTransfer = Convert.ToDouble(Console.ReadLine());
-                                if (accountHolder.Transfer(bankAccount, amtToTransfer, reciever, sbankId, ToBankId, choice))
+                                if (accountHolder.Transfer(bankAccount, amtToTransfer, recieverAccount, choice))
                                 {
                                     ConsoleOutput.TransferSuccessfull(amtToTransfer);
                                 }

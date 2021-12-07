@@ -3,13 +3,13 @@ using ATM.Repository.Models;
 
 namespace ATM.Repository
 {
-    public partial class BankDbContext : DbContext
+    public partial class ATMDbContext : DbContext
     {
-        public BankDbContext()
+        public ATMDbContext()
         {
         }
 
-        public BankDbContext(DbContextOptions<BankDbContext> options)
+        public ATMDbContext(DbContextOptions<ATMDbContext> options)
             : base(options)
         {
         }

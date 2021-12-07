@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ATM.Models;
 using ATM.Repository;
 using ATM.Repository.Models;
@@ -7,7 +8,7 @@ namespace ATM.Services
 {
     public class CustomerService
     {
-        readonly BankDbContext dbContext = new BankDbContext();
+        readonly ATMDbContext dbContext = new ATMDbContext();
         const string DefaultCurrency = "INR";
         readonly CommonServices commonServices = new CommonServices();
         readonly CustomerRepository customerOperations = new CustomerRepository();
@@ -20,8 +21,7 @@ namespace ATM.Services
                 customerOperations.UpdateBalance(user.Id, user.Balance);
 
                 Transaction trans = new Transaction(amount, 1, user.Id, user.Id, bankId, bankId, commonServices.GenerateTransactionId(bankId, user.Id));
-                string type = "Credit";
-                customerOperations.InsertTransaction(commonServices.GenerateTransactionId(bankId, user.Id), type, amount, trans);
+                customerOperations.InsertTransaction(trans);
             }
             catch (Exception ex)
             {
@@ -39,8 +39,7 @@ namespace ATM.Services
                     customerOperations.UpdateBalance(user.Id, user.Balance);
 
                     Transaction trans = new Transaction(amount, 2, user.Id, user.Id, bankId, bankId, commonServices.GenerateTransactionId(bankId, user.Id));
-                    string type = "Debit";
-                    customerOperations.InsertTransaction(commonServices.GenerateTransactionId(bankId, user.Id), type, amount, trans);
+                    customerOperations.InsertTransaction(trans);
                     return true;
                 }
             }
@@ -50,25 +49,25 @@ namespace ATM.Services
             }
             return false;
         }
-        public bool Transfer(Account sender, double amt, Account rcvr, string fromBankId, string toBankId, string choice)
+        public bool Transfer(Account sender, double amt, Account rcvr, string choice)
         {
             BankDb bank = null;
             BankDb reciever = null;
             try
             {
-                foreach (var i in dbContext.Banks)
+                foreach (var i in dbContext.Banks.ToList())
                 {
-                    if (i.Id == fromBankId)
+                    if (i.Id == sender.BankId)
                     {
                         bank = i;
                     }
-                    if (i.Id == toBankId)
+                    if (i.Id == rcvr.BankId)
                     {
                         reciever = i;
                     }
                 }
                 double charge;
-                if (fromBankId == toBankId)
+                if (sender.BankId == rcvr.BankId)
                 {
                     if (choice == "1")
                     {
@@ -100,14 +99,11 @@ namespace ATM.Services
                     rcvr.Balance += Math.Round(amt * (double)(customerOperations.FindExchangeRate(bank.Currency) / customerOperations.FindExchangeRate(reciever.Currency)), 2);
                     customerOperations.UpdateBalance(rcvr.Id, rcvr.Balance);
 
-                    Transaction senderTrans = new Transaction(amt, 2, sender.Id, rcvr.Id, fromBankId, toBankId, commonServices.GenerateTransactionId(fromBankId, sender.Id));
-                    string type = "Debit";
-                    customerOperations.InsertTransaction(commonServices.GenerateTransactionId(fromBankId, sender.Id), type, amt + charge, senderTrans);
+                    Transaction senderTrans = new Transaction(amt+charge, 2, sender.Id, rcvr.Id, sender.BankId, rcvr.BankId, commonServices.GenerateTransactionId(sender.BankId, sender.Id));
+                    customerOperations.InsertTransaction(senderTrans);
                     
-                    Transaction rcvrTrans = new Transaction(amt, 1, sender.Id, rcvr.Id, fromBankId, toBankId, commonServices.GenerateTransactionId(toBankId, rcvr.Id));
-                    string type2 = "Credit";
-                    customerOperations.InsertTransaction(commonServices.GenerateTransactionId(toBankId, rcvr.Id), type2, amt, rcvrTrans);
-                    
+                    Transaction rcvrTrans = new Transaction(amt, 1, sender.Id, rcvr.Id, sender.BankId, rcvr.BankId, commonServices.GenerateTransactionId(rcvr.BankId, rcvr.Id));
+                    customerOperations.InsertTransaction(rcvrTrans);
                     return true;
                 }
 

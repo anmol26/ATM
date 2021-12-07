@@ -9,7 +9,7 @@ namespace ATM.Services
 {
     public class StaffService
     {
-        readonly BankDbContext dbContext= new BankDbContext();
+        readonly ATMDbContext dbContext= new ATMDbContext();
         Bank bank;
         static string TransactionListFilename = @"C:\Users\dell\OneDrive\Desktop\TransactionHistory.txt";
         static string StaffListFilename = @"C:\Users\dell\OneDrive\Desktop\StaffList.txt";
@@ -72,39 +72,11 @@ namespace ATM.Services
 
             }
         }
-        public Account CheckAccount(string bankId, string accountHolder)
-        {
-            Account user = null;
-            try
-            {
-                bank = commonServices.FindBank(bankId);
-                if (bank == null)
-                {
-                    throw new Exception("Bank does not exist");
-                }
-
-                foreach (var account in dbContext.Accounts.Where(account => account.Name == accountHolder).ToList())
-                {
-                    var a = new Account(account.BankId,account.Name,Convert.ToInt64(account.PhoneNumber),account.Password,account.Gender,account.Id,Convert.ToDouble(account.Balance));
-                    user =a;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-            return user;
-        }
-        public void DeleteAccount(string bankId, string userId)
+        public void DeleteAccount(string userId)
         {
             Account user;
             try
             {
-                bank = commonServices.FindBank(bankId);
-                if (bank == null)
-                {
-                    throw new Exception("Bank does not exist");
-                }
                 user = commonServices.FindAccount(userId);
 
             }
@@ -113,7 +85,7 @@ namespace ATM.Services
                 throw new Exception(ex.Message);
 
             }
-            staffOperations.DeleteAccount(user);
+            staffOperations.DeleteAccount(user.Id);
         }
         public void AddCurrency(string code, double rate)
         {
@@ -316,17 +288,17 @@ namespace ATM.Services
         public void UpdateName(Account bankAccount, string name)
         {
             bankAccount.Name = name;
-            staffOperations.UpdateName(bankAccount, name);
+            staffOperations.UpdateAccount(bankAccount.Id,name,null,null);
         }
         public void UpdatePhoneNumber(Account bankAccount, long phoneNumber)
         {
             bankAccount.PhoneNumber = phoneNumber;
-            staffOperations.UpdatePhoneNumber(bankAccount, phoneNumber);
+            staffOperations.UpdateAccount(bankAccount.Id,null,phoneNumber,null);
         }
         public void UpdatePassword(Account bankAccount, string password)
         {
             bankAccount.Password = password;
-            staffOperations.UpdatePassword(bankAccount, password);
+            staffOperations.UpdateAccount(bankAccount.Id, null, null, password);
         }
     }
 }

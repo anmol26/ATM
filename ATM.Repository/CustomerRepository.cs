@@ -2,24 +2,27 @@
 using ATM.Models;
 using ATM.Repository.Models;
 using System.Linq;
+using ATM.Models.Enums;
 
 namespace ATM.Repository
 {
     public class CustomerRepository
     {
-        readonly BankDbContext dbContext = new BankDbContext();
+        readonly ATMDbContext dbContext = new ATMDbContext();
         public void UpdateBalance(string id, double balance)
         {
             try
             {
-                foreach (var a in dbContext.Accounts.ToList())
+                var b = dbContext.Accounts.SingleOrDefault(x => x.Id == id);
+                if (b == null)
+                { 
+                    throw new Exception(); 
+                }
+                else 
                 {
-                    if (a.Id == id)
-                    {
-                        a.Balance= Convert.ToDecimal(balance);
-                        dbContext.Accounts.Update(a);
-                        dbContext.SaveChanges();
-                    }
+                    b.Balance = Convert.ToDecimal(balance);
+                    dbContext.Accounts.Update(b);
+                    dbContext.SaveChanges();
                 }
             }
             catch (Exception ex)
@@ -27,19 +30,28 @@ namespace ATM.Repository
                 throw new Exception(ex.Message);
             }
         }
-        public void InsertTransaction(string transId, string type, double amount, Transaction trans)
+        public void InsertTransaction(Transaction trans)
         {
             try
             {
+                string type;
+                if (trans.Type == (TransactionType)1)
+                {
+                    type = "Credit";
+                }
+                else 
+                {
+                    type = "Debit";
+                }
                 var transaction = new TransactionDb
                 {
-                    Id = transId,
+                    Id = trans.Id,
                     SenderAcountId = trans.SenderAccountId,
                     RecieverAccountId=trans.RecieverAccountId,
                     SenderBankId=trans.SenderBankId,
                     RecieverBankId=trans.RecieverBankId,
                     Type=type,
-                    Amount=Convert.ToDecimal(amount),
+                    Amount=Convert.ToDecimal(trans.Amount),
                     CurrentDate=Convert.ToString(DateTime.Now),
                 };
                 dbContext.Transactions.Add(transaction);
@@ -52,17 +64,17 @@ namespace ATM.Repository
         }
         public double FindExchangeRate(string currCode)
         {
-            double value = 0;
             try
             {
-                foreach (var c in dbContext.Currencies.ToList()) 
+                var c = dbContext.Currencies.SingleOrDefault(x=> x.CurrencyCode== currCode);
+                if (c == null)
                 {
-                    if (c.CurrencyCode == currCode) 
-                    {
-                        value = Convert.ToDouble(c.ExchangeRate);
-                    }
+                    throw new Exception("CurrencyCode not Registered");
                 }
-                return value;
+                else
+                {
+                    return(Convert.ToDouble(c.ExchangeRate));
+                }
             }
             catch (Exception ex)
             {

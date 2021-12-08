@@ -9,7 +9,7 @@ namespace ATM.Services
 {
     public class StaffService
     {
-        readonly ATMDbContext dbContext= new ATMDbContext();
+        readonly ATMContext dbContext= new ATMContext();
         Bank bank;
         static string TransactionListFilename = @"C:\Users\dell\OneDrive\Desktop\TransactionHistory.txt";
         static string StaffListFilename = @"C:\Users\dell\OneDrive\Desktop\StaffList.txt";

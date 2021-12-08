@@ -8,7 +8,7 @@ namespace ATM.Repository
 {
     public class CustomerRepository
     {
-        readonly ATMDbContext dbContext = new ATMDbContext();
+        readonly ATMContext dbContext = new ATMContext();
         public void UpdateBalance(string id, double balance)
         {
             try

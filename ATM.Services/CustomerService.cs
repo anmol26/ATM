@@ -8,7 +8,7 @@ namespace ATM.Services
 {
     public class CustomerService
     {
-        readonly ATMDbContext dbContext = new ATMDbContext();
+        readonly ATMContext dbContext = new ATMContext();
         const string DefaultCurrency = "INR";
         readonly CommonServices commonServices = new CommonServices();
         readonly CustomerRepository customerOperations = new CustomerRepository();

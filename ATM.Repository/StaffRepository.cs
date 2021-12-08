@@ -7,7 +7,7 @@ namespace ATM.Repository
 {
     public class StaffRepository
     {
-        readonly ATMDbContext dbContext = new ATMDbContext();
+        readonly ATMContext dbContext = new ATMContext();
         public void InsertNewBank(Bank bank,Staff s)
         {
             using (var transaction = dbContext.Database.BeginTransaction())

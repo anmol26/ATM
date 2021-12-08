@@ -59,8 +59,6 @@ namespace ATM.CLI
                 string sPass = ConsoleInput.Password();
                 Console.WriteLine(Constants.Messages.Gender);
                 string sGender = Console.ReadLine();
-                ////////////////////////////////////////////////////////////////////////
-                //// string sName, string sPass, long sPhone, string gender)
                 try
                 {
                     bankID = staffMember.CreateBank(bankName, address, branch, currencyCode,sName,sPass,sNum,sGender);
@@ -74,7 +72,6 @@ namespace ATM.CLI
                 }
                 goto LoginPage;
 
-                //////////////////////////////////////////////////////////////////////
             }
             else if (loginOption == LoginType.StaffMember)
             {

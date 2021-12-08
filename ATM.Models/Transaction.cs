@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using ATM.Models.Enums;
 
 namespace ATM.Models
@@ -16,6 +17,7 @@ namespace ATM.Models
             SenderBankId = sBankId;
             RecieverBankId = rBankId;
         }
+        [Key]
         public string Id { get; set; }
         public string SenderBankId { set; get; }
         public string RecieverBankId { set; get; }

@@ -1,91 +1,92 @@
 ﻿using System;
 using ATM.Models;
-using System.Data.SqlClient;
 using System.Linq;
+using ATM.Repository.Models;
 
 namespace ATM.Repository
 {
     public class StaffRepository
     {
-        public static string connectionString = @"Data Source=ANMOL\SQLEXPRESS;Initial Catalog=ATM;integrated security=SSPI";
-        public void InsertNewBank(string bankId,Bank bank, string name,string address, string branch, string currencyCode) 
+        readonly ATMDbContext dbContext = new ATMDbContext();
+        public void InsertNewBank(Bank bank,Staff s)
         {
-            try
+            using (var transaction = dbContext.Database.BeginTransaction())
             {
-                Library.BankList.Add(bank);
-                string query = $"INSERT INTO Bank" +
-                    $" VALUES(N'{bankId}',N'{name}',N'{address}',N'{branch}',N'{currencyCode}'," +
-                    $"N'{bank.SameRTGS}',N'{bank.SameIMPS}',N'{bank.DiffRTGS}',N'{bank.DiffIMPS}')";
-                SqlConnection conn = new SqlConnection(connectionString);
-                conn.Open();
-                SqlCommand command = new SqlCommand(query, conn);
-                command.ExecuteNonQuery();
-                conn.Close();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
+                try
+                {
+                    var newBank = new BankDb
+                    {
+                        Id = bank.Id,
+                        Name = bank.Name,
+                        Address = bank.Address,
+                        Branch = bank.Branch,
+                    };
+                    dbContext.Banks.Add(newBank);
+                    dbContext.SaveChanges();
+                    InsertNewStaff(s);
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception(ex.Message);
+                }
             }
         }
 
-        public void InsertNewStaff(Staff s,string staffId, string name,string password, long phoneNumber,string gender,string bankId ) 
+        public void InsertNewStaff(Staff s)
         {
             try
             {
-                Library.StaffList.Add(s);
-                string query = $"INSERT INTO Staff" +
-               $" VALUES(N'{staffId}',N'{name}',N'{password}',N'{phoneNumber}',1," +
-               $"N'{DateTime.Now}',N'{gender}',N'{bankId}')";
-                SqlConnection conn = new SqlConnection(connectionString);
-                conn.Open();
-                SqlCommand command = new SqlCommand(query, conn);
-                command.ExecuteNonQuery();
-                conn.Close();
-            }
-            catch (Exception ex)
-            {
-                int counter = 0;
-                foreach (var staff in Library.StaffList.Where(staff => staff.BankId == bankId))
+                var newStaff = new StaffDb
                 {
-                    counter += 1;
-                }
-                if (counter == 0)
-                {
-                    DeleteBank(bankId);
-                }
-                throw new Exception(ex.Message);
-            }
-        }
-        public void InsertNewAccount(Account a, string accountId,string name, string password,long phoneNumber,string gender,string bankId)
-        {
-            try
-            {
-                Library.AccountList.Add(a);
-                string query = $"INSERT INTO Account" +
-               $" VALUES(N'{accountId}',N'{name}',N'{password}',N'{phoneNumber}',0,1," +
-               $"N'{gender}',N'{DateTime.Now}',N'{bankId}')";
-                SqlConnection conn = new SqlConnection(connectionString);
-                conn.Open();
-                SqlCommand command = new SqlCommand(query, conn);
-                command.ExecuteNonQuery();
-                conn.Close();
+                    Id = s.Id,
+                    Name = s.Name,
+                    Password = s.Password,
+                    PhoneNumber = Convert.ToString(s.PhoneNumber),
+                    CurrentDate = Convert.ToString(s.CurrentDate),
+                    Gender = s.Gender,
+                    BankId = s.BankId
+                };
+                dbContext.Staffs.Add(newStaff);
+                dbContext.SaveChanges();
+
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
-        public void DeleteAccount(Account user)
+        public void InsertNewAccount(Account a)
         {
             try
             {
-                Library.AccountList.Remove(user);
-                string query = $"Delete from Account where id=N'{user.Id}' ";
-                SqlConnection conn = new SqlConnection(connectionString);
-                conn.Open();
-                SqlCommand command = new SqlCommand(query, conn);
-                command.ExecuteNonQuery();
-                conn.Close();
+                var newAccount = new AccountDb
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Password = a.Password,
+                    PhoneNumber = Convert.ToString(a.PhoneNumber),
+                    Gender = a.Gender,
+                    CurrentDate = Convert.ToString(DateTime.Now),
+                    Balance = Convert.ToDecimal(a.Balance),
+                    BankId = a.BankId
+                };
+                dbContext.Accounts.Add(newAccount);
+                dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public void DeleteAccount(string userId)
+        {
+            try
+            {
+                var a = dbContext.Accounts.Single(x => x.Id == userId);
+                dbContext.Accounts.Remove(a);
+                dbContext.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -96,12 +97,13 @@ namespace ATM.Repository
         {
             try
             {
-                string query = $"Insert into Currency Values(N'{code}',N'{rate}') ";
-                SqlConnection conn = new SqlConnection(connectionString);
-                conn.Open();
-                SqlCommand command = new SqlCommand(query, conn);
-                command.ExecuteNonQuery();
-                conn.Close();
+                var newCurrency = new CurrencyDb
+                {
+                    CurrencyCode = code,
+                    ExchangeRate = Convert.ToDecimal(rate)
+                };
+                dbContext.Currencies.Add(newCurrency);
+                dbContext.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -114,21 +116,20 @@ namespace ATM.Repository
             {
                 if (choice == 1)
                 {
-                    string query1 = $"Update Bank set SameRTGS=N'{rtgs}', SameIMPS=N'{imps}' where id=N'{bankId}' ";
-                    SqlConnection conn = new SqlConnection(connectionString);
-                    conn.Open();
-                    SqlCommand command = new SqlCommand(query1, conn);
-                    command.ExecuteNonQuery();
-                    conn.Close();
+                    var b = dbContext.Banks.Single(x=> x.Id==bankId);
+                    b.SameRtgs = Convert.ToDecimal(rtgs);
+                    b.SameImps = Convert.ToDecimal(imps);
+                    dbContext.Banks.Update(b);
+                    dbContext.SaveChanges();
+                  
                 }
                 else if (choice == 2)
                 {
-                    string query2 = $"Update Bank set DiffRTGS=N'{rtgs}', DiffIMPS=N'{imps}' where id=N'{bankId}' ";
-                    SqlConnection conn = new SqlConnection(connectionString);
-                    conn.Open();
-                    SqlCommand command = new SqlCommand(query2, conn);
-                    command.ExecuteNonQuery();
-                    conn.Close();
+                    var b = dbContext.Banks.Single(x => x.Id == bankId);
+                    b.DiffRtgs = Convert.ToDecimal(rtgs);
+                    b.DiffImps = Convert.ToDecimal(imps);
+                    dbContext.Banks.Update(b);
+                    dbContext.SaveChanges();
                 }
             }
             catch (Exception ex)
@@ -136,80 +137,30 @@ namespace ATM.Repository
                 throw new Exception(ex.Message);
             }
         }
-        public void UpdateBalance(string id, double balance)
+        public void UpdateBalance(string accountId, double balance)
         {
             try
             {
-                string query = $"Update Account set Balance=N'{balance}' where id=N'{id}' ";
-                SqlConnection conn = new SqlConnection(connectionString);
-                conn.Open();
-                SqlCommand command = new SqlCommand(query, conn);
-                command.ExecuteNonQuery();
-                conn.Close();
+                var a = dbContext.Accounts.Single(x=>x.Id==accountId);
+                a.Balance = Convert.ToDecimal(balance);
+                dbContext.Accounts.Update(a);
+                dbContext.SaveChanges();
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
-        public void UpdateName(Account bankAccount, string name)
+        public void UpdateAccount(string accountId, string? name, long? phoneNumber, string? password) 
         {
             try
             {
-                string query = $"Update Account set Name=N'{name}' where id=N'{bankAccount.Id}' ";
-                SqlConnection conn = new SqlConnection(connectionString);
-                conn.Open();
-                SqlCommand command = new SqlCommand(query, conn);
-                command.ExecuteNonQuery();
-                conn.Close();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-        public void UpdatePhoneNumber(Account bankAccount, long number)
-        {
-            try
-            {
-                string query = $"Update Account set PhoneNumber=N'{number}' where id=N'{bankAccount.Id}' ";
-                SqlConnection conn = new SqlConnection(connectionString);
-                conn.Open();
-                SqlCommand command = new SqlCommand(query, conn);
-                command.ExecuteNonQuery();
-                conn.Close();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-        public void UpdatePassword(Account bankAccount, string password)
-        {
-            try
-            {
-                string query = $"Update Account set Password=N'{password}' where id=N'{bankAccount.Id}' ";
-                SqlConnection conn = new SqlConnection(connectionString);
-                conn.Open();
-                SqlCommand command = new SqlCommand(query, conn);
-                command.ExecuteNonQuery();
-                conn.Close();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-        public void DeleteBank(string bankId)
-        {
-            try
-            {
-                string query = $"Delete from Bank where id=N'{bankId}' ";
-                SqlConnection conn = new SqlConnection(connectionString);
-                conn.Open();
-                SqlCommand command = new SqlCommand(query, conn);
-                command.ExecuteNonQuery();
-                conn.Close();
+                var a = dbContext.Accounts.Single(y => y.Id == accountId);
+                a.Name = name == null ? a.Name : name;
+                a.PhoneNumber = phoneNumber == null ? a.PhoneNumber : Convert.ToString(phoneNumber);
+                a.Password = password == null ? a.Password : password;
+                dbContext.Accounts.Update(a);
+                dbContext.SaveChanges();
             }
             catch (Exception ex)
             {

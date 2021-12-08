@@ -43,10 +43,12 @@ namespace ATM.CLI
             public const string Password = "\nPlease Enter the Password";
             public const string PhoneNumber = "\nPlease enter Phone Number";
             public const string ReceiverBankId = "\nEnter Receiver BankId";
+            public const string ReceiverAccountId = "\nEnter Receiver AccountId";
             public const string RecieverName="\nPlease Enter the Reciever name";
             public const string RevertAccountId = "\nEnter Accoount Id to revert:";
             public const string RevertBankId = "\nEnter Bank Id to revert:";
             public const string RevertTransactiontId = "\nEnter Transaction Id to revert:";
+            public const string SenderAccountId = "\nEnter Sender AccountId";
             public const string SenderBankId = "\nEnter Sender BankId";
             public const string SenderInsufficientBalance = "\nYou do not have enough balance to transfer money";
             public const string ServiceChargeType = "\nSelect type:\n1.RTGS\n2.IMPS";
@@ -86,10 +88,9 @@ namespace ATM.CLI
                 "Press 6, \t---\t To Revert Transaction\n" +
                 "Press 7, \t---\t To Login Another Account\n" +
                 "Press 8, \t---\t To Print all the Staff Name\n"+
-                "Press 9, \t---\t To Print all the Account Holder Name\n" +
-                "Press 10,\t---\t To Print all the Account's Transaction History\n"+
-                "Press 11,\t---\t To Transafer Money\n" +
-                "Press 12,\t---\t To Deposit Money\n" +
+                "Press 9, \t---\t To Print all the Account Holder Name\n" + 
+                "Press 10,\t---\t To Transafer Money\n" +
+                "Press 11,\t---\t To Deposit Money\n" +
                 "Press 0, \t---\t To log out \n" +
                 "*-----------*-----------*-----------*-----------*\n";
             

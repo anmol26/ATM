@@ -1,6 +1,7 @@
 ﻿using System;
 using ATM.Models;
 using ATM.Repository;
+using ATM.Repository.Models;
 using System.IO;
 using System.Linq;
 
@@ -8,6 +9,7 @@ namespace ATM.Services
 {
     public class StaffService
     {
+        readonly ATMDbContext dbContext= new ATMDbContext();
         Bank bank;
         static string TransactionListFilename = @"C:\Users\dell\OneDrive\Desktop\TransactionHistory.txt";
         static string StaffListFilename = @"C:\Users\dell\OneDrive\Desktop\StaffList.txt";
@@ -15,19 +17,20 @@ namespace ATM.Services
         static string LineSeparater = "\n-----------------------------------------------------------------\n\n";
         readonly CommonServices commonServices = new CommonServices();
         readonly StaffRepository staffOperations = new StaffRepository();
-        public string CreateBank(string name, string address, string branch, string currencyCode)
+        public string CreateBank(string name, string address, string branch, string currencyCode, string sName, string sPass, long sPhone, string gender)
         {
             try
             {
                 if (string.IsNullOrEmpty(name))
                     throw new Exception("Bank name is not valid!");
-                if (Library.BankList.Count != 0 & Library.BankList.Any(p => p.Name == name))
+                if (dbContext.Banks.Any(p => p.Name == name))
                     throw new Exception("Bank already exists!");
-                if (!Library.CurrencyList.Any(c => c.CurrencyCode == currencyCode))
+                if (!dbContext.Currencies.Any(c => c.CurrencyCode == currencyCode))
                     throw new Exception("Invalid currency code!");
 
                 Bank bank = new Bank(name, address, branch, currencyCode, commonServices.GenerateBankId(name));
-                staffOperations.InsertNewBank(commonServices.GenerateBankId(name), bank, name, address, branch, currencyCode);
+                Staff s = new Staff(bank.Id, sName, sPhone, sPass, gender, commonServices.GenerateAccountId(sName));
+                staffOperations.InsertNewBank(bank,s);
                 return bank.Id;
             }
             catch (Exception ex)
@@ -41,25 +44,24 @@ namespace ATM.Services
             try
             {
                 bank = commonServices.FindBank(bankId);
-
                 if (string.IsNullOrEmpty(name))
                     throw new Exception("Name is not valid!");
-                if (Library.AccountList.Any(p => p.Name == name) == true)
+                if (dbContext.Accounts.Any(p => p.Name == name) == true)
                     throw new Exception("Account already exists!");
-                if (Library.BankList.Count != 0 & Library.BankList.Any(p => p.Id == bankId) != true)
+                if (dbContext.Banks.Any(p => p.Id == bankId) != true)
                     throw new Exception("Bank doesn't exists!");
 
                 if (choice == 1)
                 {
                     Staff s = new Staff(bankId, name, phoneNumber, password, gender, commonServices.GenerateAccountId(name));
                     Id = s.Id;
-                    staffOperations.InsertNewStaff(s, commonServices.GenerateAccountId(name), name, password, phoneNumber, gender, bankId);
+                    staffOperations.InsertNewStaff(s);
                 }
                 else
                 {
                     Account a = new Account(bankId, name, phoneNumber, password, gender, commonServices.GenerateAccountId(name), 0);
                     Id = a.Id;
-                    staffOperations.InsertNewAccount(a, commonServices.GenerateAccountId(name), name, password, phoneNumber, gender, bankId);
+                    staffOperations.InsertNewAccount(a);
 
                 }
                 return Id;
@@ -70,47 +72,17 @@ namespace ATM.Services
 
             }
         }
-        public Account CheckAccount(string bankId, string accountHolder)
+        public void DeleteAccount(string userId)
         {
-            Account user = null;
             try
             {
-                bank = commonServices.FindBank(bankId);
-                if (bank == null)
-                {
-                    throw new Exception("Bank does not exist");
-                }
+                staffOperations.DeleteAccount(userId);
 
-                foreach (var account in Library.AccountList.Where(account => account.Name == accountHolder))
-                {
-                    user = account;
-                }
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
-            return user;
-        }
-        public void DeleteAccount(string bankId, string userId)
-        {
-            Account user;
-            try
-            {
-                bank = commonServices.FindBank(bankId);
-                if (bank == null)
-                {
-                    throw new Exception("Bank does not exist");
-                }
-                user = commonServices.FindAccount(userId);
-
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-
-            }
-            staffOperations.DeleteAccount(user);
         }
         public void AddCurrency(string code, double rate)
         {
@@ -121,16 +93,16 @@ namespace ATM.Services
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
-
             }
         }
-        public void UpdateCharges(string bankId,double rtgs, double imps, int choice)
+        public void UpdateCharges(string bankId, double rtgs, double imps, int choice)
         {
+            bank = commonServices.FindBank(bankId);
             if (choice == 1)
             {
                 bank.SameRTGS = rtgs;
                 bank.SameIMPS = imps;
-                staffOperations.UpdateCharges(bankId,rtgs,imps,choice);
+                staffOperations.UpdateCharges(bankId, rtgs, imps, choice);
             }
             else if (choice == 2)
             {
@@ -139,69 +111,16 @@ namespace ATM.Services
                 staffOperations.UpdateCharges(bankId, rtgs, imps, choice);
             }
         }
-        public Account ViewHistory(string Id)
+        public void RevertTransaction(string transid)
         {
-            Account user = null;
+            TransactionDb revertTransaction;
+            AccountDb sender;
+            AccountDb rcvr;
             try
             {
-                foreach (var account in Library.AccountList.Where(account => account.Id == Id))
-                {
-                    user = account;
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-
-            }
-            return user;
-        }
-        public void RevertTransaction(string bankid, string accountid, string transid)
-        {
-            Transaction revert = null;
-            Account sender = null;
-            Account rcvr = null;
-            try
-            {
-                foreach (var i in Library.BankList)
-                {
-                    if (i.Id == bankid)
-                    {
-                        foreach (var j in Library.AccountList)
-                        {
-                            if (j.Id == accountid)
-                            {
-                                foreach (var k in Library.TransactionList)
-                                {
-                                    if (k.Id == transid)
-                                    {
-                                        revert = k;
-                                        sender = j;
-
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                }
-                if ((revert == null) || (sender == null))
-                {
-                    throw new Exception();
-                }
-                foreach (var i in Library.BankList)
-                {
-                    if (i.Id == revert.RecieverBankId)
-                    {
-                        foreach (var j in Library.AccountList)
-                        {
-                            if (j.Id == revert.RecieverAccountId)
-                            {
-                                rcvr = j;
-                            }
-                        }
-                    }
-                }
+                revertTransaction = dbContext.Transactions.Single(x=> x.Id==transid);
+                sender = dbContext.Accounts.Single(x => x.Id == revertTransaction.SenderAcountId);
+                rcvr = dbContext.Accounts.Single(x=> x.Id== revertTransaction.RecieverAccountId);
             }
             catch (Exception ex)
             {
@@ -209,20 +128,17 @@ namespace ATM.Services
             }
             try
             {
-                sender.Balance += revert.Amount;
-                staffOperations.UpdateBalance(sender.Id,sender.Balance);
-
-                rcvr.Balance -= revert.Amount;
-                staffOperations.UpdateBalance(rcvr.Id, rcvr.Balance);
+                sender.Balance += revertTransaction.Amount;
+                staffOperations.UpdateBalance(sender.Id,Convert.ToDouble(sender.Balance));
+                rcvr.Balance -= revertTransaction.Amount;
+                staffOperations.UpdateBalance(rcvr.Id,Convert.ToDouble(rcvr.Balance));
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
-
             }
-
         }
-        public void PrintList(Bank bank,int a)
+        public void PrintList(Bank bank, int a)
         {
             try
             {
@@ -232,7 +148,7 @@ namespace ATM.Services
                     using (StreamWriter file = new StreamWriter(fileName, append: true))
                     {
                         file.WriteLine();
-                        foreach (Staff s in Library.StaffList)
+                        foreach (var s in dbContext.Staffs.ToList())
                         {
                             if (s.BankId == bank.Id)
                             {
@@ -242,13 +158,13 @@ namespace ATM.Services
                         file.WriteLine(LineSeparater);
                     }
                 }
-                else 
+                else
                 {
                     string fileName = CustomerListFilename;
                     using (StreamWriter file = new StreamWriter(fileName, append: true))
                     {
                         file.WriteLine();
-                        foreach (Account acc in Library.AccountList)
+                        foreach (var acc in dbContext.Accounts.ToList())
                         {
                             if (acc.BankId == bank.Id)
                             {
@@ -277,28 +193,28 @@ namespace ATM.Services
                     {
                         throw new Exception("Bank does not exist");
                     }
-                    foreach (var account in Library.AccountList)
+                    foreach (var account in dbContext.Accounts.ToList())
                     {
                         if (account == null)
                         {
                             throw new Exception("Account does not exist");
                         }
-                        if (bankId == account.BankId) 
-                        { 
-                        foreach (var transaction in account.Transactions)
+                        if (bankId == account.BankId)
                         {
-                            file.WriteLine(account.Name);
-                            file.WriteLine();
-                            file.WriteLine("Transaction ID:" + transaction.Id);
-                            file.WriteLine(transaction.Amount);
-                            file.WriteLine(transaction.Type + " to/from your account ");
-                            if (transaction.SenderAccountId != transaction.RecieverAccountId)
+                            foreach (var transaction in dbContext.Transactions)
                             {
-                                file.WriteLine("From " + transaction.SenderAccountId + " to " + transaction.RecieverAccountId);
+                                file.WriteLine(account.Name);
+                                file.WriteLine();
+                                file.WriteLine("Transaction ID:" + transaction.Id);
+                                file.WriteLine(transaction.Amount);
+                                file.WriteLine(transaction.Type + " to/from your account ");
+                                if (transaction.SenderAcountId != transaction.RecieverAccountId)
+                                {
+                                    file.WriteLine("From " + transaction.SenderAcountId + " to " + transaction.RecieverAccountId);
+                                }
+                                file.WriteLine(transaction.CurrentDate.ToString());
                             }
-                            file.WriteLine(transaction.CurrentDate.ToString());
-                        }
-                        file.WriteLine(LineSeparater);
+                            file.WriteLine(LineSeparater);
                         }
                     }
                 }
@@ -311,17 +227,17 @@ namespace ATM.Services
         public void UpdateName(Account bankAccount, string name)
         {
             bankAccount.Name = name;
-            staffOperations.UpdateName(bankAccount, name);
+            staffOperations.UpdateAccount(bankAccount.Id,name,null,null);
         }
         public void UpdatePhoneNumber(Account bankAccount, long phoneNumber)
         {
             bankAccount.PhoneNumber = phoneNumber;
-            staffOperations.UpdatePhoneNumber(bankAccount, phoneNumber);
+            staffOperations.UpdateAccount(bankAccount.Id,null,phoneNumber,null);
         }
         public void UpdatePassword(Account bankAccount, string password)
         {
             bankAccount.Password = password;
-            staffOperations.UpdatePassword(bankAccount, password);
+            staffOperations.UpdateAccount(bankAccount.Id, null, null, password);
         }
     }
 }

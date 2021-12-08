@@ -11,8 +11,7 @@
         RevertTransaction,
         LoginPage,
         ShowStaffMemberList,
-        ShowCustomerMemberList,
-        PrintAllAccountTransaction,
+        ShowCustomerMemberList, 
         TransferMoney,
         DepositMoney
     }

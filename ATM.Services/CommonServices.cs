@@ -9,37 +9,32 @@ namespace ATM.Services
 {
     public class CommonServices
     {
+        readonly ATMDbContext dbContext = new ATMDbContext();
         const string DefaultPrefix = "TXN";
         const string DefaultTimeFormat = "ddHHmmss";
         const string FileName = @"C:\Users\dell\OneDrive\Desktop\TransactionHistory.txt";
-        static string LineSeparater = "\n-----------------------------------------------------------------\n\n";
+        const string LineSeparater = "\n-----------------------------------------------------------------\n\n";
         public dynamic UserLogin(string userId, string pass, string choice)
         {
             try
             {
                 if (choice == "1")
                 {
-                    foreach (var staff in Library.StaffList.Where(staff => staff.Id == userId & staff.Password == pass))
-                    {
-                        return staff;
-                    }
-
+                    var s = dbContext.Staffs.Single(staff => staff.Id == userId && staff.Password == pass);
+                    var staff = new Staff(s.BankId, s.Name, long.Parse(s.PhoneNumber), s.Password, s.Gender, s.Id);
+                    return staff;
                 }
-
                 else
                 {
-                    foreach (var account in Library.AccountList.Where(account => account.Id == userId & account.Password == pass))
-                    {
-                        return account;
-                    }
+                    var a = dbContext.Accounts.Single(x => x.Id == userId && x.Password == pass);
+                    var account = new Account(a.BankId, a.Name, long.Parse(a.PhoneNumber), a.Password, a.Gender, a.Id, Convert.ToDouble(a.Balance));
+                    return account;
                 }
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
-            return null;
-
         }
         public string GenerateBankId(string bankName)
         {
@@ -77,43 +72,74 @@ namespace ATM.Services
         }
         public Bank FindBank(string bankId)
         {
-            foreach (var i in Library.BankList.Where(i => i.Id == bankId))
+            try
             {
-                return i;
+                var i = dbContext.Banks.Single(i => i.Id == bankId);
+                Bank bank = new Bank(i.Name, i.Address, i.Branch, i.Currency, i.Id);
+                return bank;
             }
-
-            return null;
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
         public Account FindAccount(string userId)
         {
-            foreach (var account in Library.AccountList.Where(account => account.Id == userId))
-            {
-                return account;
-            }
-            return null;
-        }
-        public void WriteHistory(Transaction i)
-        {
             try
             {
-                using (StreamWriter file = new StreamWriter(FileName, append: true))
-                {
-                    file.WriteLine("Transaction ID:" + i.Id);
-                    file.WriteLine(i.Amount);
-                    file.WriteLine(i.Type + " to/from your account ");
-                    if (i.SenderAccountId != i.RecieverAccountId)
+                var a = dbContext.Accounts.Single(account => account.Id == userId);
+                Account account = new Account(a.BankId, a.Name, long.Parse(a.PhoneNumber), a.Password, a.Gender, a.Id, Convert.ToDouble(a.Balance));
+                return account;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public void WriteHistory(Account bankAccount)
+        {
+            foreach (var t in dbContext.Transactions.Where(trans=> trans.RecieverAccountId== bankAccount.Id || trans.SenderAcountId==bankAccount.Id).ToList())
+            try
+            {
+                    using StreamWriter file = new StreamWriter(FileName, append: true);
+                    file.WriteLine("Transaction ID:" + t.Id);
+                    file.WriteLine(t.Amount);
+                    file.WriteLine(t.Type + " to/from your account ");
+                    if (t.SenderAcountId != t.RecieverAccountId)
                     {
-                        file.WriteLine("From " + i.SenderAccountId + " to " + i.RecieverAccountId);
+                        file.WriteLine("From " + t.SenderAcountId + " to " + t.RecieverAccountId);
                     }
-                    file.WriteLine(i.CurrentDate.ToString());
+                    file.WriteLine(t.CurrentDate.ToString());
                     file.WriteLine(LineSeparater);
                 }
-            }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
 
         }
+        public void TransactionHistory(Account bankAccount)
+        {
+            foreach (var t in dbContext.Transactions.Where(trans => trans.RecieverAccountId == bankAccount.Id || trans.SenderAcountId == bankAccount.Id).ToList())
+                try
+                {
+                        Console.WriteLine("Transaction ID:" + t.Id);
+                        Console.WriteLine(t.Amount);
+                        Console.WriteLine(t.Type + " to/from your account ");
+                        if (t.SenderAcountId != t.RecieverAccountId)
+                        {
+                            Console.WriteLine("From " + t.SenderAcountId + " to " + t.RecieverAccountId);
+                        }
+                        Console.WriteLine(t.CurrentDate.ToString());
+                        Console.WriteLine(LineSeparater);
+                    
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+
+        }
+
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace ATM.Models
 {
@@ -15,10 +14,8 @@ namespace ATM.Models
             this.PhoneNumber = phoneNumber;
             this.Gender = gender;
             this.Password = password;
-            Transactions= new List<Transaction>();
             this.Balance = balance;
         }
         public double Balance { get; set; }
-        public List<Transaction> Transactions { get; set; }
     }
 }

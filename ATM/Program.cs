@@ -2,16 +2,15 @@
 using ATM.Models;
 using ATM.Models.Enums;
 using ATM.Services;
-using ATM.Repository;
 
 namespace ATM.CLI
 {
     public class Program
     {
-        public static void Main(string[] args )
+        public static void Main(string[] args)
         {
             ConsoleOutput.Welcome();
-            Library lib = new Library();
+
             StaffService staffMember = new StaffService();
             CustomerService accountHolder = new CustomerService();
             CommonServices commonServices = new CommonServices();
@@ -23,7 +22,7 @@ namespace ATM.CLI
             {
                 loginOption = (LoginType)(Convert.ToInt32(Console.ReadLine()));
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 goto LoginPage;
@@ -33,7 +32,6 @@ namespace ATM.CLI
             if (loginOption == LoginType.SetupBank)
             {
             SetupBank:
-
                 string bankName = ConsoleInput.BankName();
                 string address = ConsoleInput.Address();
                 Console.WriteLine(Constants.Messages.BranchName);
@@ -41,17 +39,7 @@ namespace ATM.CLI
                 Console.WriteLine(Constants.Messages.CurrencyCode);
                 string currencyCode = Console.ReadLine();
                 string bankID;
-                try
-                {
-                    bankID = staffMember.CreateBank(bankName, address, branch, currencyCode);
-                    ConsoleOutput.BankSuccessfullCreation();
-                    ConsoleOutput.BankId(bankID);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    goto SetupBank;
-                }
+
                 Console.WriteLine(Constants.Messages.CreateFirstStaff);
 
             SetupStaff:
@@ -71,36 +59,38 @@ namespace ATM.CLI
                 string sPass = ConsoleInput.Password();
                 Console.WriteLine(Constants.Messages.Gender);
                 string sGender = Console.ReadLine();
-                string accountID;
+                ////////////////////////////////////////////////////////////////////////
+                //// string sName, string sPass, long sPhone, string gender)
                 try
                 {
-                    accountID = staffMember.CreateAccount(bankID, sName, sPass, sNum, sGender, 1);
-                    ConsoleOutput.AccountId(accountID);
-                    ConsoleOutput.WelcomeUser();
+                    bankID = staffMember.CreateBank(bankName, address, branch, currencyCode,sName,sPass,sNum,sGender);
+                    ConsoleOutput.BankSuccessfullCreation();
+                    ConsoleOutput.BankId(bankID);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
-                    goto SetupStaff;
+                    goto SetupBank;
                 }
                 goto LoginPage;
 
+                //////////////////////////////////////////////////////////////////////
             }
             else if (loginOption == LoginType.StaffMember)
-            {   
+            {
                 Staff bankstaff;
                 Console.WriteLine(Constants.Messages.AccountId);
                 string aId = Console.ReadLine();
                 string pass = ConsoleInput.Password();
                 try
                 {
-                    bankstaff = commonServices.UserLogin(aId, pass,"1");
-                    if (bankstaff == null) 
+                    bankstaff = commonServices.UserLogin(aId, pass, "1");
+                    if (bankstaff == null)
                     {
                         throw new Exception(Constants.Messages.AccountDoesNotExist);
                     }
                 }
-                catch(Exception ex) 
+                catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                     goto LoginPage;
@@ -114,7 +104,7 @@ namespace ATM.CLI
                 {
                     staffOperation = (StaffOperationType)Convert.ToInt32(Console.ReadLine());
                 }
-                catch (Exception ex) 
+                catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                     goto StaffOperations;
@@ -125,14 +115,12 @@ namespace ATM.CLI
                     if (staffOperation == StaffOperationType.CreateAccount)
                     {
                         int choice;
-                        string bankId, name, password, gender, Id;
+                        string name, password, gender, Id;
                         long phoneNumber;
                         try
                         {
                             Console.WriteLine(Constants.Messages.CreateAccountChoice);
                             choice = Convert.ToInt32(Console.ReadLine());
-                            Console.WriteLine(Constants.Messages.BankId);
-                            bankId = Console.ReadLine();
                             name = ConsoleInput.UserName();
                             password = ConsoleInput.Password();
                             Console.WriteLine(Constants.Messages.PhoneNumber);
@@ -147,7 +135,7 @@ namespace ATM.CLI
                         }
                         try
                         {
-                            Id = staffMember.CreateAccount(bankId, name, password, phoneNumber, gender, choice);
+                            Id = staffMember.CreateAccount(bankstaff.BankId, name, password, phoneNumber, gender, choice);
                         }
                         catch (Exception ex)
                         {
@@ -215,13 +203,11 @@ namespace ATM.CLI
                         }
                         else if (choice == "2")
                         {
-                            string userId, bankId;
+                            string userId;
                             try
                             {
                                 Console.WriteLine(Constants.Messages.AccountId);
                                 userId = Console.ReadLine();
-                                Console.WriteLine(Constants.Messages.BankId);
-                                bankId = Console.ReadLine();
                             }
                             catch (Exception ex)
                             {
@@ -230,7 +216,7 @@ namespace ATM.CLI
                             }
                             try
                             {
-                                staffMember.DeleteAccount(bankId, userId);
+                                staffMember.DeleteAccount(userId);
                             }
                             catch (Exception ex)
                             {
@@ -283,7 +269,7 @@ namespace ATM.CLI
                                 Console.WriteLine(ex.Message);
                                 goto UpdateServiceCharge;
                             }
-                            staffMember.UpdateCharges(bankstaff.BankId ,rtgs, imps, 1);
+                            staffMember.UpdateCharges(bankstaff.BankId, rtgs, imps, 1);
                         }
                         else if (choice == "2")
                         {
@@ -300,7 +286,7 @@ namespace ATM.CLI
                                 Console.WriteLine(ex.Message);
                                 goto UpdateServiceCharge;
                             }
-                            staffMember.UpdateCharges(bankstaff.BankId,rtgs, imps, 2);
+                            staffMember.UpdateCharges(bankstaff.BankId, rtgs, imps, 2);
                         }
                         else
                         {
@@ -314,60 +300,50 @@ namespace ATM.CLI
                     ShowTransactionHistory:
                         Console.WriteLine(Constants.Messages.AccountId);
                         string accountId = Console.ReadLine();
-                        bankAccount = staffMember.ViewHistory(accountId);
-                        Console.WriteLine(Constants.Messages.StaffTransactionHistoryChoice);
-                        string choice = Console.ReadLine();
-                        if (choice == "1")
+                        try
                         {
-                            if (bankAccount == null)
+                            bankAccount = commonServices.FindAccount(accountId);
+                            Console.WriteLine(Constants.Messages.StaffTransactionHistoryChoice);
+                            string choice = Console.ReadLine();
+                            if (choice == "1")
                             {
-                                Console.WriteLine(Constants.Messages.InvalidDetail);
-                                goto ShowTransactionHistory;
-                            }
-                            foreach (var i in Library.TransactionList)
-                            {
-                                ConsoleOutput.History(i);
-                            }
-
-                        }
-                        else if (choice == "2")
-                        {
-                            if (bankAccount == null)
-                            {
-                                Console.WriteLine(Constants.Messages.InvalidDetail);
-                                goto ShowTransactionHistory;
-                            }
-                            foreach (var i in Library.TransactionList)
-                            {
-                                try
+                                if (bankAccount == null)
                                 {
-                                    commonServices.WriteHistory(i);
-                                }
-                                catch (Exception ex)
-                                {
-                                    Console.WriteLine(ex.Message);
+                                    Console.WriteLine(Constants.Messages.InvalidDetail);
                                     goto ShowTransactionHistory;
                                 }
-                            }
+                                ConsoleOutput.TransactionHistory();
+                                commonServices.TransactionHistory(bankAccount);
 
+                            }
+                            else if (choice == "2")
+                            {
+                                if (bankAccount == null)
+                                {
+                                    Console.WriteLine(Constants.Messages.InvalidDetail);
+                                    goto ShowTransactionHistory;
+                                }
+                                commonServices.WriteHistory(bankAccount);
+                            }
+                            else
+                            {
+                                Console.Clear();
+                                ConsoleOutput.InValidOption();
+                            }
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            Console.Clear();
-                            ConsoleOutput.InValidOption();
+                            Console.WriteLine(ex.Message);
+                            goto StaffOperations;
                         }
                     }
                     else if (staffOperation == StaffOperationType.RevertTransaction)
                     {
-                        Console.WriteLine(Constants.Messages.RevertBankId);
-                        string bankId = Console.ReadLine();
-                        Console.WriteLine(Constants.Messages.RevertAccountId);
-                        string accountId = Console.ReadLine();
                         Console.WriteLine(Constants.Messages.RevertTransactiontId);
                         string transId = Console.ReadLine();
                         try
                         {
-                            staffMember.RevertTransaction(bankId, accountId, transId);
+                            staffMember.RevertTransaction(transId);
                         }
                         catch (Exception ex)
                         {
@@ -410,53 +386,33 @@ namespace ATM.CLI
                             staffMember.PrintList(bank, 2);
                             Console.WriteLine(Constants.Messages.AccountHolderListSuccessFull);
                         }
-                    }
-                    else if (staffOperation == StaffOperationType.PrintAllAccountTransaction)
-                    {
-                        Console.WriteLine(Constants.Messages.BankId);
-                        string bankId = Console.ReadLine();
-                        try
-                        {
-                            staffMember.WriteAllAccountHistory(bankId);
-                            Console.WriteLine(Constants.Messages.PrintAllAccountTransaction);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
-
-                    }
+                    } 
                     else if (staffOperation == StaffOperationType.TransferMoney)
                     {
                         Console.Clear();
-                        Account reciever;
-                        Bank bank;
-                        Console.WriteLine(Constants.Messages.AccountId);
-                        string accountID = Console.ReadLine();
-                        Console.WriteLine(Constants.Messages.SenderBankId);
-                        string sbankId = Console.ReadLine();
-                        Console.WriteLine(Constants.Messages.ReceiverBankId);
-                        string ToBankId = Console.ReadLine();
+                        Account senderAccount,recieverAccount;
+                        Console.WriteLine(Constants.Messages.SenderAccountId);
+                        string senderAccountId = Console.ReadLine();
+                        Console.WriteLine(Constants.Messages.ReceiverAccountId);
+                        string recieverAccountId = Console.ReadLine();
                         Console.WriteLine(Constants.Messages.ServiceChargeType);
                         string choice = Console.ReadLine();
-                        Console.WriteLine(Constants.Messages.TransferToAccountHolderName);
-                        string hName = Console.ReadLine();
                         Console.WriteLine();
                         try
-                        {   bank = commonServices.FindBank(sbankId);
-                            bankAccount=commonServices.FindAccount(accountID);
-                            reciever = staffMember.CheckAccount(ToBankId, hName);
+                        {
+                            senderAccount = commonServices.FindAccount(senderAccountId);
+                            recieverAccount = commonServices.FindAccount(recieverAccountId);
                         }
                         catch (Exception ex)
                         {
                             Console.WriteLine(ex.Message);
                             goto StaffOperations;
                         }
-                        if (reciever != null)
+                        if (recieverAccount != null)
                         {
                             Console.WriteLine(Constants.Messages.Amount);
                             double amtToTransfer = Convert.ToDouble(Console.ReadLine());
-                            if (accountHolder.Transfer(bankAccount, amtToTransfer, reciever, sbankId, ToBankId, choice))
+                            if (accountHolder.Transfer(senderAccount, amtToTransfer, recieverAccount,choice))
                             {
                                 ConsoleOutput.TransferSuccessfull(amtToTransfer);
                             }
@@ -481,8 +437,6 @@ namespace ATM.CLI
                             amt = Convert.ToDouble(ConsoleInput.DepositAmount());
                             Console.WriteLine(Constants.Messages.CurrencyCode);
                             currCode = Console.ReadLine();
-                            Console.WriteLine(Constants.Messages.BankId);
-                            bankId = Console.ReadLine();
                             Console.WriteLine(Constants.Messages.AccountId);
                             accountID = Console.ReadLine();
                             bankAccount = commonServices.FindAccount(accountID);
@@ -494,7 +448,7 @@ namespace ATM.CLI
                         }
                         try
                         {
-                            accountHolder.Deposit(bankAccount, amt, currCode, bankId);
+                            accountHolder.Deposit(bankAccount, amt, currCode);
                         }
                         catch (Exception ex)
                         {
@@ -525,9 +479,9 @@ namespace ATM.CLI
                 string pass = ConsoleInput.Password();
                 try
                 {
-                    bankAccount = commonServices.UserLogin(aId, pass,"2");
+                    bankAccount = commonServices.UserLogin(aId, pass, "2");
                 }
-                catch 
+                catch
                 {
                     Console.WriteLine(Constants.Messages.InvalidDetail);
                     goto LoginPage;
@@ -559,14 +513,12 @@ namespace ATM.CLI
                         {
                             Console.Clear();
                             double amt;
-                            string currCode, bankId;
+                            string currCode;
                             try
                             {
                                 amt = Convert.ToDouble(ConsoleInput.DepositAmount());
                                 Console.WriteLine(Constants.Messages.CurrencyCode);
                                 currCode = Console.ReadLine();
-                                Console.WriteLine(Constants.Messages.BankId);
-                                bankId = Console.ReadLine();
                             }
                             catch (Exception ex)
                             {
@@ -575,9 +527,7 @@ namespace ATM.CLI
                             }
                             try
                             {
-                                Console.WriteLine(bankAccount.Id,bankAccount.Balance);
-                                accountHolder.Deposit(bankAccount, amt, currCode, bankId);
-
+                                accountHolder.Deposit(bankAccount, amt, currCode);
                             }
                             catch (Exception ex)
                             {
@@ -590,19 +540,16 @@ namespace ATM.CLI
                         {
                             Console.Clear();
                             double amt;
-                            string bankId;
                             try
                             {
                                 amt = Convert.ToDouble(ConsoleInput.WithdrawAmount());
-                                Console.WriteLine(Constants.Messages.BankId);
-                                bankId = Console.ReadLine();
                             }
                             catch (Exception ex)
                             {
                                 Console.WriteLine(ex.Message);
                                 goto CustomerOperations;
                             }
-                            if (accountHolder.Withdraw(bankAccount, amt,bankId))
+                            if (accountHolder.Withdraw(bankAccount, amt))
                             {
                                 ConsoleOutput.WithdrawSuccessfull(amt);
                             }
@@ -614,29 +561,25 @@ namespace ATM.CLI
                         else if (customerOperation == CustomerOperationType.Transfer)
                         {
                             Console.Clear();
-                            Account reciever;
-                            Console.WriteLine(Constants.Messages.SenderBankId);
-                            string sbankId = Console.ReadLine();
-                            Console.WriteLine(Constants.Messages.ReceiverBankId);
-                            string ToBankId = Console.ReadLine();
+                            Account recieverAccount;
                             Console.WriteLine(Constants.Messages.ServiceChargeType);
                             string choice = Console.ReadLine();
-                            Console.WriteLine(Constants.Messages.TransferToAccountHolderName);
-                            string hName = Console.ReadLine();
+                            Console.WriteLine(Constants.Messages.ReceiverAccountId);
+                            string recieverAccountId = Console.ReadLine();
                             try
                             {
-                                reciever = staffMember.CheckAccount(ToBankId, hName);
+                                recieverAccount = commonServices.FindAccount(recieverAccountId);
                             }
                             catch (Exception ex)
                             {
                                 Console.WriteLine(ex.Message);
                                 goto CustomerOperations;
                             }
-                            if (reciever != null)
+                            if (recieverAccount != null)
                             {
                                 Console.WriteLine(Constants.Messages.Amount);
                                 double amtToTransfer = Convert.ToDouble(Console.ReadLine());
-                                if (accountHolder.Transfer(bankAccount, amtToTransfer, reciever, sbankId, ToBankId, choice))
+                                if (accountHolder.Transfer(bankAccount, amtToTransfer, recieverAccount, choice))
                                 {
                                     ConsoleOutput.TransferSuccessfull(amtToTransfer);
                                 }
@@ -659,18 +602,11 @@ namespace ATM.CLI
                             if (choice == "1")
                             {
                                 ConsoleOutput.TransactionHistory();
-                                foreach (var i in Library.TransactionList)
-                                {
-                                    ConsoleOutput.History(i);
-                                }
+                                commonServices.TransactionHistory(bankAccount);
                             }
-                            else if(choice=="2")
+                            else if (choice == "2")
                             {
-                                foreach (var i in Library.TransactionList)
-                                {
-                                    commonServices.WriteHistory(i);
-                                    Console.WriteLine(Constants.Messages.TransactionListSuccessFull);
-                                }
+                                commonServices.WriteHistory(bankAccount);
                             }
                             else
                             {
@@ -696,7 +632,7 @@ namespace ATM.CLI
                         goto CustomerOperations;
                     }
                 }
-                 
+
             }
             else
             {
@@ -708,7 +644,7 @@ namespace ATM.CLI
         Finish:
             ConsoleOutput.Exit();
         }
-        
+
 
     }
 }

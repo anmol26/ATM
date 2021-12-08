@@ -32,7 +32,6 @@ namespace ATM.CLI
             if (loginOption == LoginType.SetupBank)
             {
             SetupBank:
-
                 string bankName = ConsoleInput.BankName();
                 string address = ConsoleInput.Address();
                 Console.WriteLine(Constants.Messages.BranchName);
@@ -40,17 +39,7 @@ namespace ATM.CLI
                 Console.WriteLine(Constants.Messages.CurrencyCode);
                 string currencyCode = Console.ReadLine();
                 string bankID;
-                try
-                {
-                    bankID = staffMember.CreateBank(bankName, address, branch, currencyCode);
-                    ConsoleOutput.BankSuccessfullCreation();
-                    ConsoleOutput.BankId(bankID);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    goto SetupBank;
-                }
+
                 Console.WriteLine(Constants.Messages.CreateFirstStaff);
 
             SetupStaff:
@@ -70,20 +59,22 @@ namespace ATM.CLI
                 string sPass = ConsoleInput.Password();
                 Console.WriteLine(Constants.Messages.Gender);
                 string sGender = Console.ReadLine();
-                string accountID;
+                ////////////////////////////////////////////////////////////////////////
+                //// string sName, string sPass, long sPhone, string gender)
                 try
                 {
-                    accountID = staffMember.CreateAccount(bankID, sName, sPass, sNum, sGender, 1);
-                    ConsoleOutput.AccountId(accountID);
-                    ConsoleOutput.WelcomeUser();
+                    bankID = staffMember.CreateBank(bankName, address, branch, currencyCode,sName,sPass,sNum,sGender);
+                    ConsoleOutput.BankSuccessfullCreation();
+                    ConsoleOutput.BankId(bankID);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
-                    goto SetupStaff;
+                    goto SetupBank;
                 }
                 goto LoginPage;
 
+                //////////////////////////////////////////////////////////////////////
             }
             else if (loginOption == LoginType.StaffMember)
             {

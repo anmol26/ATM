@@ -8,24 +8,29 @@ namespace ATM.Repository
     public class StaffRepository
     {
         readonly ATMDbContext dbContext = new ATMDbContext();
-        public void InsertNewBank(Bank bank)
+        public void InsertNewBank(Bank bank,Staff s)
         {
-            try
+            using (var transaction = dbContext.Database.BeginTransaction())
             {
-                var newBank = new BankDb
+                try
                 {
-                    Id = bank.Id,
-                    Name = bank.Name,
-                    Address = bank.Address,
-                    Branch = bank.Branch,
-                };
-                dbContext.Banks.Add(newBank);
-                dbContext.SaveChanges();
-
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
+                    var newBank = new BankDb
+                    {
+                        Id = bank.Id,
+                        Name = bank.Name,
+                        Address = bank.Address,
+                        Branch = bank.Branch,
+                    };
+                    dbContext.Banks.Add(newBank);
+                    dbContext.SaveChanges();
+                    InsertNewStaff(s);
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception(ex.Message);
+                }
             }
         }
 
@@ -49,7 +54,6 @@ namespace ATM.Repository
             }
             catch (Exception ex)
             {
-                //rollback
                 throw new Exception(ex.Message);
             }
         }

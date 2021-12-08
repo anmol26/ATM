@@ -17,7 +17,7 @@ namespace ATM.Services
         static string LineSeparater = "\n-----------------------------------------------------------------\n\n";
         readonly CommonServices commonServices = new CommonServices();
         readonly StaffRepository staffOperations = new StaffRepository();
-        public string CreateBank(string name, string address, string branch, string currencyCode)
+        public string CreateBank(string name, string address, string branch, string currencyCode, string sName, string sPass, long sPhone, string gender)
         {
             try
             {
@@ -29,7 +29,8 @@ namespace ATM.Services
                     throw new Exception("Invalid currency code!");
 
                 Bank bank = new Bank(name, address, branch, currencyCode, commonServices.GenerateBankId(name));
-                staffOperations.InsertNewBank(bank);
+                Staff s = new Staff(bank.Id, sName, sPhone, sPass, gender, commonServices.GenerateAccountId(sName));
+                staffOperations.InsertNewBank(bank,s);
                 return bank.Id;
             }
             catch (Exception ex)

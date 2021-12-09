@@ -7,7 +7,7 @@ using System.Data;
 
 namespace ATM.Services
 {
-    public class CommonServices
+    public class CommonServices : ICommonService
     {
         readonly ATMContext dbContext = new ATMContext();
         const string DefaultPrefix = "TXN";

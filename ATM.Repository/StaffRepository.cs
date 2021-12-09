@@ -5,7 +5,7 @@ using ATM.Repository.Models;
 
 namespace ATM.Repository
 {
-    public class StaffRepository
+    public class StaffRepository : IStaffRepository
     {
         readonly ATMContext dbContext = new ATMContext();
         public void InsertNewBank(Bank bank,Staff s)

@@ -1,14 +1,27 @@
 ﻿using System;
+using System.Threading.Tasks;
 using ATM.Models;
 using ATM.Models.Enums;
 using ATM.Services;
+using Hangfire.Server;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace ATM.CLI
 {
     public class Program
     {
         public static void Main(string[] args)
+        
         {
+            //CreateHostBuilder(args).Build().RunAsync();
+
+            //static IHostBuilder CreateHostBuilder(string[] args) =>
+            //    Host.CreateDefaultBuilder(args)
+            //        .ConfigureServices((_, services) =>
+            //            services.AddHostedService<Worker>()
+            //                    .AddScoped<ICommonService, CommonServices>());
+
             ConsoleOutput.Welcome();
 
             StaffService staffMember = new StaffService();
@@ -428,7 +441,7 @@ namespace ATM.CLI
                     {
                         Console.Clear();
                         double amt;
-                        string currCode, bankId, accountID;
+                        string currCode, accountID;
                         try
                         {
                             amt = Convert.ToDouble(ConsoleInput.DepositAmount());

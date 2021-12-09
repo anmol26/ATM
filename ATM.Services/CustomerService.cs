@@ -6,7 +6,7 @@ using ATM.Repository.Models;
 
 namespace ATM.Services
 {
-    public class CustomerService
+    public class CustomerService : ICustomerService
     {
         readonly ATMContext dbContext = new ATMContext();
         const string DefaultCurrency = "INR";

@@ -6,7 +6,7 @@ using ATM.Models.Enums;
 
 namespace ATM.Repository
 {
-    public class CustomerRepository
+    public class CustomerRepository : ICustomerRepository
     {
         readonly ATMContext dbContext = new ATMContext();
         public void UpdateBalance(string id, double balance)

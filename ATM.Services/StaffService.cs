@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace ATM.Services
 {
-    public class StaffService
+    public class StaffService : IStaffService
     {
         readonly ATMContext dbContext= new ATMContext();
         Bank bank;

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using ATM.Models;
 using ATM.Models.Enums;
 using ATM.Services;
-using Hangfire.Server;
+//using Hangfire.Server;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -11,16 +11,30 @@ namespace ATM.CLI
 {
     public class Program
     {
+        //private readonly IStaffService _staffService;
+        //public Program(IStaffService staffservice)
+        //{
+        //    _staffService = staffservice;
+        //}
         public static void Main(string[] args)
         
         {
+            
             //CreateHostBuilder(args).Build().RunAsync();
 
             //static IHostBuilder CreateHostBuilder(string[] args) =>
             //    Host.CreateDefaultBuilder(args)
             //        .ConfigureServices((_, services) =>
-            //            services.AddHostedService<Worker>()
+            //            services.AddHostedService<>()
             //                    .AddScoped<ICommonService, CommonServices>());
+
+
+            //void ConfigureServices(IServiceCollection services)
+            //{
+            //    services.AddScoped<IStaffService, StaffService>();
+
+            //    services.AddRazorPages();
+            //}
 
             ConsoleOutput.Welcome();
 

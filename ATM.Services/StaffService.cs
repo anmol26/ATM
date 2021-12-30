@@ -9,15 +9,26 @@ namespace ATM.Services
 {
     public class StaffService : IStaffService
     {
-       
-        readonly ATMContext dbContext= new ATMContext();
         Bank bank;
         static string TransactionListFilename = @"C:\Users\dell\OneDrive\Desktop\TransactionHistory.txt";
         static string StaffListFilename = @"C:\Users\dell\OneDrive\Desktop\StaffList.txt";
         static string CustomerListFilename = @"C:\Users\dell\OneDrive\Desktop\AccountHolderList.txt";
         static string LineSeparater = "\n-----------------------------------------------------------------\n\n";
-        readonly CommonServices commonServices = new CommonServices();
-        readonly StaffRepository staffOperations = new StaffRepository();
+        private readonly ATMContext dbContext;
+        private readonly ICommonService commonServices;
+        private readonly IStaffRepository staffOperations;
+
+        //readonly ATMContext dbContext= new ATMContext();
+        //readonly CommonServices commonServices = new CommonServices();
+        //readonly StaffRepository staffOperations = new StaffRepository();
+
+        public StaffService(ATMContext dbContext, ICommonService commonServices, IStaffRepository staffOperations)
+        {
+
+            this.dbContext = dbContext;
+            this.commonServices = commonServices;
+            this.staffOperations = staffOperations;
+        }
         public string CreateBank(string name, string address, string branch, string currencyCode, string sName, string sPass, long sPhone, string gender)
         {
             try

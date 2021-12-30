@@ -1,47 +1,25 @@
-﻿using System;
-using System.Threading.Tasks;
-using ATM.Models;
+﻿using ATM.Models;
 using ATM.Models.Enums;
-using ATM.Services;
-//using Hangfire.Server;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using ATM.Services;
+using System;
 
 namespace ATM.CLI
 {
     public class Program
     {
-        //private readonly IStaffService _staffService;
-        //public Program(IStaffService staffservice)
-        //{
-        //    _staffService = staffservice;
-        //}
+
+        public static readonly IServiceProvider container = DIContainerBuilder.Build();
         public static void Main(string[] args)
-        
         {
-            
-            //CreateHostBuilder(args).Build().RunAsync();
-
-            //static IHostBuilder CreateHostBuilder(string[] args) =>
-            //    Host.CreateDefaultBuilder(args)
-            //        .ConfigureServices((_, services) =>
-            //            services.AddHostedService<>()
-            //                    .AddScoped<ICommonService, CommonServices>());
-
-
-            //void ConfigureServices(IServiceCollection services)
-            //{
-            //    services.AddScoped<IStaffService, StaffService>();
-
-            //    services.AddRazorPages();
-            //}
-
+            IStaffService staffMember = container.GetService<IStaffService>();
+            ICustomerService accountHolder = container.GetService<ICustomerService>();
+            ICommonService commonServices = container.GetService<ICommonService>();
             ConsoleOutput.Welcome();
 
-            StaffService staffMember = new StaffService();
-            CustomerService accountHolder = new CustomerService();
-            CommonServices commonServices = new CommonServices();
-
+        //StaffService staffMember = new StaffService();
+        //CustomerService aaccountHolder = new CustomerService();
+        //CommonServices commonServices = new CommonServices();
         LoginPage:
             ConsoleOutput.Login();
             LoginType loginOption;
@@ -88,7 +66,7 @@ namespace ATM.CLI
                 string sGender = Console.ReadLine();
                 try
                 {
-                    bankID = staffMember.CreateBank(bankName, address, branch, currencyCode,sName,sPass,sNum,sGender);
+                    bankID = staffMember.CreateBank(bankName, address, branch, currencyCode, sName, sPass, sNum, sGender);
                     ConsoleOutput.BankSuccessfullCreation();
                     ConsoleOutput.BankId(bankID);
                 }
@@ -410,11 +388,11 @@ namespace ATM.CLI
                             staffMember.PrintList(bank, 2);
                             Console.WriteLine(Constants.Messages.AccountHolderListSuccessFull);
                         }
-                    } 
+                    }
                     else if (staffOperation == StaffOperationType.TransferMoney)
                     {
                         Console.Clear();
-                        Account senderAccount,recieverAccount;
+                        Account senderAccount, recieverAccount;
                         Console.WriteLine(Constants.Messages.SenderAccountId);
                         string senderAccountId = Console.ReadLine();
                         Console.WriteLine(Constants.Messages.ReceiverAccountId);
@@ -436,7 +414,7 @@ namespace ATM.CLI
                         {
                             Console.WriteLine(Constants.Messages.Amount);
                             double amtToTransfer = Convert.ToDouble(Console.ReadLine());
-                            if (accountHolder.Transfer(senderAccount, amtToTransfer, recieverAccount,choice))
+                            if (accountHolder.Transfer(senderAccount, amtToTransfer, recieverAccount, choice))
                             {
                                 ConsoleOutput.TransferSuccessfull(amtToTransfer);
                             }

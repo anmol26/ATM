@@ -14,12 +14,14 @@ namespace ATM.Repository.Models
         public DbSet<TransactionDb> Transactions { get; set; }
         public DbSet<StaffDb> Staffs { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Server= ANMOL\\SQLEXPRESS;Database=Banking;Trusted_Connection=True;");
-            }
-        }
+        public ATMContext(DbContextOptions options) : base(options) { }
+
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    if (!optionsBuilder.IsConfigured)
+        //    {
+        //        optionsBuilder.UseSqlServer("Server= ANMOL\\SQLEXPRESS;Database=Banking;Trusted_Connection=True;");
+        //    }
+        //}
     }
 }

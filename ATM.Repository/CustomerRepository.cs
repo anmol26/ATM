@@ -8,7 +8,13 @@ namespace ATM.Repository
 {
     public class CustomerRepository : ICustomerRepository
     {
-        readonly ATMContext dbContext = new ATMContext();
+        private readonly ATMContext dbContext;
+
+        //readonly ATMContext dbContext = new ATMContext();
+        public CustomerRepository(ATMContext dbContext)
+        {
+            this.dbContext = dbContext;
+        }
         public void UpdateBalance(string id, double balance)
         {
             try

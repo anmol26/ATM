@@ -9,11 +9,17 @@ namespace ATM.Services
 {
     public class CommonServices : ICommonService
     {
-        readonly ATMContext dbContext = new ATMContext();
+        //readonly ATMContext dbContext = new ATMContext();
         const string DefaultPrefix = "TXN";
         const string DefaultTimeFormat = "ddHHmmss";
         const string FileName = @"C:\Users\dell\OneDrive\Desktop\TransactionHistory.txt";
         const string LineSeparater = "\n-----------------------------------------------------------------\n\n";
+        private readonly ATMContext dbContext;
+
+        public CommonServices(ATMContext dbContext)
+        {
+            this.dbContext = dbContext;
+        }
         public dynamic UserLogin(string userId, string pass, string choice)
         {
             try

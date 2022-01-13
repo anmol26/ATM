@@ -1,6 +1,6 @@
 using System;
 
-namespace ATM.Api
+namespace ATM.API
 {
     public class WeatherForecast
     {

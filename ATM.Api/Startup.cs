@@ -1,7 +1,11 @@
+using ATM.Repository;
+using ATM.Repository.Models;
+using ATM.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -10,11 +14,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ATM.Services;
-using ATM.Repository;
-using ATM.Repository.Models;
-using Microsoft.EntityFrameworkCore;
-namespace ATM.Api
+
+namespace ATM.API
 {
     public class Startup
     {
@@ -28,14 +29,14 @@ namespace ATM.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ATMContext>(i=>i.UseSqlServer("Server= ANMOL\\SQLEXPRESS;Database=Banking;Trusted_Connection=True;"));
+
+            services.AddDbContext<ATMContext>(i => i.UseSqlServer("Server= ANMOL\\SQLEXPRESS;Database=Banking;Trusted_Connection=True;"));
             services.AddScoped<ICommonService, CommonServices>();
-            services.AddScoped<ICustomerService,CustomerService>();
+            services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IStaffService, StaffService>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IStaffRepository, StaffRepository>();
-
-            services.AddRazorPages();
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

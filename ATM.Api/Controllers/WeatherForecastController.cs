@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ATM.Api.Controllers
+namespace ATM.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
@@ -35,11 +35,5 @@ namespace ATM.Api.Controllers
             })
             .ToArray();
         }
-
-        //[HttpPost]
-        //public WeatherForecast Post(WeatherForecast wf)
-        //{
-
-        //}
     }
 }

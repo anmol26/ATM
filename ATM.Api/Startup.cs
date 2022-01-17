@@ -36,6 +36,7 @@ namespace ATM.API
             services.AddScoped<IStaffService, StaffService>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IStaffRepository, StaffRepository>();
+
             services.AddControllers();
         }
 

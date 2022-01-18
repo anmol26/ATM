@@ -17,9 +17,6 @@ namespace ATM.CLI
             ICommonService commonServices = container.GetService<ICommonService>();
             ConsoleOutput.Welcome();
 
-        //StaffService staffMember = new StaffService();
-        //CustomerService aaccountHolder = new CustomerService();
-        //CommonServices commonServices = new CommonServices();
         LoginPage:
             ConsoleOutput.Login();
             LoginType loginOption;

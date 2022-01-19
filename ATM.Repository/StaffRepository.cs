@@ -5,9 +5,13 @@ using ATM.Repository.Models;
 
 namespace ATM.Repository
 {
-    public class StaffRepository
+    public class StaffRepository : IStaffRepository
     {
-        readonly ATMDbContext dbContext = new ATMDbContext();
+        private readonly ATMContext dbContext;
+        public StaffRepository(ATMContext dbContext)
+        {
+            this.dbContext = dbContext;
+        }
         public void InsertNewBank(Bank bank,Staff s)
         {
             using (var transaction = dbContext.Database.BeginTransaction())
@@ -93,6 +97,33 @@ namespace ATM.Repository
                 throw new Exception(ex.Message);
             }
         }
+        public void DeleteStaff(string staffId)
+        {
+            try
+            {
+                var a = dbContext.Staffs.Single(x => x.Id == staffId);
+                dbContext.Staffs.Remove(a);
+                dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public void DeleteBank(string bankId)
+        {
+            try
+            {
+                var a = dbContext.Banks.Single(x => x.Id == bankId);
+                dbContext.Banks.Remove(a);
+                dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public void InsertNewCurrency(string code, double rate)
         {
             try

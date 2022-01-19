@@ -6,12 +6,22 @@ using ATM.Repository.Models;
 
 namespace ATM.Services
 {
-    public class CustomerService
+    public class CustomerService : ICustomerService
     {
-        readonly ATMDbContext dbContext = new ATMDbContext();
         const string DefaultCurrency = "INR";
-        readonly CommonServices commonServices = new CommonServices();
-        readonly CustomerRepository customerOperations = new CustomerRepository();
+        private readonly ATMContext dbContext;
+        private readonly ICommonService commonServices;
+        private readonly ICustomerRepository customerOperations;
+
+        //readonly ATMContext dbContext = new ATMContext();
+        //readonly CommonServices commonServices = new CommonServices();
+        //readonly CustomerRepository customerOperations = new CustomerRepository();
+        public CustomerService(ATMContext dbContext, ICommonService commonServices, ICustomerRepository customerOperations)
+        {
+            this.dbContext = dbContext;
+            this.commonServices = commonServices;
+            this.customerOperations = customerOperations;
+        }
         public void Deposit(Account user, double amount, string currCode)
         {
             try

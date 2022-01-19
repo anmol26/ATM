@@ -1,19 +1,25 @@
 ﻿using System;
 using ATM.Models;
-using ATM.Repository;
+using ATM.Repository.Models;
 using System.IO;
 using System.Linq;
 using System.Data;
 
 namespace ATM.Services
 {
-    public class CommonServices
+    public class CommonServices : ICommonService
     {
-        readonly ATMDbContext dbContext = new ATMDbContext();
+        //readonly ATMContext dbContext = new ATMContext();
         const string DefaultPrefix = "TXN";
         const string DefaultTimeFormat = "ddHHmmss";
         const string FileName = @"C:\Users\dell\OneDrive\Desktop\TransactionHistory.txt";
         const string LineSeparater = "\n-----------------------------------------------------------------\n\n";
+        private readonly ATMContext dbContext;
+
+        public CommonServices(ATMContext dbContext)
+        {
+            this.dbContext = dbContext;
+        }
         public dynamic UserLogin(string userId, string pass, string choice)
         {
             try

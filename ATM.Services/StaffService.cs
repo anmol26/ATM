@@ -7,16 +7,28 @@ using System.Linq;
 
 namespace ATM.Services
 {
-    public class StaffService
+    public class StaffService : IStaffService
     {
-        readonly ATMDbContext dbContext= new ATMDbContext();
         Bank bank;
         static string TransactionListFilename = @"C:\Users\dell\OneDrive\Desktop\TransactionHistory.txt";
         static string StaffListFilename = @"C:\Users\dell\OneDrive\Desktop\StaffList.txt";
         static string CustomerListFilename = @"C:\Users\dell\OneDrive\Desktop\AccountHolderList.txt";
         static string LineSeparater = "\n-----------------------------------------------------------------\n\n";
-        readonly CommonServices commonServices = new CommonServices();
-        readonly StaffRepository staffOperations = new StaffRepository();
+        private readonly ATMContext dbContext;
+        private readonly ICommonService commonServices;
+        private readonly IStaffRepository staffOperations;
+
+        //readonly ATMContext dbContext= new ATMContext();
+        //readonly CommonServices commonServices = new CommonServices();
+        //readonly StaffRepository staffOperations = new StaffRepository();
+
+        public StaffService(ATMContext dbContext, ICommonService commonServices, IStaffRepository staffOperations)
+        {
+
+            this.dbContext = dbContext;
+            this.commonServices = commonServices;
+            this.staffOperations = staffOperations;
+        }
         public string CreateBank(string name, string address, string branch, string currencyCode, string sName, string sPass, long sPhone, string gender)
         {
             try
@@ -77,6 +89,51 @@ namespace ATM.Services
             try
             {
                 staffOperations.DeleteAccount(userId);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public void DeleteStaff(string staffId)
+        {
+            try
+            {
+                staffOperations.DeleteStaff(staffId);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public void DeleteBank(string bankId)
+        {
+            try
+            {
+                staffOperations.DeleteBank(bankId);
+                //foreach (var s in dbContext.Staffs.ToList())
+                //{
+                //    if (s.BankId == bank.Id)
+                //    {
+                //        file.WriteLine(s.Name);
+                //    }
+                //}
+                foreach (var s in dbContext.Staffs.ToList())
+                {
+                    if (s.BankId == bankId)
+                    {
+                        staffOperations.DeleteStaff(s.Id);
+                    }
+                }
+                foreach (var s in dbContext.Accounts.ToList())
+                {
+                    if (s.BankId == bankId)
+                    {
+                        staffOperations.DeleteAccount(s.Id);
+                    }
+                }
 
             }
             catch (Exception ex)

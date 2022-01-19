@@ -1,19 +1,21 @@
-﻿using System;
-using ATM.Models;
+﻿using ATM.Models;
 using ATM.Models.Enums;
+using Microsoft.Extensions.DependencyInjection;
 using ATM.Services;
+using System;
 
 namespace ATM.CLI
 {
     public class Program
     {
+
+        public static readonly IServiceProvider container = DIContainerBuilder.Build();
         public static void Main(string[] args)
         {
+            IStaffService staffMember = container.GetService<IStaffService>();
+            ICustomerService accountHolder = container.GetService<ICustomerService>();
+            ICommonService commonServices = container.GetService<ICommonService>();
             ConsoleOutput.Welcome();
-
-            StaffService staffMember = new StaffService();
-            CustomerService accountHolder = new CustomerService();
-            CommonServices commonServices = new CommonServices();
 
         LoginPage:
             ConsoleOutput.Login();
@@ -59,11 +61,9 @@ namespace ATM.CLI
                 string sPass = ConsoleInput.Password();
                 Console.WriteLine(Constants.Messages.Gender);
                 string sGender = Console.ReadLine();
-                ////////////////////////////////////////////////////////////////////////
-                //// string sName, string sPass, long sPhone, string gender)
                 try
                 {
-                    bankID = staffMember.CreateBank(bankName, address, branch, currencyCode,sName,sPass,sNum,sGender);
+                    bankID = staffMember.CreateBank(bankName, address, branch, currencyCode, sName, sPass, sNum, sGender);
                     ConsoleOutput.BankSuccessfullCreation();
                     ConsoleOutput.BankId(bankID);
                 }
@@ -74,7 +74,6 @@ namespace ATM.CLI
                 }
                 goto LoginPage;
 
-                //////////////////////////////////////////////////////////////////////
             }
             else if (loginOption == LoginType.StaffMember)
             {
@@ -386,11 +385,11 @@ namespace ATM.CLI
                             staffMember.PrintList(bank, 2);
                             Console.WriteLine(Constants.Messages.AccountHolderListSuccessFull);
                         }
-                    } 
+                    }
                     else if (staffOperation == StaffOperationType.TransferMoney)
                     {
                         Console.Clear();
-                        Account senderAccount,recieverAccount;
+                        Account senderAccount, recieverAccount;
                         Console.WriteLine(Constants.Messages.SenderAccountId);
                         string senderAccountId = Console.ReadLine();
                         Console.WriteLine(Constants.Messages.ReceiverAccountId);
@@ -412,7 +411,7 @@ namespace ATM.CLI
                         {
                             Console.WriteLine(Constants.Messages.Amount);
                             double amtToTransfer = Convert.ToDouble(Console.ReadLine());
-                            if (accountHolder.Transfer(senderAccount, amtToTransfer, recieverAccount,choice))
+                            if (accountHolder.Transfer(senderAccount, amtToTransfer, recieverAccount, choice))
                             {
                                 ConsoleOutput.TransferSuccessfull(amtToTransfer);
                             }
@@ -431,7 +430,7 @@ namespace ATM.CLI
                     {
                         Console.Clear();
                         double amt;
-                        string currCode, bankId, accountID;
+                        string currCode, accountID;
                         try
                         {
                             amt = Convert.ToDouble(ConsoleInput.DepositAmount());

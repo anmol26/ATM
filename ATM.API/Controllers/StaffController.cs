@@ -47,7 +47,7 @@ namespace ATM.API.Controllers
             return Created($"{Request.Path}/{staffId}", newAccount);
         }
         [HttpDelete("{staffId}")]
-        public IActionResult DeleteAccount(string staffId)
+        public IActionResult DeleteAccountById(string staffId)
         {
             try
             {

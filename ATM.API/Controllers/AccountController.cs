@@ -45,7 +45,7 @@ namespace ATM.API.Controllers
         }
 
         [HttpDelete("{accountId}")]
-        public IActionResult DeleteAccount(string accountId)
+        public IActionResult DeleteAccountById(string accountId)
         {
             try
             {

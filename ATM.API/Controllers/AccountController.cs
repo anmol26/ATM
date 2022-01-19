@@ -1,4 +1,5 @@
-﻿using ATM.Services;
+﻿using ATM.API.Models;
+using ATM.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,13 +14,15 @@ namespace ATM.API.Controllers
     public class AccountController : Controller
     {
         private readonly ICustomerService _customerService;
+        private readonly IStaffService _staffService;
         private readonly ICommonService _commonService;
         private readonly ILogger<BankController> _logger;
-        public AccountController(ICustomerService customerService, ICommonService commonService, ILogger<BankController> logger)
+        public AccountController(ICustomerService customerService, ICommonService commonService, ILogger<BankController> logger, IStaffService staffService)
         {
             _customerService = customerService;
             _commonService = commonService;
             _logger = logger;
+            _staffService = staffService;
         }
         [HttpGet("{accountId}")]
         public IActionResult GetAccountById(string accountId)
@@ -34,6 +37,13 @@ namespace ATM.API.Controllers
                 _logger.Log(LogLevel.Error, message: ex.Message);
                 return NotFound(ex.Message);
             }
+        }
+        [HttpPost]
+        public IActionResult CreateAccount(NewAccount newAccount)
+        {
+            string AccountId = _staffService.CreateAccount(newAccount.BankId, newAccount.Name, newAccount.Password, newAccount.PhoneNumber, newAccount.Gender, 2);
+            _logger.Log(LogLevel.Information, message: "New Account created Successfully");
+            return Created($"{Request.Path}/{AccountId}", newAccount);
         }
     }
 }

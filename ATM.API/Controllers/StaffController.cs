@@ -1,4 +1,5 @@
-﻿using ATM.Models;
+﻿using ATM.API.Models;
+using ATM.Models;
 using ATM.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -38,13 +39,13 @@ namespace ATM.API.Controllers
                 return NotFound(ex.Message);
             }
         }
-
         [HttpPost]
-        public IActionResult CreateBank(Bank bank, Staff staff)
+        public IActionResult CreateStaff(NewAccount newAccount)
         {
-            string bankId = _staffService.CreateBank(bank.Name, bank.Address, bank.Branch, bank.CurrencyCode, staff.Name, staff.Password, staff.PhoneNumber, staff.Gender);
-            _logger.Log(LogLevel.Information, message: "New Bank created Successfully");
-            return Created($"{Request.Path}/{bankId}", bank);
+            //(string bankId, string name, string password, long phoneNumber, string gender, int choice)
+            string staffId = _staffService.CreateAccount(newAccount.BankId,newAccount.Name,newAccount.Password,newAccount.PhoneNumber,newAccount.Gender,1);
+            _logger.Log(LogLevel.Information, message: "New Staff created Successfully");
+            return Created($"{Request.Path}/{staffId}", newAccount);
         }
 
         //[HttpPost]

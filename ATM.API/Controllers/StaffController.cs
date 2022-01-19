@@ -42,19 +42,24 @@ namespace ATM.API.Controllers
         [HttpPost]
         public IActionResult CreateStaff(NewAccount newAccount)
         {
-            //(string bankId, string name, string password, long phoneNumber, string gender, int choice)
             string staffId = _staffService.CreateAccount(newAccount.BankId,newAccount.Name,newAccount.Password,newAccount.PhoneNumber,newAccount.Gender,1);
             _logger.Log(LogLevel.Information, message: "New Staff created Successfully");
             return Created($"{Request.Path}/{staffId}", newAccount);
         }
-
-        //[HttpPost]
-        //public IActionResult CreateAccount(string bankId, string name, string password, long phoneNumber, string gender, int choice)
-        //{
-        //    string id= _staffService.CreateAccount(bankId, name, password, phoneNumber, gender, choice);
-        //    _logger.Log(LogLevel.Information, message: "New Account created Successfully");
-        //    return Created($"{Request.Path}/id/{id}",bankId);
-
-        //}
+        [HttpDelete("{staffId}")]
+        public IActionResult DeleteAccount(string staffId)
+        {
+            try
+            {
+                _staffService.DeleteStaff(staffId);
+                _logger.Log(LogLevel.Information, message: "Staff Deleted Sucessfully");
+                return Ok("Staff Deleted Sucessfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.Log(LogLevel.Error, message: ex.Message);
+                return NotFound(ex.Message);
+            }
+        }
     }
 }

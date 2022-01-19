@@ -13,13 +13,11 @@ namespace ATM.API.Controllers
     [Route("api/[controller]")]
     public class AccountController : Controller
     {
-        private readonly ICustomerService _customerService;
         private readonly IStaffService _staffService;
         private readonly ICommonService _commonService;
-        private readonly ILogger<BankController> _logger;
-        public AccountController(ICustomerService customerService, ICommonService commonService, ILogger<BankController> logger, IStaffService staffService)
+        private readonly ILogger<AccountController> _logger;
+        public AccountController(ICommonService commonService, ILogger<AccountController> logger, IStaffService staffService)
         {
-            _customerService = customerService;
             _commonService = commonService;
             _logger = logger;
             _staffService = staffService;
@@ -44,6 +42,22 @@ namespace ATM.API.Controllers
             string AccountId = _staffService.CreateAccount(newAccount.BankId, newAccount.Name, newAccount.Password, newAccount.PhoneNumber, newAccount.Gender, 2);
             _logger.Log(LogLevel.Information, message: "New Account created Successfully");
             return Created($"{Request.Path}/{AccountId}", newAccount);
+        }
+
+        [HttpDelete("{accountId}")]
+        public IActionResult DeleteAccount(string accountId)
+        {
+            try
+            {
+                _staffService.DeleteAccount(accountId);
+                _logger.Log(LogLevel.Information, message: "Account Deleted Sucessfully");
+                return Ok("Account Deleted Sucessfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.Log(LogLevel.Error, message: ex.Message);
+                return NotFound(ex.Message);
+            }
         }
     }
 }

@@ -7,6 +7,8 @@ namespace ATM.Services
         public string CreateBank(string name, string address, string branch, string currencyCode, string sName, string sPass, long sPhone, string gender);
         public string CreateAccount(string bankId, string name, string password, long phoneNumber, string gender, int choice);
         public void DeleteAccount(string userId);
+        public void DeleteStaff(string userId);
+        public void DeleteBank(string bankId);
         public void AddCurrency(string code, double rate);
         public void UpdateCharges(string bankId, double rtgs, double imps, int choice);
         public void RevertTransaction(string transid);

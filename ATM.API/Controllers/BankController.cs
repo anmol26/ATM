@@ -44,5 +44,20 @@ namespace ATM.API.Controllers
             _logger.Log(LogLevel.Information, message: "New Bank created Successfully");
             return Created($"{Request.Path}/{bankId}", newBank);
         }
+        [HttpDelete("{bankId}")]
+        public IActionResult DeleteBank(string bankId)
+        {
+            try
+            {
+                _staffService.DeleteBank(bankId);
+                _logger.Log(LogLevel.Information, message: "Bank Deleted Sucessfully");
+                return Ok("Bank Deleted Sucessfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.Log(LogLevel.Error, message: ex.Message);
+                return NotFound(ex.Message);
+            }
+        }
     }
 }

@@ -96,6 +96,51 @@ namespace ATM.Services
                 throw new Exception(ex.Message);
             }
         }
+        public void DeleteStaff(string staffId)
+        {
+            try
+            {
+                staffOperations.DeleteStaff(staffId);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public void DeleteBank(string bankId)
+        {
+            try
+            {
+                staffOperations.DeleteBank(bankId);
+                //foreach (var s in dbContext.Staffs.ToList())
+                //{
+                //    if (s.BankId == bank.Id)
+                //    {
+                //        file.WriteLine(s.Name);
+                //    }
+                //}
+                foreach (var s in dbContext.Staffs.ToList())
+                {
+                    if (s.BankId == bankId)
+                    {
+                        staffOperations.DeleteStaff(s.Id);
+                    }
+                }
+                foreach (var s in dbContext.Accounts.ToList())
+                {
+                    if (s.BankId == bankId)
+                    {
+                        staffOperations.DeleteAccount(s.Id);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
         public void AddCurrency(string code, double rate)
         {
             try

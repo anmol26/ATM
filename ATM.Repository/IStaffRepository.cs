@@ -8,6 +8,8 @@ namespace ATM.Repository
         void InsertNewStaff(Staff s);
         void InsertNewAccount(Account a);
         void DeleteAccount(string userId);
+        void DeleteStaff(string staffId);
+        void DeleteBank(string bankId);
         void InsertNewCurrency(string code, double rate);
         void UpdateCharges(string bankId, double rtgs, double imps, int choice);
         void UpdateBalance(string accountId, double balance);
